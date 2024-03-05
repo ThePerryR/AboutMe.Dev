@@ -5,6 +5,11 @@
 await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
-const config = {};
+// allow avatars.githubusercontent.com in images
+const config = {
+    images: {
+        domains: ["avatars.githubusercontent.com"],
+    }
+};
 
 export default config;

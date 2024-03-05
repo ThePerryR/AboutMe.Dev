@@ -7,6 +7,14 @@ import {
 } from "~/server/api/trpc";
 
 export const postRouter = createTRPCRouter({
+  getPublicUser: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx }) => {
+      // return ctx.db.user.findUnique({
+      //   where: { id: ctx.input.id },
+      // });
+    
+    }),
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
     .query(({ input }) => {

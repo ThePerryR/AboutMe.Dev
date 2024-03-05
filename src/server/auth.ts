@@ -46,6 +46,11 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
+  events: {
+    linkAccount: async (message) => {
+      console.log("linkAccount", message);
+    }
+  },
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
     GithubProvider({

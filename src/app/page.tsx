@@ -1,5 +1,6 @@
 import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
+import GitHubCalendar from 'react-github-calendar';
 
 import { CreatePost } from "~/app/_components/create-post";
 import { getServerAuthSession } from "~/server/auth";
@@ -27,6 +28,7 @@ export default async function Home() {
               Just the basics - Everything you need to know to set up your
               database and authentication.
             </div>
+            <GitHubCalendar username="theperryr" />
           </Link>
           <Link
             className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
