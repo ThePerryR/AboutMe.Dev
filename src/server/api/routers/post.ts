@@ -13,7 +13,6 @@ export const postRouter = createTRPCRouter({
       // return ctx.db.user.findUnique({
       //   where: { id: ctx.input.id },
       // });
-    
     }),
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
