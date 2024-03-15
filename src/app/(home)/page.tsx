@@ -14,8 +14,10 @@ import Navigation from "../Navigation";
 export default async function Home() {
   noStore();
   const session = await getServerAuthSession();
+  console.log('here')
 
   if (!session?.user) {
+    console.log('fywifowefwfwefwf')
     return (
       <div className="bg-black px-4">
         <div className='max-w-[1608px] mx-auto'>

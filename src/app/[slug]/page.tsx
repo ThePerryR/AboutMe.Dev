@@ -25,7 +25,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
         return null
     }
     return (
-        <div className='flex flex-col items-center py-10 text-white text-opacity-80 '>
+        <div className='flex flex-col items-center py-10 text-white text-opacity-80 px-6'>
             <div className='flex w-full max-w-[844px] mb-8 justify-between'>
                 <div className='flex'>
                     <Image src={session?.user.image ?? githubData?.avatar_url ?? '/no-picture.jpg'} alt='avatar' width={100} height={100} className='rounded' />
