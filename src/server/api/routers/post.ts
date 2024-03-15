@@ -21,6 +21,38 @@ export const postRouter = createTRPCRouter({
         greeting: `Hello ${input.text}`,
       };
     }),
+    fetchUser: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { 
+          username: input
+         },
+      });
+      console.log(1929919191)
+      console.log(user)
+      console.log(1929919191)
+      if (!user) {
+        return null;
+      }
+      return {
+        username: user?.username,
+        name: user?.name,
+        image: user?.image,
+        headline: user?.headline,
+        twitterUsername: user?.twitterUsername,
+        githubCreatedAt: user?.githubCreatedAt
+      };
+    }),
+
+  updateName: protectedProcedure
+    .input(z.string())
+    .mutation(({ ctx, input }) => {
+      return ctx.db.user.update({
+        where: { id: ctx.session.user.id },
+        data: { name: input },
+      });
+    }),
 
   create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))

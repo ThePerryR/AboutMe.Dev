@@ -8,7 +8,7 @@ await import("./src/env.js");
 // allow avatars.githubusercontent.com in images
 const config = {
     images: {
-        domains: ["avatars.githubusercontent.com"],
+        domains: ["avatars.githubusercontent.com", "utfs.io"],
     }
 };
 

@@ -20,15 +20,13 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
+      username: string;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    username: string;
+  }
 }
 
 /**
@@ -38,17 +36,46 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    session: ({ session, user }) => {
+      console.log("session", { session, user });
+      return ({
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          username: user.username,
+        },
+      })
+    },
   },
   events: {
     linkAccount: async (message) => {
       console.log("linkAccount", message);
+      const accessToken = message.account.access_token
+      if (accessToken) {
+        console.log("accessToken", accessToken)
+        // fetch user's username from github api
+        const response = await fetch('https://api.github.com/user', {
+          headers: {
+            Authorization: `token ${accessToken}`
+          }
+        })
+        const data = await response.json() as { login: string, blog: string | null, hireable: boolean | null, bio: string | null, company: string | null, twitter_username: string | null, created_at: string }
+        console.log("data", data)
+        // update user's profile
+        await db.user.update({
+          where: {
+            id: message.user.id
+          },
+          data: {
+            username: data.login,
+            hireable: data.hireable ?? false,
+            headline: data.bio,
+            twitterUsername: data.twitter_username,
+            githubCreatedAt: new Date(data.created_at)
+          }
+        })
+      }
     }
   },
   adapter: PrismaAdapter(db) as Adapter,

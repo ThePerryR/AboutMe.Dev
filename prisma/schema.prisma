@@ -60,10 +60,15 @@ model Session {
 
 model User {
     id            String    @id @default(cuid())
+    username      String? @unique
     name          String?
     email         String?   @unique
-    emailVerified DateTime?
-    image         String?
+    emailVerified   DateTime?
+    image           String?
+    hireable        Boolean  @default(false)
+    headline        String?
+    twitterUsername String?
+    githubCreatedAt DateTime?
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
