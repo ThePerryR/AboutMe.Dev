@@ -37,7 +37,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                 <div className='space-y-2'>
                     {userQuery?.twitterUsername &&
                         <div>
-                            <Link href={`https://x.com/${userQuery?.twitterUsername}`}  className='opacity-90 hover:opacity-100'>
+                            <Link href={`https://x.com/${userQuery?.twitterUsername}`} className='opacity-90 hover:opacity-100'>
                                 <div className='flex items-center'>
                                     <div className='w-7'>
                                         𝕏
@@ -72,6 +72,44 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                 </div>
             </div>
             <GitHubCalendar username={params.slug} />
+
+            <div className='w-full max-w-[844px] mt-8'>
+                <div className='text-sm opacity-70 mb-2'>
+                    Projects
+                </div>
+                <div className='grid grid-cols-3 gap-6'>
+                    {userQuery?.projects.map(project => {
+                        return (
+                            <div key={project.id} className='rounded  border-opacity-10'>
+                                <Link href={project.url ?? ''} target='_blank'>
+                                    <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2' />
+                                </Link>
+                                <div className='flex items-center justify-between mb-2'>
+                                    {project.url
+                                        ? (
+                                            <Link href={project.url} target="_blank">
+                                                <div className='text-sm opacity-90'>{project.name}</div>
+                                            </Link>
+                                        )
+                                        :
+                                        <div className='text-sm opacity-100'>{project.name}</div>
+                                    }
+                                    {project.status === 'live' &&
+                                        <div className='bg-green-500 text-black text-[12px] px-2 rounded-full'>Live</div>
+                                    }
+                                    {project.status === 'live-beta' &&
+                                        <div className='bg-blue-500 text-black text-[12px] px-2 rounded-full'>Beta</div>
+                                    }
+                                    {project.status === 'in-progress' &&
+                                        <div className='bg-yellow-500 text-black text-[12px] px-2 rounded-full'>In Progress</div>
+                                    }
+                                </div>
+                                <div className='text-sm text-opacity-40 text-white'>{project.headline}</div>
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
         </div>
     )
 }

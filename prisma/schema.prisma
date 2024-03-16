@@ -27,6 +27,24 @@ model Post {
     @@index([createdById])
 }
 
+model Project {
+    id     Int      @id @default(autoincrement())
+    name   String?
+    url    String?
+    image  String?
+    status String?
+    headline String?
+    isFavorited Boolean @default(false)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
+
+    @@index([createdById])
+}
+
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -72,6 +90,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    projects      Project[]
 }
 
 model VerificationToken {

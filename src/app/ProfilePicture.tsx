@@ -24,6 +24,7 @@ const ProfilePicture = ({ initialImage }: { initialImage?: string }) => {
                         }}
                         onUploadBegin={() => {
                             setUploadError(undefined)
+                            
                         }}
                         onClientUploadComplete={(res) => {
                             setImage(res[0]?.url)

@@ -44,6 +44,31 @@ export const ourFileRouter = {
 
             // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
             return { url: file.url };
+        }),
+    projectImage: f({ image: { maxFileSize: "4MB" } })
+        .input(z.object({ projectId: z.number() }))
+        .middleware(async ({ req, input }) => {
+            // const user = auth(req); 
+            const session = await getServerAuthSession()
+            if (!session?.user) throw new UploadThingError("Unauthorized");
+
+            // Whatever is returned here is accessible in onUploadComplete as `metadata`
+            return { userId: session.user.id, projectId: input.projectId }
+        })
+        .onUploadComplete(async ({ metadata, file }) => {
+            // This code RUNS ON YOUR SERVER after upload
+            console.log("Upload complete for userId:", metadata);
+
+            console.log("file url", file.url);
+            await db.project.update({
+                where: { id: metadata.projectId },
+                data: {
+                    image: file.url
+                }
+            })
+
+            // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
+            return { url: file.url };
         })
 } satisfies FileRouter;
 
