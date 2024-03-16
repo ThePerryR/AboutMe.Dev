@@ -48,12 +48,12 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
     }
     return (
         <div className='flex flex-col items-center py-10 text-white text-opacity-80 px-6'>
-            <div className='flex w-full max-w-[844px] mb-8 justify-between'>
-                <div className='flex items-center'>
-                    <Image src={session?.user.image ?? githubData?.avatar_url ?? '/no-picture.jpg'} alt='avatar' width={100} height={100} className='rounded' />
-                    <div className='ml-4'>
-                        <h1 className='text-4xl font-bold mb-1'>{session?.user.name ?? githubData?.name}</h1>
-                        <div className='flex items-center space-x-6'>
+            <div className='flex flex-col sm:flex-row w-full max-w-[844px] mb-4 sm:mb-8 justify-between'>
+                <div className='flex items-start sm:items-center mb-4 sm:mb-0'>
+                    <Image src={session?.user.image ?? githubData?.avatar_url ?? '/no-picture.jpg'} alt='avatar' width={100} height={100} className='rounded h-[64px] w-[64px] sm:w-[100px] sm:h-[100px]' />
+                    <div className='ml-2 sm:ml-4'>
+                        <h1 className='text-2xl sm:text-4xl font-bold mb-1'>{session?.user.name ?? githubData?.name}</h1>
+                        <div className='flex items-center space-x-2 sm:space-x-6'>
                             {userQuery?.region &&
                                 <div className='flex items-center opacity-70 space-x-1'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
@@ -74,37 +74,11 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                         </div>
                     </div>
                 </div>
-                <div className='space-y-2'>
-                    {userQuery?.twitterUsername &&
-                        <div>
-                            <Link target='_blank' href={`https://x.com/${userQuery?.twitterUsername}`} className='opacity-90 hover:opacity-100'>
-                                <div className='flex items-center'>
-                                    <div className='w-7'>
-                                        𝕏
-                                    </div>
-                                    <div className=''>{params.slug}</div>
-                                </div>
-                            </Link>
-                        </div>
-                    }
-                    {userQuery?.linkedinUsername &&
-                        <div>
-                            <Link target='_blank' href={`https://linkedin.com/in/${userQuery.linkedinUsername}`} className='opacity-90 hover:opacity-100'>
-                                <div className='flex items-center'>
-                                    <div className='w-7'>
-                                        <svg width="32" height="32" className='w-[15px] h-[15px]' viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M64 72H8C3.58172 72 0 68.4183 0 64V8C0 3.58172 3.58172 0 8 0H64C68.4183 0 72 3.58172 72 8V64C72 68.4183 68.4183 72 64 72ZM51.3156 62H62V40.0512C62 30.7645 56.7357 26.2742 49.3826 26.2742C42.026 26.2742 38.9301 32.0029 38.9301 32.0029V27.3333H28.6333V62H38.9301V43.8021C38.9301 38.9261 41.1746 36.0245 45.4707 36.0245C49.4198 36.0245 51.3156 38.8128 51.3156 43.8021V62ZM10 16.397C10 19.9297 12.8421 22.794 16.3493 22.794C19.8566 22.794 22.697 19.9297 22.697 16.397C22.697 12.8644 19.8566 10 16.3493 10C12.8421 10 10 12.8644 10 16.397ZM21.7694 62H11.0326V27.3333H21.7694V62Z" fill="white" />
-                                        </svg>
-                                    </div>
-                                    <div className=''>{userQuery.linkedinUsername}</div>
-                                </div>
-                            </Link>
-                        </div>
-                    }
+                <div className='space-y-0 sm:space-y-1 flex flex-row sm:flex-col space-x-4 sm:space-x-0'>
                     <div>
                         <Link target='_blank' href={`https://github.com/${params.slug}`} className='opacity-90 hover:opacity-100'>
                             <div className='flex items-center'>
-                                <div className='w-7'>
+                                <div className='w-5 sm:w-7'>
                                     <svg width="33" height="32" className='w-4 h-4' viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path
                                             fillRule="evenodd"
@@ -118,21 +92,47 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                             </div>
                         </Link>
                         {userQuery?.githubCreatedAt &&
-                            <div className='text-xs text-opacity-50 text-white mt-2'>
+                            <div className='text-xs text-opacity-50 text-white mt-0'>
                                 Created {userQuery.githubCreatedAt.toLocaleDateString('en-us', { year: "numeric", month: "short", day: "numeric" })}
                             </div>
                         }
                     </div>
+                    {userQuery?.twitterUsername &&
+                        <div>
+                            <Link target='_blank' href={`https://x.com/${userQuery?.twitterUsername}`} className='opacity-90 hover:opacity-100'>
+                                <div className='flex items-center'>
+                                    <div className='w-5 sm:w-7'>
+                                        𝕏
+                                    </div>
+                                    <div className=''>{params.slug}</div>
+                                </div>
+                            </Link>
+                        </div>
+                    }
+                    {userQuery?.linkedinUsername &&
+                        <div>
+                            <Link target='_blank' href={`https://linkedin.com/in/${userQuery.linkedinUsername}`} className='opacity-90 hover:opacity-100'>
+                                <div className='flex items-center'>
+                                    <div className='w-5 sm:w-7'>
+                                        <svg width="32" height="32" className='w-[15px] h-[15px]' viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M64 72H8C3.58172 72 0 68.4183 0 64V8C0 3.58172 3.58172 0 8 0H64C68.4183 0 72 3.58172 72 8V64C72 68.4183 68.4183 72 64 72ZM51.3156 62H62V40.0512C62 30.7645 56.7357 26.2742 49.3826 26.2742C42.026 26.2742 38.9301 32.0029 38.9301 32.0029V27.3333H28.6333V62H38.9301V43.8021C38.9301 38.9261 41.1746 36.0245 45.4707 36.0245C49.4198 36.0245 51.3156 38.8128 51.3156 43.8021V62ZM10 16.397C10 19.9297 12.8421 22.794 16.3493 22.794C19.8566 22.794 22.697 19.9297 22.697 16.397C22.697 12.8644 19.8566 10 16.3493 10C12.8421 10 10 12.8644 10 16.397ZM21.7694 62H11.0326V27.3333H21.7694V62Z" fill="white" />
+                                        </svg>
+                                    </div>
+                                    <div className=''>{userQuery.linkedinUsername}</div>
+                                </div>
+                            </Link>
+                        </div>
+                    }
                 </div>
             </div>
 
             <GitHubCalendar username={params.slug} />
 
-            <div className='w-full max-w-[844px] mt-8'>
+            <div className='w-full max-w-[844px] mt-4 sm:mt-8'>
                 <div className='text-sm opacity-70 mb-2'>
                     Projects
                 </div>
-                <div className='grid grid-cols-3 gap-6'>
+                <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6'>
                     {userQuery?.projects.map(project => {
                         return (
                             <div key={project.id} className='rounded  border-opacity-10'>
