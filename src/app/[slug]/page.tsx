@@ -15,29 +15,69 @@ async function fetchGithubData(session: Session | null, username: string) {
     return data
 }
 
+/*
+                        <option value='us'>United States</option>
+                        <option value='ca'>Canada</option>
+                        <option value='sa'>Latin America & Caribbean</option>
+                        <option value='eu'>Europe</option>
+                        <option value='ap'>Asia Pacific</option>
+                        <option value='me'>Middle East & Africa</option>
+                        <option value='oc'>Oceania</option>
+                        <option value='other'>Other</option>
+                        */
+
+const regionLabels = {
+    'us': 'United States',
+    'ca': 'Canada',
+    'sa': 'Latin America & Caribbean',
+    'eu': 'Europe',
+    'ap': 'Asia Pacific',
+    'me': 'Middle East & Africa',
+    'oc': 'Oceania',
+    'other': 'Other'
+}
+
 const UserPage = async ({ params }: { params: { slug: string } }) => {
     const session = await getServerAuthSession()
     const userQuery = await api.post.fetchUser.query(params.slug)
     const githubData = await fetchGithubData(session, params.slug)
     // const userInfo = await api.post
-    console.log('yo', { githubData, session, userQuery })
+    console.log('yfeo', { githubData, session, userQuery })
     if (session === null && githubData === undefined) {
         return null
     }
     return (
         <div className='flex flex-col items-center py-10 text-white text-opacity-80 px-6'>
             <div className='flex w-full max-w-[844px] mb-8 justify-between'>
-                <div className='flex'>
+                <div className='flex items-center'>
                     <Image src={session?.user.image ?? githubData?.avatar_url ?? '/no-picture.jpg'} alt='avatar' width={100} height={100} className='rounded' />
                     <div className='ml-4'>
                         <h1 className='text-4xl font-bold mb-1'>{session?.user.name ?? githubData?.name}</h1>
-                        {/* <h2 className='text-2xl opacity-60'>{session?.user.location}</h2> */}
+                        <div className='flex items-center space-x-6'>
+                            {userQuery?.region &&
+                                <div className='flex items-center opacity-70 space-x-1'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+                                    </svg>
+                                    <span>{regionLabels[userQuery.region as keyof typeof regionLabels]}</span>
+                                </div>
+                            }
+                            {(userQuery?.location ?? githubData?.location) &&
+                                <div className='flex items-center opacity-70 space-x-0.5'>
+                                    <svg className="w-[15px] h-[15px]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                    </svg>
+                                    <span>{userQuery?.location ?? githubData?.location}</span>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
                 <div className='space-y-2'>
                     {userQuery?.twitterUsername &&
                         <div>
-                            <Link href={`https://x.com/${userQuery?.twitterUsername}`} className='opacity-90 hover:opacity-100'>
+                            <Link target='_blank' href={`https://x.com/${userQuery?.twitterUsername}`} className='opacity-90 hover:opacity-100'>
                                 <div className='flex items-center'>
                                     <div className='w-7'>
                                         𝕏
@@ -47,8 +87,22 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                             </Link>
                         </div>
                     }
+                    {userQuery?.linkedinUsername &&
+                        <div>
+                            <Link target='_blank' href={`https://linkedin.com/in/${userQuery.linkedinUsername}`} className='opacity-90 hover:opacity-100'>
+                                <div className='flex items-center'>
+                                    <div className='w-7'>
+                                        <svg width="32" height="32" className='w-[15px] h-[15px]' viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M64 72H8C3.58172 72 0 68.4183 0 64V8C0 3.58172 3.58172 0 8 0H64C68.4183 0 72 3.58172 72 8V64C72 68.4183 68.4183 72 64 72ZM51.3156 62H62V40.0512C62 30.7645 56.7357 26.2742 49.3826 26.2742C42.026 26.2742 38.9301 32.0029 38.9301 32.0029V27.3333H28.6333V62H38.9301V43.8021C38.9301 38.9261 41.1746 36.0245 45.4707 36.0245C49.4198 36.0245 51.3156 38.8128 51.3156 43.8021V62ZM10 16.397C10 19.9297 12.8421 22.794 16.3493 22.794C19.8566 22.794 22.697 19.9297 22.697 16.397C22.697 12.8644 19.8566 10 16.3493 10C12.8421 10 10 12.8644 10 16.397ZM21.7694 62H11.0326V27.3333H21.7694V62Z" fill="white" />
+                                        </svg>
+                                    </div>
+                                    <div className=''>{userQuery.linkedinUsername}</div>
+                                </div>
+                            </Link>
+                        </div>
+                    }
                     <div>
-                        <Link href={`https://github.com/${params.slug}`} className='opacity-90 hover:opacity-100'>
+                        <Link target='_blank' href={`https://github.com/${params.slug}`} className='opacity-90 hover:opacity-100'>
                             <div className='flex items-center'>
                                 <div className='w-7'>
                                     <svg width="33" height="32" className='w-4 h-4' viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -71,6 +125,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     </div>
                 </div>
             </div>
+
             <GitHubCalendar username={params.slug} />
 
             <div className='w-full max-w-[844px] mt-8'>

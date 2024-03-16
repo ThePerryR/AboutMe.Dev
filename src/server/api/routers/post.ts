@@ -21,6 +21,12 @@ export const postRouter = createTRPCRouter({
         greeting: `Hello ${input.text}`,
       };
     }),
+  fetchMyUser: protectedProcedure
+    .query(({ ctx }) => {
+      return ctx.db.user.findUnique({
+        where: { id: ctx.session.user.id },
+      });
+    }),
   fetchUser: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
@@ -43,7 +49,10 @@ export const postRouter = createTRPCRouter({
         name: user?.name,
         image: user?.image,
         headline: user?.headline,
+        region: user?.region,
+        location: user?.location,
         twitterUsername: user?.twitterUsername,
+        linkedinUsername: user?.linkedinUsername,
         githubCreatedAt: user?.githubCreatedAt,
         projects: user.projects.map(project => {
           return ({
@@ -65,6 +74,30 @@ export const postRouter = createTRPCRouter({
       return ctx.db.user.update({
         where: { id: ctx.session.user.id },
         data: { name: input },
+      });
+    }),
+
+  updateLinks: protectedProcedure
+    .input(z.object({
+      twitterUsername: z.string().optional(),
+      linkedinUsername: z.string().optional()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          twitterUsername: input.twitterUsername,
+          linkedinUsername: input.linkedinUsername
+        },
+      });
+    }),
+
+  updateLocation: protectedProcedure
+    .input(z.object({ region: z.string().optional(), location: z.string().optional() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.user.update({
+        where: { id: ctx.session.user.id },
+        data: { region: input.region, location: input.location },
       });
     }),
 
@@ -112,7 +145,7 @@ export const postRouter = createTRPCRouter({
         },
       });
     }),
-    deleteProject: protectedProcedure
+  deleteProject: protectedProcedure
     .input(z.number())
     .mutation(async ({ ctx, input }) => {
       const project = await ctx.db.project.findUnique({

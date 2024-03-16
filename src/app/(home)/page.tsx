@@ -10,6 +10,8 @@ import UploadButtonWrapper from "../_components/upload-button";
 import ProfilePicture from "../ProfilePicture";
 import Name from "../Name";
 import Navigation from "../Navigation";
+import Location from "../Location";
+import Links from "../Links";
 
 export default async function Home() {
   noStore();
@@ -44,10 +46,20 @@ export default async function Home() {
 
   console.log(session)
 
+  const userQuery = await api.post.fetchMyUser.query()
+  if (!userQuery) {
+    return null;
+  }
   return (
     <>
       <ProfilePicture initialImage={session.user.image ?? undefined} />
       <Name initialName={session.user.name ?? undefined} />
+      <Location initialRegion={userQuery.region ?? undefined} initialLocation={userQuery.location ?? undefined} />
+      <Links 
+        username={userQuery.username ?? ''} 
+        initialTwitter={userQuery.twitterUsername ?? undefined}
+        initialLinkedin={userQuery.linkedinUsername ?? undefined}
+      />
     </>
   );
 }

@@ -86,7 +86,10 @@ model User {
     hireable        Boolean  @default(false)
     headline        String?
     twitterUsername String?
+    linkedinUsername String?
     githubCreatedAt DateTime?
+    region          String?
+    location        String?
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
