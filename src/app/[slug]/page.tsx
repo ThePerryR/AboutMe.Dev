@@ -1,3 +1,5 @@
+import { User } from '@prisma/client';
+import classNames from 'classnames';
 import { type Session } from 'next-auth';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,12 +8,13 @@ import GitHubCalendar from 'react-github-calendar'
 import { getServerAuthSession } from '~/server/auth';
 import { api } from "~/trpc/server";
 
-async function fetchGithubData(session: Session | null, username: string) {
-    if (session !== null) {
+async function fetchGithubData(user: { username: string | null } | null, username: string) {
+    if (user !== null) {
         return
     }
     const res = await fetch(`https://api.github.com/users/${username}`)
     const data = await res.json() as { login: string, id: number, node_id: string, avatar_url: string, gravatar_id: string, url: string, html_url: string, followers_url: string, following_url: string, gists_url: string, starred_url: string, subscriptions_url: string, organizations_url: string, repos_url: string, events_url: string, received_events_url: string, type: string, site_admin: boolean, name: string, company: string, blog: string, location: string, email: string, hireable: boolean, bio: string, twitter_username: string, public_repos: number, public_gists: number, followers: number, following: number, created_at: string, updated_at: string }
+    console.log(11111, data, username, 'GITHUBaoao')
     return data
 }
 
@@ -38,21 +41,20 @@ const regionLabels = {
 }
 
 const UserPage = async ({ params }: { params: { slug: string } }) => {
-    const session = await getServerAuthSession()
     const userQuery = await api.post.fetchUser.query(params.slug)
-    const githubData = await fetchGithubData(session, params.slug)
+    const githubData = await fetchGithubData(userQuery, params.slug)
     // const userInfo = await api.post
-    console.log('yfeo', { githubData, session, userQuery })
-    if (session === null && githubData === undefined) {
+    console.log('yfeo', { githubData, userQuery })
+    if (userQuery === null && githubData === undefined) {
         return null
     }
     return (
         <div className='flex flex-col items-center py-10 text-white text-opacity-80 px-6'>
             <div className='flex flex-col sm:flex-row w-full max-w-[844px] mb-4 sm:mb-8 justify-between'>
                 <div className='flex items-start sm:items-center mb-4 sm:mb-0'>
-                    <Image src={session?.user.image ?? githubData?.avatar_url ?? '/no-picture.jpg'} alt='avatar' width={100} height={100} className='rounded h-[64px] w-[64px] sm:w-[100px] sm:h-[100px]' />
+                    <Image src={userQuery?.image ?? githubData?.avatar_url ?? '/no-picture.jpg'} alt='avatar' width={100} height={100} className='rounded h-[64px] w-[64px] sm:w-[100px] sm:h-[100px]' />
                     <div className='ml-2 sm:ml-4'>
-                        <h1 className='text-2xl sm:text-4xl font-bold mb-1'>{session?.user.name ?? githubData?.name}</h1>
+                        <h1 className={classNames('text-2xl sm:text-4xl font-bold mb-1', (userQuery?.name ?? githubData?.name) ? '' : 'opacity-50')}>{userQuery?.name ?? githubData?.name ?? 'No name'}</h1>
                         <div className='flex items-center space-x-2 sm:space-x-6'>
                             {userQuery?.region &&
                                 <div className='flex items-center opacity-70 space-x-1'>
@@ -62,15 +64,13 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                     <span>{regionLabels[userQuery.region as keyof typeof regionLabels]}</span>
                                 </div>
                             }
-                            {(userQuery?.location ?? githubData?.location) &&
-                                <div className='flex items-center opacity-70 space-x-0.5'>
-                                    <svg className="w-[15px] h-[15px]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                                    </svg>
-                                    <span>{userQuery?.location ?? githubData?.location}</span>
-                                </div>
-                            }
+                            <div className={classNames('flex items-center opacity-70 space-x-0.5', { 'opacity-40': !(userQuery?.location ?? githubData?.location)})}>
+                                <svg className="w-[15px] h-[15px]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                </svg>
+                                <span>{userQuery?.location ?? githubData?.location ?? 'No location'}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -128,43 +128,45 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
 
             <GitHubCalendar username={params.slug} />
 
-            <div className='w-full max-w-[844px] mt-4 sm:mt-8'>
-                <div className='text-sm opacity-70 mb-2'>
-                    Projects
-                </div>
-                <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6'>
-                    {userQuery?.projects.map(project => {
-                        return (
-                            <div key={project.id} className='rounded  border-opacity-10'>
-                                <Link href={project.url ?? ''} target='_blank'>
-                                    <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2' />
-                                </Link>
-                                <div className='flex items-center justify-between mb-2'>
-                                    {project.url
-                                        ? (
-                                            <Link href={project.url} target="_blank">
-                                                <div className='text-sm opacity-90'>{project.name}</div>
-                                            </Link>
-                                        )
-                                        :
-                                        <div className='text-sm opacity-100'>{project.name}</div>
-                                    }
-                                    {project.status === 'live' &&
-                                        <div className='bg-green-500 text-black text-[12px] px-2 rounded-full'>Live</div>
-                                    }
-                                    {project.status === 'live-beta' &&
-                                        <div className='bg-blue-500 text-black text-[12px] px-2 rounded-full'>Beta</div>
-                                    }
-                                    {project.status === 'in-progress' &&
-                                        <div className='bg-yellow-500 text-black text-[12px] px-2 rounded-full'>In Progress</div>
-                                    }
+            {userQuery &&
+                <div className='w-full max-w-[844px] mt-4 sm:mt-8'>
+                    <div className='text-sm opacity-70 mb-2'>
+                        Projects
+                    </div>
+                    <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6'>
+                        {userQuery?.projects.map(project => {
+                            return (
+                                <div key={project.id} className='rounded  border-opacity-10'>
+                                    <Link href={project.url ?? ''} target='_blank'>
+                                        <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2' />
+                                    </Link>
+                                    <div className='flex items-center justify-between mb-2'>
+                                        {project.url
+                                            ? (
+                                                <Link href={project.url} target="_blank">
+                                                    <div className='text-sm opacity-90'>{project.name}</div>
+                                                </Link>
+                                            )
+                                            :
+                                            <div className='text-sm opacity-100'>{project.name}</div>
+                                        }
+                                        {project.status === 'live' &&
+                                            <div className='bg-green-500 text-black text-[12px] px-2 rounded-full'>Live</div>
+                                        }
+                                        {project.status === 'live-beta' &&
+                                            <div className='bg-blue-500 text-black text-[12px] px-2 rounded-full'>Beta</div>
+                                        }
+                                        {project.status === 'in-progress' &&
+                                            <div className='bg-yellow-500 text-black text-[12px] px-2 rounded-full'>In Progress</div>
+                                        }
+                                    </div>
+                                    <div className='text-sm text-opacity-40 text-white'>{project.headline}</div>
                                 </div>
-                                <div className='text-sm text-opacity-40 text-white'>{project.headline}</div>
-                            </div>
-                        )
-                    })}
+                            )
+                        })}
+                    </div>
                 </div>
-            </div>
+            }
         </div>
     )
 }
