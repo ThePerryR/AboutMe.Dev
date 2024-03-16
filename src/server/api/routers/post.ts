@@ -35,7 +35,8 @@ export const postRouter = createTRPCRouter({
           username: input
         },
         include: {
-          projects: true
+          projects: true,
+          experiences: true
         }
       });
       console.log(1929919191)
@@ -51,6 +52,7 @@ export const postRouter = createTRPCRouter({
         headline: user?.headline,
         region: user?.region,
         location: user?.location,
+        website: user?.website,
         twitterUsername: user?.twitterUsername,
         linkedinUsername: user?.linkedinUsername,
         githubCreatedAt: user?.githubCreatedAt,
@@ -63,6 +65,17 @@ export const postRouter = createTRPCRouter({
             status: project.status,
             headline: project.headline,
             isFavorited: project.isFavorited
+          })
+        }),
+        experiences: user.experiences.map(experience => {
+          return ({
+            id: experience.id,
+            role: experience.role,
+            company: experience.company,
+            companyLogo: experience.companyLogo,
+            startDate: experience.startDate,
+            endDate: experience.endDate,
+            isCurrent: experience.isCurrent
           })
         })
       };
@@ -80,14 +93,16 @@ export const postRouter = createTRPCRouter({
   updateLinks: protectedProcedure
     .input(z.object({
       twitterUsername: z.string().optional(),
-      linkedinUsername: z.string().optional()
+      linkedinUsername: z.string().optional(),
+      website: z.string().optional()
     }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db.user.update({
         where: { id: ctx.session.user.id },
         data: {
           twitterUsername: input.twitterUsername,
-          linkedinUsername: input.linkedinUsername
+          linkedinUsername: input.linkedinUsername,
+          website: input.website
         },
       });
     }),
@@ -98,6 +113,28 @@ export const postRouter = createTRPCRouter({
       return ctx.db.user.update({
         where: { id: ctx.session.user.id },
         data: { region: input.region, location: input.location },
+      });
+    }),
+
+    updateExperience: protectedProcedure
+    .input(z.object({ 
+      id: z.number(), 
+      role: z.string().optional(),
+      company: z.string().optional(),
+      startDate: z.string().optional(),
+      endDate: z.string().optional(),
+      isCurrent: z.boolean().optional()
+     }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.experience.update({
+        where: { id: input.id },
+        data: { 
+          role: input.role,
+          company: input.company,
+          startDate: input.startDate,
+          endDate: input.endDate,
+          isCurrent: input.isCurrent
+         },
       });
     }),
 
@@ -117,6 +154,16 @@ export const postRouter = createTRPCRouter({
       return project;
     }),
 
+    createExperience: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      const experience = ctx.db.experience.create({
+        data: {
+          createdBy: { connect: { id: ctx.session.user.id } }
+        }
+      })
+      return experience
+    }),
+
   fetchProjects: protectedProcedure
     .query(async ({ ctx }) => {
       const projects = await ctx.db.project.findMany({
@@ -125,7 +172,13 @@ export const postRouter = createTRPCRouter({
 
       return projects;
     }),
-
+fetchExperiences: protectedProcedure
+    .query(async ({ ctx }) => {
+      const experiences = await ctx.db.experience.findMany({
+        where: { createdBy: { id: ctx.session.user.id } }
+      })
+      return experiences
+    }),
   updateProject: protectedProcedure
     .input(z.object({
       id: z.number(),

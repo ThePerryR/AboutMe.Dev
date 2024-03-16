@@ -45,6 +45,25 @@ model Project {
     @@index([createdById])
 }
 
+model Experience {
+    id     Int      @id @default(autoincrement())
+    role  String?
+    description String?
+    startDate DateTime?
+    endDate DateTime?
+    company String?
+    companyLogo String?
+    isCurrent Boolean @default(false)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
+
+    @@index([createdById])
+}
+
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -87,6 +106,7 @@ model User {
     headline        String?
     twitterUsername String?
     linkedinUsername String?
+    website         String?
     githubCreatedAt DateTime?
     region          String?
     location        String?
@@ -94,6 +114,7 @@ model User {
     sessions      Session[]
     posts         Post[]
     projects      Project[]
+    experiences   Experience[]
 }
 
 model VerificationToken {

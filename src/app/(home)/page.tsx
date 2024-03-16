@@ -59,6 +59,7 @@ export default async function Home() {
         username={userQuery.username ?? ''} 
         initialTwitter={userQuery.twitterUsername ?? undefined}
         initialLinkedin={userQuery.linkedinUsername ?? undefined}
+        initialWebsite={userQuery.website ?? undefined}
       />
     </>
   );

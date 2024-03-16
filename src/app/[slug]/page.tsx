@@ -7,10 +7,11 @@ import React from 'react'
 import GitHubCalendar from 'react-github-calendar'
 import { getServerAuthSession } from '~/server/auth';
 import { api } from "~/trpc/server";
+import Calendar from './Calendar';
 
 async function fetchGithubData(user: { username: string | null } | null, username: string) {
     if (user !== null) {
-        return
+        // return
     }
     const res = await fetch(`https://api.github.com/users/${username}`)
     const data = await res.json() as { login: string, id: number, node_id: string, avatar_url: string, gravatar_id: string, url: string, html_url: string, followers_url: string, following_url: string, gists_url: string, starred_url: string, subscriptions_url: string, organizations_url: string, repos_url: string, events_url: string, received_events_url: string, type: string, site_admin: boolean, name: string, company: string, blog: string, location: string, email: string, hireable: boolean, bio: string, twitter_username: string, public_repos: number, public_gists: number, followers: number, following: number, created_at: string, updated_at: string }
@@ -43,11 +44,12 @@ const regionLabels = {
 const UserPage = async ({ params }: { params: { slug: string } }) => {
     const userQuery = await api.post.fetchUser.query(params.slug)
     const githubData = await fetchGithubData(userQuery, params.slug)
-    // const userInfo = await api.post
+
     console.log('yfeo', { githubData, userQuery })
     if (userQuery === null && githubData === undefined) {
         return null
     }
+
     return (
         <div className='flex flex-col items-center py-10 text-white text-opacity-80 px-6'>
             <div className='flex flex-col sm:flex-row w-full max-w-[844px] mb-4 sm:mb-8 justify-between'>
@@ -59,18 +61,29 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                             {userQuery?.region &&
                                 <div className='flex items-center opacity-70 space-x-1'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
                                     </svg>
                                     <span>{regionLabels[userQuery.region as keyof typeof regionLabels]}</span>
                                 </div>
                             }
-                            <div className={classNames('flex items-center opacity-70 space-x-0.5', { 'opacity-40': !(userQuery?.location ?? githubData?.location)})}>
+                            <div className={classNames('flex items-center opacity-70 space-x-0.5', { 'opacity-40': !(userQuery?.location ?? githubData?.location) })}>
                                 <svg className="w-[15px] h-[15px]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                                 </svg>
                                 <span>{userQuery?.location ?? githubData?.location ?? 'No location'}</span>
                             </div>
+                            {(userQuery?.website ?? githubData?.blog) &&
+                                <Link href={userQuery?.website ?? githubData?.blog} target='_blank' className='opacity-90 hover:opacity-100'>
+                                    <div className={classNames('flex items-center opacity-100 space-x-1', { 'opacity-40': !(userQuery?.location ?? githubData?.location) })}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                                        </svg>
+
+                                        <span>Website</span>
+                                    </div>
+                                </Link>
+                            }
                         </div>
                     </div>
                 </div>
@@ -115,7 +128,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                 <div className='flex items-center'>
                                     <div className='w-5 sm:w-7'>
                                         <svg width="32" height="32" className='w-[15px] h-[15px]' viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M64 72H8C3.58172 72 0 68.4183 0 64V8C0 3.58172 3.58172 0 8 0H64C68.4183 0 72 3.58172 72 8V64C72 68.4183 68.4183 72 64 72ZM51.3156 62H62V40.0512C62 30.7645 56.7357 26.2742 49.3826 26.2742C42.026 26.2742 38.9301 32.0029 38.9301 32.0029V27.3333H28.6333V62H38.9301V43.8021C38.9301 38.9261 41.1746 36.0245 45.4707 36.0245C49.4198 36.0245 51.3156 38.8128 51.3156 43.8021V62ZM10 16.397C10 19.9297 12.8421 22.794 16.3493 22.794C19.8566 22.794 22.697 19.9297 22.697 16.397C22.697 12.8644 19.8566 10 16.3493 10C12.8421 10 10 12.8644 10 16.397ZM21.7694 62H11.0326V27.3333H21.7694V62Z" fill="white" />
+                                            <path fillRule="evenodd" clip-rule="evenodd" d="M64 72H8C3.58172 72 0 68.4183 0 64V8C0 3.58172 3.58172 0 8 0H64C68.4183 0 72 3.58172 72 8V64C72 68.4183 68.4183 72 64 72ZM51.3156 62H62V40.0512C62 30.7645 56.7357 26.2742 49.3826 26.2742C42.026 26.2742 38.9301 32.0029 38.9301 32.0029V27.3333H28.6333V62H38.9301V43.8021C38.9301 38.9261 41.1746 36.0245 45.4707 36.0245C49.4198 36.0245 51.3156 38.8128 51.3156 43.8021V62ZM10 16.397C10 19.9297 12.8421 22.794 16.3493 22.794C19.8566 22.794 22.697 19.9297 22.697 16.397C22.697 12.8644 19.8566 10 16.3493 10C12.8421 10 10 12.8644 10 16.397ZM21.7694 62H11.0326V27.3333H21.7694V62Z" fill="white" />
                                         </svg>
                                     </div>
                                     <div className=''>{userQuery.linkedinUsername}</div>
@@ -125,8 +138,9 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     }
                 </div>
             </div>
-
-            <GitHubCalendar username={params.slug} />
+            <div className='text-white text-opacity-60'>
+                <Calendar username={params.slug} />
+            </div>
 
             {userQuery &&
                 <div className='w-full max-w-[844px] mt-4 sm:mt-8'>
@@ -161,6 +175,32 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                         }
                                     </div>
                                     <div className='text-sm text-opacity-40 text-white'>{project.headline}</div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                    <div className='text-sm opacity-70 mb-2 mt-2 sm:mt-4'>
+                        Experience
+                    </div>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-20'>
+                        {userQuery?.experiences.map(experience => {
+                            const years = (experience.isCurrent && experience.startDate) ? (new Date().getFullYear() - experience.startDate.getFullYear()) : (experience.endDate && experience.startDate) ? experience.endDate.getFullYear() - experience.startDate.getFullYear() : undefined
+                            return (
+                                <div key={experience.id} className='flex flex-col'>
+                                    <div className='flex justify-between'>
+                                        <div className='flex-1'>
+                                            <Image src={experience.companyLogo ?? ''} alt='experience' width={200} height={56} className='h-[24px] w-auto' />
+                                        </div>
+                                        <div className='flex flex-col text-right justify-end'>
+                                            <div className='text-sm opacity-90'>{experience.company}</div>
+                                            <div className='text-sm opacity-50'>{experience.role}</div>
+                                            <div className='text-sm opacity-50'>
+                                                {experience.startDate ? experience.startDate.toLocaleDateString('en-us', { year: "numeric", month: "short" }) : ''}
+                                                {(experience.startDate && (experience.endDate ?? experience.isCurrent)) ? ' - ' : ''}{experience.isCurrent ? 'Present' : experience.endDate ? experience.endDate.toLocaleDateString('en-us', { year: "numeric", month: "short" }) : ''}
+                                                &nbsp;{years !== undefined && `(${years} yrs)`}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             )
                         })}
