@@ -91,9 +91,9 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                 <div>{params.slug}</div>
                             </div>
                         </Link>
-                        {userQuery?.githubCreatedAt &&
+                        {(userQuery?.githubCreatedAt ?? githubData?.created_at) &&
                             <div className='text-xs text-opacity-50 text-white mt-0'>
-                                Created {userQuery.githubCreatedAt.toLocaleDateString('en-us', { year: "numeric", month: "short", day: "numeric" })}
+                                Created {(userQuery?.githubCreatedAt ?? new Date(githubData?.created_at ?? '')).toLocaleDateString('en-us', { year: "numeric", month: "short", day: "numeric" })}
                             </div>
                         }
                     </div>
