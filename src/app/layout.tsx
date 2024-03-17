@@ -28,7 +28,7 @@ export default async function RootLayout({
         <TRPCReactProvider>
           <header className="max-w-[1608px] h-[56px] sm:h-[120px] mx-auto flex items-center justify-between px-4 bg-[#010101] text-white">
             <Link href="/" className='text-2xl flex items-center'>
-              ⛶ <span className='opacity-50 text-base ml-2'>about me</span>
+              ⛶ <span className='opacity-50 text-base ml-2'>about me . <span className='font-mono'>dev</span></span>
             </Link>
 
             {!session?.user
