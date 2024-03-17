@@ -149,6 +149,8 @@ model User {
     githubCreatedAt DateTime?
     region          String?
     location        String?
+    nationalityEmoji String?
+    statusEmoji     String?
     accounts      Account[]
     sessions      Session[]
     posts         Post[]

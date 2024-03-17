@@ -56,6 +56,8 @@ export const postRouter = createTRPCRouter({
         region: user?.region,
         location: user?.location,
         website: user?.website,
+        nationalityEmoji: user?.nationalityEmoji,
+        statusEmoji: user?.statusEmoji,
         twitterUsername: user?.twitterUsername,
         linkedinUsername: user?.linkedinUsername,
         githubCreatedAt: user?.githubCreatedAt,
@@ -430,4 +432,18 @@ export const postRouter = createTRPCRouter({
         }
       })
     }),
+    updateStatuses: protectedProcedure
+    .input(z.object({
+      nationalityEmoji: z.string().optional(),
+      statusEmoji: z.string().optional()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          nationalityEmoji: input.nationalityEmoji,
+          statusEmoji: input.statusEmoji
+        }
+      })
+    })
 });

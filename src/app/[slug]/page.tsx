@@ -52,9 +52,23 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
         <div className='flex flex-col items-center py-10 text-white text-opacity-80 px-6'>
             <div className='flex flex-col sm:flex-row w-full max-w-[844px] mb-4 sm:mb-8 justify-between'>
                 <div className='flex items-start sm:items-center mb-4 sm:mb-0'>
-                    <Image src={userQuery?.image ?? githubData?.avatar_url ?? '/no-picture.jpg'} alt='avatar' width={100} height={100} className='rounded h-[64px] w-[64px] sm:w-[100px] sm:h-[100px]' />
+                    <div className='relative'>
+                        <Image src={userQuery?.image ?? githubData?.avatar_url ?? '/no-picture.jpg'} alt='avatar' width={100} height={100} className='rounded h-[64px] w-[64px] sm:w-[100px] sm:h-[100px]' />
+                        {userQuery?.statusEmoji &&
+                            <div className='absolute bottom-[-4px] right-[-4px] bg-[#5f5f5f] rounded-full h-[24px] w-[24px] text-[18px] shadow flex items-center justify-center'>
+                                {userQuery.statusEmoji}
+                            </div>
+                        }
+                    </div>
                     <div className='ml-2 sm:ml-4'>
-                        <h1 className={classNames('text-2xl sm:text-4xl font-bold mb-1', (userQuery?.name ?? githubData?.name) ? '' : 'opacity-50')}>{userQuery?.name ?? githubData?.name ?? 'No name'}</h1>
+                        <div className='flex'>
+                            <h1 className={classNames('text-2xl sm:text-4xl font-bold mb-1', (userQuery?.name ?? githubData?.name) ? '' : 'opacity-50')}>{userQuery?.name ?? githubData?.name ?? 'No name'}</h1>
+                            {userQuery?.nationalityEmoji &&
+                            <div className='ml-2'>
+                                <span>{userQuery.nationalityEmoji}</span>
+                            </div>
+                            }
+                        </div>
                         <div className='flex items-center space-x-2 sm:space-x-6'>
                             {userQuery?.region &&
                                 <div className='flex items-center opacity-70 space-x-1'>
@@ -150,7 +164,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                             return (
                                 <div key={skill.id} className='flex items-center border h-9 border-white border-opacity-20 rounded-full px-2 py-1 justify-between mb-2'>
                                     {skill.image &&
-                                    <Image src={skill.image} alt='skill' width={20} height={20} className='' />
+                                        <Image src={skill.image} alt='skill' width={20} height={20} className='' />
                                     }
                                     <div className='text-sm opacity-90 mx-2'>{skill.name}</div>
                                 </div>
@@ -229,7 +243,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                             return (
                                 <div key={skill.id} className='flex items-center border h-9  border-none justify-between mb-2'>
                                     {skill.image &&
-                                    <div>{skill.image}</div>
+                                        <div>{skill.image}</div>
                                     }
                                     <div className='text-sm opacity-90 mx-2'>{skill.name}</div>
                                 </div>

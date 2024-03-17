@@ -19,8 +19,8 @@ const Skills = () => {
     return (
         <div className='space-y-6'>
             <div className='bg-black border-white border rounded border-opacity-10'>
-                <div className='flex p-4 space-y-4 bg-white bg-opacity-5'>
-                    <div className='w-[250px] shrink-0'>
+                <div className='flex flex-col p-4 space-y-6 bg-white bg-opacity-5'>
+                    <div className='w-full shrink-0'>
                         <div className='text-sm'>Hobbies & Interests</div>
                         <div className='text-sm opacity-60'>
                             Add any hobbies you have such as playing guitar, cooking, or reading. Or interests and causes such as climate change, mental health, or politics.

@@ -12,6 +12,7 @@ import Name from "../Name";
 import Navigation from "../Navigation";
 import Location from "../Location";
 import Links from "../Links";
+import Statuses from "../Statuses";
 
 export default async function Home() {
   noStore();
@@ -49,10 +50,11 @@ export default async function Home() {
   return (
     <>
       <ProfilePicture initialImage={session.user.image ?? undefined} />
+      <Statuses initialNationality={userQuery.nationalityEmoji} initialStatus={userQuery.statusEmoji} />
       <Name initialName={session.user.name ?? undefined} />
       <Location initialRegion={userQuery.region ?? undefined} initialLocation={userQuery.location ?? undefined} />
-      <Links 
-        username={userQuery.username ?? ''} 
+      <Links
+        username={userQuery.username ?? ''}
         initialTwitter={userQuery.twitterUsername ?? undefined}
         initialLinkedin={userQuery.linkedinUsername ?? undefined}
         initialWebsite={userQuery.website ?? undefined}
