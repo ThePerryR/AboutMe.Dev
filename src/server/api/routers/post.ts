@@ -36,12 +36,14 @@ export const postRouter = createTRPCRouter({
         },
         include: {
           projects: true,
-          experiences: true
+          experiences: true,
+          skills: {
+            include: {
+              skill: true
+            }
+          }
         }
       });
-      console.log(1929919191)
-      console.log(user)
-      console.log(1929919191)
       if (!user) {
         return null;
       }
@@ -76,6 +78,14 @@ export const postRouter = createTRPCRouter({
             startDate: experience.startDate,
             endDate: experience.endDate,
             isCurrent: experience.isCurrent
+          })
+        }),
+        skills: user.skills.map(skill => {
+          return ({
+            id: skill.id,
+            name: skill.skill.name,
+            type: skill.skill.type,
+            primary: skill.primary
           })
         })
       };
@@ -221,16 +231,13 @@ export const postRouter = createTRPCRouter({
       const projects = await ctx.db.project.findMany({
         where: { createdBy: { id: ctx.session.user.id } }
       })
-      console.log(1)
       const project = projects.find((p) => p.id === input)
       if (!project) {
         throw new Error('Project not found')
       }
-      console.log(2)
       if (!project.isFavorited && projects.filter((p) => p.isFavorited).length >= 6) {
         throw new Error('You can only favorite up to 6 projects')
       }
-      console.log(3)
       const isFavorited = project.isFavorited
       const updatedProject = await ctx.db.project.update({
         where: { id: input },
@@ -289,7 +296,6 @@ export const postRouter = createTRPCRouter({
   toggleSkill: protectedProcedure
     .input(z.object({ id: z.number(), primary: z.boolean().optional() }))
     .mutation(async ({ ctx, input }) => {
-      console.log('toggle')
       // add the userskill if doesn't exist, otherwise delete it
       const userSkill = await ctx.db.userSkill.findFirst({
         where: {
@@ -302,7 +308,6 @@ export const postRouter = createTRPCRouter({
           where: { id: userSkill.id, userId: ctx.session.user.id }
         })
       } else {
-        console.log(2)
         await ctx.db.userSkill.create({
           data: {
             userId: ctx.session.user.id,

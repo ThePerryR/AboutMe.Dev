@@ -16,10 +16,8 @@ import Links from "../Links";
 export default async function Home() {
   noStore();
   const session = await getServerAuthSession();
-  console.log('here')
 
   if (!session?.user) {
-    console.log('fywifowefwfwefwf')
     return (
       <div className="bg-black px-4">
         <div className='max-w-[1608px] mx-auto'>
@@ -43,8 +41,6 @@ export default async function Home() {
       </div>
     )
   }
-
-  console.log(session)
 
   const userQuery = await api.post.fetchMyUser.query()
   if (!userQuery) {

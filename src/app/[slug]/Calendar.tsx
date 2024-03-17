@@ -8,7 +8,7 @@ const Calendar = ({ username }: { username: string }) => {
         <GitHubCalendar
             username={username}
             eventHandlers={{
-                onClick: (event) => (activity) => { console.log(activity) }
+                // onClick: (event) => (activity) => { console.log(activity) }
             }}
             fontSize={13}
             hideColorLegend

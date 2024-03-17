@@ -15,7 +15,6 @@ async function fetchGithubData(user: { username: string | null } | null, usernam
     }
     const res = await fetch(`https://api.github.com/users/${username}`)
     const data = await res.json() as { login: string, id: number, node_id: string, avatar_url: string, gravatar_id: string, url: string, html_url: string, followers_url: string, following_url: string, gists_url: string, starred_url: string, subscriptions_url: string, organizations_url: string, repos_url: string, events_url: string, received_events_url: string, type: string, site_admin: boolean, name: string, company: string, blog: string, location: string, email: string, hireable: boolean, bio: string, twitter_username: string, public_repos: number, public_gists: number, followers: number, following: number, created_at: string, updated_at: string }
-    console.log(11111, data, username, 'GITHUBaoao')
     return data
 }
 
@@ -45,7 +44,6 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
     const userQuery = await api.post.fetchUser.query(params.slug)
     const githubData = await fetchGithubData(userQuery, params.slug)
 
-    console.log('yfeo', { githubData, userQuery })
     if (userQuery === null && githubData === undefined) {
         return null
     }
@@ -128,7 +126,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                 <div className='flex items-center'>
                                     <div className='w-5 sm:w-7'>
                                         <svg width="32" height="32" className='w-[15px] h-[15px]' viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path fillRule="evenodd" clip-rule="evenodd" d="M64 72H8C3.58172 72 0 68.4183 0 64V8C0 3.58172 3.58172 0 8 0H64C68.4183 0 72 3.58172 72 8V64C72 68.4183 68.4183 72 64 72ZM51.3156 62H62V40.0512C62 30.7645 56.7357 26.2742 49.3826 26.2742C42.026 26.2742 38.9301 32.0029 38.9301 32.0029V27.3333H28.6333V62H38.9301V43.8021C38.9301 38.9261 41.1746 36.0245 45.4707 36.0245C49.4198 36.0245 51.3156 38.8128 51.3156 43.8021V62ZM10 16.397C10 19.9297 12.8421 22.794 16.3493 22.794C19.8566 22.794 22.697 19.9297 22.697 16.397C22.697 12.8644 19.8566 10 16.3493 10C12.8421 10 10 12.8644 10 16.397ZM21.7694 62H11.0326V27.3333H21.7694V62Z" fill="white" />
+                                            <path fillRule="evenodd" clipRule="evenodd" d="M64 72H8C3.58172 72 0 68.4183 0 64V8C0 3.58172 3.58172 0 8 0H64C68.4183 0 72 3.58172 72 8V64C72 68.4183 68.4183 72 64 72ZM51.3156 62H62V40.0512C62 30.7645 56.7357 26.2742 49.3826 26.2742C42.026 26.2742 38.9301 32.0029 38.9301 32.0029V27.3333H28.6333V62H38.9301V43.8021C38.9301 38.9261 41.1746 36.0245 45.4707 36.0245C49.4198 36.0245 51.3156 38.8128 51.3156 43.8021V62ZM10 16.397C10 19.9297 12.8421 22.794 16.3493 22.794C19.8566 22.794 22.697 19.9297 22.697 16.397C22.697 12.8644 19.8566 10 16.3493 10C12.8421 10 10 12.8644 10 16.397ZM21.7694 62H11.0326V27.3333H21.7694V62Z" fill="white" />
                                         </svg>
                                     </div>
                                     <div className=''>{userQuery.linkedinUsername}</div>
@@ -145,6 +143,19 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
             {userQuery &&
                 <div className='w-full max-w-[844px] mt-4 sm:mt-8'>
                     <div className='text-sm opacity-70 mb-2'>
+                        Stack
+                    </div>
+                    <div className='flex items-center flex-wrap gap-2'>
+                        {userQuery.skills.filter(skill => skill.primary).map(skill => {
+                            return (
+                                <div key={skill.id} className='flex items-center border border-white border-opacity-20 rounded-full px-3 py-1 justify-between mb-2'>
+                                    <div className='text-sm opacity-90'>{skill.name}</div>
+                                </div>
+                            )
+                        })}
+                    </div>
+
+                    <div className='text-sm opacity-70 mb-2 mt-10'>
                         Projects
                     </div>
                     <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6'>

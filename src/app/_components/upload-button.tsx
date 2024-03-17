@@ -8,11 +8,9 @@ export default function UploadButtonWrapper () {
         endpoint="imageUploader"
         onClientUploadComplete={(res) => {
           // Do something with the response
-          console.log("Files: ", res);
         }}
         onUploadError={(error: Error) => {
           // Do something with the error.
-          console.log("Error: ", error);
         }}
       />
   );
