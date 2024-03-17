@@ -143,7 +143,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
             {userQuery &&
                 <div className='w-full max-w-[844px] mt-4 sm:mt-8'>
                     <div className='text-sm opacity-70 mb-2'>
-                        Stack
+                        Current Stack
                     </div>
                     <div className='flex items-center flex-wrap gap-2'>
                         {userQuery.skills.filter(skill => skill.primary).map(skill => {
@@ -196,11 +196,11 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     <div className='text-sm opacity-70 mb-2 mt-2 sm:mt-8'>
                         Experience
                     </div>
-                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-20'>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-y-8 sm:gap-x-4'>
                         {userQuery?.experiences.map(experience => {
                             const years = (experience.isCurrent && experience.startDate) ? (new Date().getFullYear() - experience.startDate.getFullYear()) : (experience.endDate && experience.startDate) ? experience.endDate.getFullYear() - experience.startDate.getFullYear() : undefined
                             return (
-                                <div key={experience.id} className='flex flex-col border border-white border-opacity-20 rounded p-2 pl-4'>
+                                <div key={experience.id} className={classNames('flex flex-col border border-white border-opacity-20 rounded p-2 pl-4', experience.isCurrent ? 'col-span-2' : 'col-span-1')}>
                                     <div className='flex justify-between items-center'>
                                         <div className='flex-1'>
                                             <Image src={experience.companyLogo ?? ''} alt='experience' width={200} height={56} className='h-[24px] w-auto' />
@@ -215,6 +215,23 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+
+
+                    <div className='text-sm opacity-70 mb-2 mt-10'>
+                        Hobbies, Interests, & Causes
+                    </div>
+                    <div className='flex items-center flex-wrap gap-x-6 gap-y-4'>
+                        {userQuery.interests.map(skill => {
+                            return (
+                                <div key={skill.id} className='flex items-center border h-9  border-none justify-between mb-2'>
+                                    {skill.image &&
+                                    <div>{skill.image}</div>
+                                    }
+                                    <div className='text-sm opacity-90 mx-2'>{skill.name}</div>
                                 </div>
                             )
                         })}

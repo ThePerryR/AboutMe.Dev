@@ -41,7 +41,8 @@ export const postRouter = createTRPCRouter({
             include: {
               skill: true
             }
-          }
+          },
+          interests: true
         }
       });
       if (!user) {
@@ -67,6 +68,13 @@ export const postRouter = createTRPCRouter({
             status: project.status,
             headline: project.headline,
             isFavorited: project.isFavorited
+          })
+        }),
+        interests: user.interests.map(interest => {
+          return ({
+            id: interest.id,
+            name: interest.name,
+            image: interest.image
           })
         }),
         experiences: user.experiences.map(experience => {
@@ -288,7 +296,7 @@ export const postRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
 
       return ctx.db.skill.findMany({
-        where: { 
+        where: {
           name: { contains: input.search },
           id: { notIn: input.exclude }
         },
@@ -341,5 +349,85 @@ export const postRouter = createTRPCRouter({
       })
 
       return userSkill
+    }),
+  getInterests: protectedProcedure
+    .query(async ({ ctx }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { id: ctx.session.user.id },
+        include: {
+          interests: true
+        }
+      });
+      return user?.interests ?? []
+    }),
+  toggleInterest: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({ where: { id: ctx.session.user.id }, include: { interests: true } })
+      if (user?.interests.find((i) => i.id === input)) {
+        await ctx.db.user.update({
+          where: { id: ctx.session.user.id },
+          data: {
+            interests: {
+              disconnect: { id: input }
+            }
+          }
+        })
+      } else {
+        await ctx.db.user.update({
+          where: { id: ctx.session.user.id },
+          data: {
+            interests: {
+              connect: { id: input }
+            }
+          }
+        })
+      }
+    }),
+  addInterest: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const interest = await ctx.db.interest.create({
+        data: {
+          name: input
+        }
+      })
+      await ctx.db.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          interests: {
+            connect: { id: interest.id }
+          }
+        }
+      })
+    }),
+
+  searchInterests: publicProcedure
+    .input(z.object({
+      search: z.string(),
+      exclude: z.array(z.number()).optional(),
+      limit: z.number().optional()
+    }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.interest.findMany({
+        where: {
+          name: { contains: input.search },
+          id: { notIn: input.exclude }
+        },
+        take: input.limit
+      });
+    }),
+  updateInterest: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      image: z.string()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.interest.update({
+        where: { id: input.id },
+        data: {
+          image: input.image
+        }
+      })
     }),
 });
