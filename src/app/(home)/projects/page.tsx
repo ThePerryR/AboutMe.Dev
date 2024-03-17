@@ -1,13 +1,14 @@
 'use client'
 
 import React from 'react'
-import { type Project } from '@prisma/client'
+import { Skill, type Project } from '@prisma/client'
 import classNames from 'classnames'
 import Image from 'next/image'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 import { api } from '~/trpc/react'
 import { UploadButton } from '~/utils/uploadthing'
+import SkillList from '../skills/SkillList'
 
 const Projects = () => {
     const [favoriteCount, setFavoriteCount] = React.useState(0)
@@ -55,11 +56,12 @@ const Projects = () => {
     )
 }
 
-const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Project, canFavorite: boolean, toggleFavorite: () => void }) => {
+const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Project & { skills: Skill[] }, canFavorite: boolean, toggleFavorite: () => void }) => {
     const [name, setName] = React.useState(project.name)
     const [url, setUrl] = React.useState(project.url)
     const [status, setStatus] = React.useState(project.status)
     const [headline, setHeadline] = React.useState(project.headline)
+    const [skills, setSkills] = React.useState(project.skills)
 
     const [image, setImage] = React.useState(project.image)
     const [isFavorited, setIsFavorited] = React.useState(project.isFavorited)
@@ -74,6 +76,17 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Projec
     const toggleProjectFavoriteMutation = api.post.toggleProjectFavorite.useMutation({
         onSuccess: () => {
             toggleFavorite()
+        }
+    })
+    const addSkillMutation = api.post.addSkill.useMutation({
+        onSuccess: (skill) => {
+            setSkills([...skills, skill])
+        }
+    })
+    const toggleSkillMutation = api.post.toggleSkill.useMutation({
+        onSuccess: (skills) => {
+            console.log(111, skills)
+            setSkills(skills)
         }
     })
     return (
@@ -163,6 +176,25 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Projec
                         </div>
                     </div>
                 </div>
+
+                <div className='flex'>
+                    <div className='flex-1 flex flex-col items-start max-w-[250px]'>
+                        <div className='text-sm mb-1'>Skills</div>
+                        <div className='text-xs opacity-60'>List the technologies and tools used in this project.</div>
+                    </div>
+                    <div className='flex-1'>
+                        <SkillList
+                            allSkills={skills}
+                            skills={skills}
+                            toggleSkill={async (id) => {
+                                await toggleSkillMutation.mutateAsync({ id, projectId: project.id })
+                            }}
+                            addSkill={async (name) => {
+                                await addSkillMutation.mutateAsync({ name, type: 'language', projectId: project.id })
+                            }}
+                        />
+                    </div>
+                </div>
             </div>
             <div className='flex p-4 justify-between items-center'>
                 <div
@@ -226,7 +258,7 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Projec
                             <DropdownMenu.Content className='bg-white py-2 rounded'>
                                 <DropdownMenu.Item
                                     onClick={() => {
-                                        if(confirm("Are you sure you want to delete this project?")) {
+                                        if (confirm("Are you sure you want to delete this project?")) {
                                             deleteProjectMutation.mutate(project.id)
                                         }
                                     }}

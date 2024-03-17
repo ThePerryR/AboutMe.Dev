@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { type Skill } from '@prisma/client';
 import { api } from '~/trpc/react';
+import Image from 'next/image';
 
 const SkillList = ({ allSkills, skills, addSkill, toggleSkill }: { allSkills: Skill[], skills: Skill[], addSkill: (name: string) => Promise<void>, toggleSkill: (id: number) => Promise<void> }) => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -36,15 +37,26 @@ const SkillList = ({ allSkills, skills, addSkill, toggleSkill }: { allSkills: Sk
                     onFocus={() => setFocused(true)}
                 />
                 {focused && (
-                    <div className='absolute top-full left-0 w-full bg-gray-800 text-xs rounded-b z-10'>
+                    <div className='absolute bottom-full left-0 w-full bg-gray-800 text-xs rounded-b z-10'>
                         {skillSearchQuery.data?.map(skill => (
                             <div
                                 key={skill.id}
                                 onClick={() => {
                                     void toggleSkill(skill.id);
                                 }}
-                                className='px-2 py-1 hover:bg-white hover:bg-opacity-5 cursor-pointer'>
-                                {skill.name}
+                                className='px-2 flex items-center py-1 hover:bg-white hover:bg-opacity-5 cursor-pointer'>
+                                <div className='w-[20px]'>
+                                    {skill.image &&
+                                        <Image
+                                            src={skill.image}
+                                            alt={skill.name ?? ''}
+                                            width={16}
+                                            height={16}
+                                            className=''
+                                        />
+                                    }
+                                </div>
+                                <div>{skill.name}</div>
                             </div>
                         ))}
                         {search && !skillSearchQuery.data?.find(s => s.name?.toLowerCase() === search.toLowerCase()) &&
@@ -70,6 +82,15 @@ const SkillList = ({ allSkills, skills, addSkill, toggleSkill }: { allSkills: Sk
                             void toggleSkill(skill.id);
                         }}
                         className='cursor-pointer flex items-center hover:opacity-50 space-x-2 border border-white border-opacity-20 px-2 py-1 rounded-full text-white text-opacity-70 bg-white bg-opacity-5 text-xs'>
+                        {skill.image &&
+                            <Image
+                                src={skill.image}
+                                alt={skill.name ?? ''}
+                                width={16}
+                                height={16}
+                                className=''
+                            />
+                        }
                         <div>{skill.name}</div>
                     </div>
                 ))}

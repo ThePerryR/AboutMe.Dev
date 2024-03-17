@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { Skill, User } from '@prisma/client';
 import classNames from 'classnames';
 import { type Session } from 'next-auth';
 import Image from 'next/image';
@@ -64,9 +64,9 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                         <div className='flex'>
                             <h1 className={classNames('text-2xl sm:text-4xl font-bold mb-1', (userQuery?.name ?? githubData?.name) ? '' : 'opacity-50')}>{userQuery?.name ?? githubData?.name ?? 'No name'}</h1>
                             {userQuery?.nationalityEmoji &&
-                            <div className='ml-2'>
-                                <span>{userQuery.nationalityEmoji}</span>
-                            </div>
+                                <div className='ml-2'>
+                                    <span>{userQuery.nationalityEmoji}</span>
+                                </div>
                             }
                         </div>
                         <div className='flex items-center space-x-2 sm:space-x-6'>
@@ -203,6 +203,16 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                         }
                                     </div>
                                     <div className='text-sm text-opacity-40 text-white'>{project.headline}</div>
+                                    <div className='flex flex-wrap gap-0 mt-1'>
+                                        {project.skills.filter(s => !!s.image && typeof s.image === 'string').map(s => {
+                                            const skill = s as Skill & { image: string }
+                                            return (
+                                                <div key={skill.id} className='w-[18px] h-[18px] flex items-center justify-center'>
+                                                    <Image src={skill.image} alt='skill' width={12} height={12} className='' />
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
                                 </div>
                             )
                         })}

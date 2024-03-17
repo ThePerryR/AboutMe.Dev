@@ -39,6 +39,8 @@ model Project {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    skills    Skill[]
+
     createdBy   User   @relation(fields: [createdById], references: [id])
     createdById String
 
@@ -73,6 +75,7 @@ model Skill {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     users    UserSkill[]
+    projects Project[]
 }
 
 model Interest {

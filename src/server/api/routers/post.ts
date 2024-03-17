@@ -35,7 +35,11 @@ export const postRouter = createTRPCRouter({
           username: input
         },
         include: {
-          projects: true,
+          projects: {
+            include: {
+              skills: true
+            }
+          },
           experiences: true,
           skills: {
             include: {
@@ -69,7 +73,15 @@ export const postRouter = createTRPCRouter({
             image: project.image,
             status: project.status,
             headline: project.headline,
-            isFavorited: project.isFavorited
+            isFavorited: project.isFavorited,
+            skills: project.skills.map(skill => {
+                return ({
+                  id: skill.id,
+                  name: skill.name,
+                  type: skill.type,
+                  image: skill.image
+              })
+            })
           })
         }),
         interests: user.interests.map(interest => {
@@ -189,6 +201,7 @@ export const postRouter = createTRPCRouter({
     .query(async ({ ctx }) => {
       const projects = await ctx.db.project.findMany({
         where: { createdBy: { id: ctx.session.user.id } },
+        include: { skills: true }
       });
 
       return projects;
@@ -305,8 +318,36 @@ export const postRouter = createTRPCRouter({
       });
     }),
   toggleSkill: protectedProcedure
-    .input(z.object({ id: z.number(), primary: z.boolean().optional() }))
+    .input(z.object({ id: z.number(), primary: z.boolean().optional(), projectId: z.number().optional() }))
     .mutation(async ({ ctx, input }) => {
+      if (input.projectId) {
+        const project = await ctx.db.project.findUnique({ where: { id: input.projectId }, include: { skills: true } })
+        if (!project) { throw new Error('Project not found') }
+        if (project.skills.find((s) => s.id === input.id)) {
+          const project = await ctx.db.project.update({
+            where: { id: input.projectId },
+            data: {
+              skills: {
+                disconnect: { id: input.id }
+              }
+            },
+            include: { skills: true }
+          })
+          return project.skills
+        } else {
+          const project = await ctx.db.project.update({
+            where: { id: input.projectId },
+            data: {
+              skills: {
+                connect: { id: input.id }
+              }
+            },
+            include: { skills: true }
+          })
+          return project.skills
+        }
+      }
+
       // add the userskill if doesn't exist, otherwise delete it
       const userSkill = await ctx.db.userSkill.findFirst({
         where: {
@@ -327,11 +368,17 @@ export const postRouter = createTRPCRouter({
           }
         })
       }
+      const userSkills = await ctx.db.userSkill.findMany({
+        where: { userId: ctx.session.user.id },
+        include: { skill: true }
+      })
+      return userSkills.map((us) => us.skill)
     }),
   addSkill: protectedProcedure
     .input(z.object({
       name: z.string(),
       type: z.string(),
+      projectId: z.number().optional(),
       primary: z.boolean().optional()
     }))
     .mutation(async ({ ctx, input }) => {
@@ -342,15 +389,31 @@ export const postRouter = createTRPCRouter({
         }
       })
 
+      if (input.projectId) {
+
+        await ctx.db.project.update({
+          where: { id: input.projectId },
+          data: {
+            skills: {
+              connect: { id: skill.id }
+            }
+          }
+        })
+        return skill
+      }
+
       const userSkill = await ctx.db.userSkill.create({
         data: {
           user: { connect: { id: ctx.session.user.id } },
           skill: { connect: { id: skill.id } },
           primary: input.primary
+        },
+        include: {
+          skill: true
         }
       })
 
-      return userSkill
+      return userSkill.skill
     }),
   getInterests: protectedProcedure
     .query(async ({ ctx }) => {
@@ -432,7 +495,7 @@ export const postRouter = createTRPCRouter({
         }
       })
     }),
-    updateStatuses: protectedProcedure
+  updateStatuses: protectedProcedure
     .input(z.object({
       nationalityEmoji: z.string().optional(),
       statusEmoji: z.string().optional()
