@@ -151,7 +151,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     }
                 </div>
             </div>
-            <div className='text-white text-opacity-60 w-full'>
+            <div className='text-white text-opacity-60 w-full max-w-[844px] mx-auto'>
                 <Calendar username={params.slug} />
             </div>
 
@@ -226,7 +226,9 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                 <div key={experience.id} className={classNames('flex flex-col border border-white border-opacity-20 rounded p-2 pl-4', experience.isCurrent ? 'col-span-2' : 'col-span-1')}>
                                     <div className='flex justify-between items-center'>
                                         <div className='flex-1'>
-                                            <Image src={experience.companyLogo ?? ''} alt='experience' width={200} height={56} className='h-[24px] w-auto' />
+                                            {experience.companyLogo &&
+                                                <Image src={experience.companyLogo} alt='experience' width={200} height={56} className='h-[24px] w-auto' />
+                                            }
                                         </div>
                                         <div className='flex flex-col text-right justify-end'>
                                             <div className='text-sm opacity-90'>{experience.company}</div>
