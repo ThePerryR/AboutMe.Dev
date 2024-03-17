@@ -61,6 +61,20 @@ export const ourFileRouter = {
                 data: { companyLogo: file.url }
             })
             return { url: file.url };
+        }),
+    skillIcon: f({ image: { maxFileSize: "1MB" } })
+        .input(z.object({ skillId: z.number() }))
+        .middleware(async ({ req, input }) => {
+            const session = await getServerAuthSession()
+            if (!session?.user) throw new UploadThingError("Unauthorized");
+            return { userId: session.user.id, skillId: input.skillId }
+        })
+        .onUploadComplete(async ({ metadata, file }) => {
+            await db.skill.update({
+                where: { id: metadata.skillId },
+                data: { image: file.url }
+            })
+            return { url: file.url };
         })
 } satisfies FileRouter;
 

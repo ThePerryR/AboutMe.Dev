@@ -148,8 +148,11 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     <div className='flex items-center flex-wrap gap-2'>
                         {userQuery.skills.filter(skill => skill.primary).map(skill => {
                             return (
-                                <div key={skill.id} className='flex items-center border border-white border-opacity-20 rounded-full px-3 py-1 justify-between mb-2'>
-                                    <div className='text-sm opacity-90'>{skill.name}</div>
+                                <div key={skill.id} className='flex items-center border h-9 border-white border-opacity-20 rounded-full px-2 py-1 justify-between mb-2'>
+                                    {skill.image &&
+                                    <Image src={skill.image} alt='skill' width={20} height={20} className='' />
+                                    }
+                                    <div className='text-sm opacity-90 mx-2'>{skill.name}</div>
                                 </div>
                             )
                         })}

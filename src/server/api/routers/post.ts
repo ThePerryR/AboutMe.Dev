@@ -85,7 +85,8 @@ export const postRouter = createTRPCRouter({
             id: skill.id,
             name: skill.skill.name,
             type: skill.skill.type,
-            primary: skill.primary
+            primary: skill.primary,
+            image: skill.skill.image
           })
         })
       };
