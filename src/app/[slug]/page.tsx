@@ -8,6 +8,7 @@ import GitHubCalendar from 'react-github-calendar'
 import { getServerAuthSession } from '~/server/auth';
 import { api } from "~/trpc/server";
 import Calendar from './Calendar';
+import SkillShow from './Skill';
 
 async function fetchGithubData(user: { username: string | null } | null, username: string) {
     if (user !== null) {
@@ -207,9 +208,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                         {project.skills.filter(s => !!s.image && typeof s.image === 'string').map(s => {
                                             const skill = s as Skill & { image: string }
                                             return (
-                                                <div key={skill.id} className='w-[18px] h-[18px] flex items-center justify-center'>
-                                                    <Image src={skill.image} alt='skill' width={12} height={12} className='' />
-                                                </div>
+                                                <SkillShow key={skill.id} skill={skill} />
                                             )
                                         })}
                                     </div>
