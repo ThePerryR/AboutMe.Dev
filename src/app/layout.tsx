@@ -16,19 +16,32 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
+const faceEmojis = ['🤩', '🥳', '🥸', '🤪', '🤯', '🤠', '😵‍💫', '🫨', '🙄']
+
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const session = await getServerAuthSession();
+  const randomEmoji = faceEmojis[Math.floor(Math.random() * faceEmojis.length)]
+  // random rotation between -30 and 30
+  const rotation = Math.floor(Math.random() * 60) - 30
   return (
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable}  ${GeistMono.variable} min-h-screen bg-black`}>
         <TRPCReactProvider>
           <header className="max-w-[1608px] h-[56px] sm:h-[120px] mx-auto flex items-center justify-between px-4 bg-[#010101] text-white">
             <Link href="/" className='text-2xl flex items-center'>
-              ⛶ <span className='opacity-50 text-base ml-2'>about me . <span className='font-mono'>dev</span></span>
+              <div className='relative text-[40px]'>
+                <span className='opacity-80'>⛶</span>
+                <div
+                  style={{ transform: `rotate(${rotation}deg)` }}
+                  className='absolute top-[2px] left-[3px] text-[28px]'>
+                  {randomEmoji}
+                </div>
+              </div>
+              <span className='opacity-50 text-base ml-2'>about me . <span className='font-mono'>dev</span></span>
             </Link>
 
             {!session?.user
