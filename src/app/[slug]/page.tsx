@@ -151,7 +151,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     }
                 </div>
             </div>
-            <div className='text-white text-opacity-60'>
+            <div className='text-white text-opacity-60 w-full'>
                 <Calendar username={params.slug} />
             </div>
 
