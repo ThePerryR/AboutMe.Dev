@@ -34,7 +34,7 @@ const Statuses = ({ initialNationality, initialStatus }: { initialNationality: s
                         />
                     </div>
                     <div className='flex items-center space-x-3'>
-                        <div className='font-medium opacity-60'>Vibe</div>
+                        <div className='font-medium opacity-60'>Flair</div>
                         <EmojiPicker 
                             emoji={status}
                             placeholder='😴'
