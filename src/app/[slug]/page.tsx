@@ -179,15 +179,15 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                             )
                         })}
                     </div>
-                    <div className='text-sm opacity-70 mb-2 mt-2 sm:mt-4'>
+                    <div className='text-sm opacity-70 mb-2 mt-2 sm:mt-8'>
                         Experience
                     </div>
                     <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-20'>
                         {userQuery?.experiences.map(experience => {
                             const years = (experience.isCurrent && experience.startDate) ? (new Date().getFullYear() - experience.startDate.getFullYear()) : (experience.endDate && experience.startDate) ? experience.endDate.getFullYear() - experience.startDate.getFullYear() : undefined
                             return (
-                                <div key={experience.id} className='flex flex-col'>
-                                    <div className='flex justify-between'>
+                                <div key={experience.id} className='flex flex-col border border-white border-opacity-20 rounded p-2 pl-4'>
+                                    <div className='flex justify-between items-center'>
                                         <div className='flex-1'>
                                             <Image src={experience.companyLogo ?? ''} alt='experience' width={200} height={56} className='h-[24px] w-auto' />
                                         </div>

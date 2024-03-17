@@ -64,6 +64,35 @@ model Experience {
     @@index([createdById])
 }
 
+model Skill {
+    id     Int      @id @default(autoincrement())
+    name   String?
+    image  String?
+    type   String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    users    UserSkill[]
+}
+
+model UserSkill {
+    id     Int      @id @default(autoincrement())
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    primary Boolean @default(false)
+
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    skill  Skill  @relation(fields: [skillId], references: [id])
+    skillId Int
+
+    @@index([userId])
+    @@index([skillId])
+}
+
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -115,6 +144,7 @@ model User {
     posts         Post[]
     projects      Project[]
     experiences   Experience[]
+    skills        UserSkill[]
 }
 
 model VerificationToken {

@@ -116,25 +116,25 @@ export const postRouter = createTRPCRouter({
       });
     }),
 
-    updateExperience: protectedProcedure
-    .input(z.object({ 
-      id: z.number(), 
+  updateExperience: protectedProcedure
+    .input(z.object({
+      id: z.number(),
       role: z.string().optional(),
       company: z.string().optional(),
       startDate: z.string().optional(),
       endDate: z.string().optional(),
       isCurrent: z.boolean().optional()
-     }))
+    }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db.experience.update({
         where: { id: input.id },
-        data: { 
+        data: {
           role: input.role,
           company: input.company,
           startDate: input.startDate,
           endDate: input.endDate,
           isCurrent: input.isCurrent
-         },
+        },
       });
     }),
 
@@ -154,7 +154,7 @@ export const postRouter = createTRPCRouter({
       return project;
     }),
 
-    createExperience: protectedProcedure
+  createExperience: protectedProcedure
     .mutation(async ({ ctx }) => {
       const experience = ctx.db.experience.create({
         data: {
@@ -172,7 +172,7 @@ export const postRouter = createTRPCRouter({
 
       return projects;
     }),
-fetchExperiences: protectedProcedure
+  fetchExperiences: protectedProcedure
     .query(async ({ ctx }) => {
       const experiences = await ctx.db.experience.findMany({
         where: { createdBy: { id: ctx.session.user.id } }
@@ -263,4 +263,77 @@ fetchExperiences: protectedProcedure
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";
   }),
+
+  getSkills: protectedProcedure
+    .query(async ({ ctx }) => {
+      return ctx.db.userSkill.findMany({
+        where: { userId: ctx.session.user.id },
+        include: { skill: true }
+      });
+    }),
+
+  searchSkills: publicProcedure
+    .input(z.object({
+      search: z.string(),
+      exclude: z.array(z.number()).optional()
+    }))
+    .query(async ({ ctx, input }) => {
+
+      return ctx.db.skill.findMany({
+        where: { 
+          name: { contains: input.search },
+          id: { notIn: input.exclude }
+        },
+      });
+    }),
+  toggleSkill: protectedProcedure
+    .input(z.object({ id: z.number(), primary: z.boolean().optional() }))
+    .mutation(async ({ ctx, input }) => {
+      console.log('toggle')
+      // add the userskill if doesn't exist, otherwise delete it
+      const userSkill = await ctx.db.userSkill.findFirst({
+        where: {
+          userId: ctx.session.user.id,
+          skillId: input.id
+        }
+      })
+      if (userSkill) {
+        await ctx.db.userSkill.delete({
+          where: { id: userSkill.id, userId: ctx.session.user.id }
+        })
+      } else {
+        console.log(2)
+        await ctx.db.userSkill.create({
+          data: {
+            userId: ctx.session.user.id,
+            skillId: input.id,
+            primary: input.primary
+          }
+        })
+      }
+    }),
+  addSkill: protectedProcedure
+    .input(z.object({
+      name: z.string(),
+      type: z.string(),
+      primary: z.boolean().optional()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const skill = await ctx.db.skill.create({
+        data: {
+          name: input.name,
+          type: input.type
+        }
+      })
+
+      const userSkill = await ctx.db.userSkill.create({
+        data: {
+          user: { connect: { id: ctx.session.user.id } },
+          skill: { connect: { id: skill.id } },
+          primary: input.primary
+        }
+      })
+
+      return userSkill
+    }),
 });
