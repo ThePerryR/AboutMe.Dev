@@ -186,9 +186,11 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                         {userQuery?.projects.map(project => {
                             return (
                                 <div key={project.id} className='rounded  border-opacity-10'>
-                                    <Link href={project.url ?? ''} target='_blank'>
-                                        <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2' />
-                                    </Link>
+                                    {project.image &&
+                                        <Link href={project.url ?? ''} target='_blank'>
+                                            <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2' />
+                                        </Link>
+                                    }
                                     <div className='flex items-center justify-between mb-2'>
                                         {project.url
                                             ? (
