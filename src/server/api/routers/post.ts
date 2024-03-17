@@ -317,6 +317,20 @@ export const postRouter = createTRPCRouter({
         },
       });
     }),
+
+    updateSkill: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      type: z.string().optional()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.skill.update({
+        where: { id: input.id },
+        data: {
+          type: input.type
+        }
+      })
+    }),
   toggleSkill: protectedProcedure
     .input(z.object({ id: z.number(), primary: z.boolean().optional(), projectId: z.number().optional() }))
     .mutation(async ({ ctx, input }) => {

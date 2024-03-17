@@ -11,6 +11,7 @@ const SudoPage = () => {
     const skillsQuery = api.post.searchSkills.useQuery({ search: '', exclude: [] })
     const interestsQuery = api.post.searchInterests.useQuery({ search: '', exclude: [] })
     console.log(1, interestsQuery.data)
+    const updateSkillMutation = api.post.updateSkill.useMutation()
     return (
         <div className='text-white'>
             <h1 className='text-2xl font-bold mb-5'>Sudo Page</h1>
@@ -33,6 +34,24 @@ const SudoPage = () => {
                                 // setUploadError('Invalid image. Max size is 4MB')
                             }}
                         />
+
+                        <div className=''>
+                            <select
+                                value={skill.type ?? ''}
+                                onChange={async (e) => {
+                                    if (e.target.type !== '') {
+                                        await updateSkillMutation.mutateAsync({ id: skill.id, type: e.target.value })
+                                        void skillsQuery.refetch()
+                                    }
+                                }}
+                                className='bg-transparent border rounded'>
+                                <option value=''>Select One...</option>
+                                <option value='language'>Language</option>
+                                <option value='library'>Library</option>
+                                <option value='framework'>Framework</option>
+                                <option value='tool'>Tool</option>
+                            </select>
+                        </div>
                     </li>
                 ))}
             </ul>

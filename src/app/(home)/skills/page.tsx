@@ -112,12 +112,12 @@ const Skills = () => {
                     <div className='flex-1'>
                         <SkillList
                             allSkills={skillsQuery.data?.map(skill => skill.skill) ?? []}
-                            skills={skillsQuery.data?.filter(skill => !skill.primary && skill.skill.type === 'framework').map(skill => skill.skill) ?? []}
+                            skills={skillsQuery.data?.filter(skill => !skill.primary && skill.skill.type === 'tool').map(skill => skill.skill) ?? []}
                             toggleSkill={async (id) => {
                                 await toggleSkillMutation.mutateAsync({ id, primary: false })
                             }}
                             addSkill={async (name) => {
-                                await addSkillMutation.mutateAsync({ name, type: 'framework', primary: false })
+                                await addSkillMutation.mutateAsync({ name, type: 'tool', primary: false })
                             }}
                         />
                     </div>
