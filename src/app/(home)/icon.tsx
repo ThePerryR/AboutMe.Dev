@@ -15,7 +15,7 @@ export const revalidate = 360 // 6 minutes
 // Image generation
 export default async function Icon({ params }: { params: { slug: string } }) {
   console.log(params, 'cococococo')
-  const userQuery = await api.post.fetchUser.query(params.slug)
+  const userQuery = params?.slug ? await api.post.fetchUser.query(params.slug) : null
   console.log(userQuery?.statusEmoji)
   return new ImageResponse(
     (

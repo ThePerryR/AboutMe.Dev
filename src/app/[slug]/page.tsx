@@ -12,7 +12,7 @@ import SkillShow from './Skill';
 
 async function fetchGithubData(user: { username: string | null } | null, username: string) {
     if (user !== null) {
-        // return
+        return
     }
     const res = await fetch(`https://api.github.com/users/${username}`)
     const data = await res.json() as { login: string, id: number, node_id: string, avatar_url: string, gravatar_id: string, url: string, html_url: string, followers_url: string, following_url: string, gists_url: string, starred_url: string, subscriptions_url: string, organizations_url: string, repos_url: string, events_url: string, received_events_url: string, type: string, site_admin: boolean, name: string, company: string, blog: string, location: string, email: string, hireable: boolean, bio: string, twitter_username: string, public_repos: number, public_gists: number, followers: number, following: number, created_at: string, updated_at: string }
@@ -103,7 +103,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                             </div>
                             {/* Website */}
                             {(userQuery?.website ?? githubData?.blog) &&
-                                <Link href={userQuery?.website ?? githubData?.blog} target='_blank' className='opacity-90 hover:opacity-100'>
+                                <Link href={userQuery?.website ?? githubData?.blog ?? ''} target='_blank' className='opacity-90 hover:opacity-100'>
                                     <div className={classNames('flex items-center opacity-100 space-x-1', { 'opacity-40': !(userQuery?.location ?? githubData?.location) })}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
