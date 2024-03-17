@@ -41,6 +41,16 @@ const regionLabels = {
     'other': 'Other'
 }
 
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+    const userQuery = await api.post.fetchUser.query(params.slug)
+    const githubData = await fetchGithubData(userQuery, params.slug)
+    return {
+        title: `${userQuery?.name ?? githubData?.name ?? 'AboutMe.dev'} - @${params.slug}`,
+        // fancy formatted description
+        description: `@${params.slug} is a developer from ${userQuery?.location ?? githubData?.location ?? 'somewhere'} who works with ${userQuery?.skills.filter(skill => skill.primary).map(skill => skill.name).join(', ')}.`,
+    }
+}
+
 const UserPage = async ({ params }: { params: { slug: string } }) => {
     const userQuery = await api.post.fetchUser.query(params.slug)
     const githubData = await fetchGithubData(userQuery, params.slug)
