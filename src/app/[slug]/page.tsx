@@ -50,18 +50,20 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
     }
 
     return (
-        <div className='flex flex-col items-center py-10 text-white text-opacity-80 px-6'>
+        <div className='flex flex-col items-center py-4 sm:py-10 text-white text-opacity-80 px-6'>
             <div className='flex flex-col sm:flex-row w-full max-w-[844px] mb-4 sm:mb-8 justify-between'>
-                <div className='flex items-start sm:items-center mb-4 sm:mb-0'>
+                <div className='flex flex-col sm:flex-row items-start sm:items-center mb-4 sm:mb-0'>
+                    {/* User's Picture */}
                     <div className='relative'>
-                        <Image src={userQuery?.image ?? githubData?.avatar_url ?? '/no-picture.jpg'} alt='avatar' width={100} height={100} className='rounded h-[64px] w-[64px] sm:w-[100px] sm:h-[100px]' />
+                        <Image src={userQuery?.image ?? githubData?.avatar_url ?? '/no-picture.jpg'} alt='avatar' width={120} height={120} className='rounded h-[120px] w-[120px] sm:w-[100px] sm:h-[100px]' />
                         {userQuery?.statusEmoji &&
                             <div className='absolute bottom-[-4px] right-[-4px] bg-[#5f5f5f] rounded-full h-[24px] w-[24px] text-[18px] shadow flex items-center justify-center'>
                                 {userQuery.statusEmoji}
                             </div>
                         }
                     </div>
-                    <div className='ml-2 sm:ml-4'>
+                    <div className='mt-2 sm:mt-0 sm:ml-4'>
+                        {/* Name */}
                         <div className='flex'>
                             <h1 className={classNames('text-2xl sm:text-4xl font-bold mb-1', (userQuery?.name ?? githubData?.name) ? '' : 'opacity-50')}>{userQuery?.name ?? githubData?.name ?? 'No name'}</h1>
                             {userQuery?.nationalityEmoji &&
@@ -70,7 +72,9 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                 </div>
                             }
                         </div>
-                        <div className='flex items-center space-x-2 sm:space-x-6'>
+
+                        <div className='flex flex-wrap items-center gap-2 sm:gap-6'>
+                            {/* Region */}
                             {userQuery?.region &&
                                 <div className='flex items-center opacity-70 space-x-1'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
@@ -79,6 +83,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                     <span>{regionLabels[userQuery.region as keyof typeof regionLabels]}</span>
                                 </div>
                             }
+                            {/* Location */}
                             <div className={classNames('flex items-center opacity-70 space-x-0.5', { 'opacity-40': !(userQuery?.location ?? githubData?.location) })}>
                                 <svg className="w-[15px] h-[15px]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -86,6 +91,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                 </svg>
                                 <span>{userQuery?.location ?? githubData?.location ?? 'No location'}</span>
                             </div>
+                            {/* Website */}
                             {(userQuery?.website ?? githubData?.blog) &&
                                 <Link href={userQuery?.website ?? githubData?.blog} target='_blank' className='opacity-90 hover:opacity-100'>
                                     <div className={classNames('flex items-center opacity-100 space-x-1', { 'opacity-40': !(userQuery?.location ?? githubData?.location) })}>
@@ -100,7 +106,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                         </div>
                     </div>
                 </div>
-                <div className='space-y-0 sm:space-y-1 flex flex-row sm:flex-col space-x-4 sm:space-x-0'>
+                <div className='gap-y-2 sm:gapy-y-1 flex flex-wrap flex-row sm:flex-col gap-x-4'>
                     <div>
                         <Link target='_blank' href={`https://github.com/${params.slug}`} className='opacity-90 hover:opacity-100'>
                             <div className='flex items-center'>
@@ -160,7 +166,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     <div className='text-sm opacity-70 mb-2'>
                         Current Stack
                     </div>
-                    <div className='flex items-center flex-wrap gap-2'>
+                    <div className='flex items-center flex-wrap gap-x-2 gap-y-1'>
                         {userQuery.skills.filter(skill => skill.primary).map(skill => {
                             return (
                                 <div key={skill.id} className='flex items-center border h-9 border-white border-opacity-20 rounded-full px-2 py-1 justify-between mb-2'>
@@ -176,7 +182,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     <div className='text-sm opacity-70 mb-2 mt-10'>
                         Projects
                     </div>
-                    <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6'>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6'>
                         {userQuery?.projects.map(project => {
                             return (
                                 <div key={project.id} className='rounded  border-opacity-10'>
@@ -223,7 +229,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                         {userQuery?.experiences.map(experience => {
                             const years = (experience.isCurrent && experience.startDate) ? (new Date().getFullYear() - experience.startDate.getFullYear()) : (experience.endDate && experience.startDate) ? experience.endDate.getFullYear() - experience.startDate.getFullYear() : undefined
                             return (
-                                <div key={experience.id} className={classNames('flex flex-col border border-white border-opacity-20 rounded p-2 pl-4', experience.isCurrent ? 'col-span-2' : 'col-span-1')}>
+                                <div key={experience.id} className={classNames('flex flex-col border border-white border-opacity-20 rounded p-2 pl-4', experience.isCurrent ? 'sm:col-span-2' : 'col-span-1')}>
                                     <div className='flex justify-between items-center'>
                                         <div className='flex-1'>
                                             {experience.companyLogo &&
@@ -249,7 +255,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     <div className='text-sm opacity-70 mb-2 mt-10'>
                         Hobbies, Interests, & Causes
                     </div>
-                    <div className='flex items-center flex-wrap gap-x-6 gap-y-4'>
+                    <div className='flex items-center flex-wrap gap-x-6 gap-y-1 sm:gap-y-2'>
                         {userQuery.interests.map(skill => {
                             return (
                                 <div key={skill.id} className='flex items-center border h-9  border-none justify-between mb-2'>
