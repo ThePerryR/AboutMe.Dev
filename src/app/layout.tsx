@@ -4,6 +4,7 @@ import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
+import { Analytics } from "@vercel/analytics/react"
 
 import { TRPCReactProvider } from "~/trpc/react";
 import Link from "next/link";
@@ -60,6 +61,7 @@ export default async function RootLayout({
           </header>
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
           {children}
+          <Analytics />
         </TRPCReactProvider>
       </body>
     </html>
