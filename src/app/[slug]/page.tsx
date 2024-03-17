@@ -146,7 +146,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                     <div className='w-5 sm:w-7'>
                                         𝕏
                                     </div>
-                                    <div className=''>{params.slug}</div>
+                                    <div className=''>{userQuery?.twitterUsername}</div>
                                 </div>
                             </Link>
                         </div>
