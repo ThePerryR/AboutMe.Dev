@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
             id: message.user.id
           },
           data: {
-            username: data.login,
+            username: data.login.toLowerCase(),
             hireable: data.hireable ?? false,
             headline: data.bio,
             twitterUsername: data.twitter_username,

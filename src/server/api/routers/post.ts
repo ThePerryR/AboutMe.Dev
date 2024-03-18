@@ -32,7 +32,7 @@ export const postRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const user = await ctx.db.user.findUnique({
         where: {
-          username: input
+          username: input.toLowerCase(),
         },
         include: {
           projects: {
@@ -477,6 +477,22 @@ export const postRouter = createTRPCRouter({
           interests: {
             connect: { id: interest.id }
           }
+        }
+      })
+    }),
+
+    fetchUsers: protectedProcedure
+    .query(async ({ ctx }) => {
+      const users = await ctx.db.user.findMany({
+        where: { id: { not: ctx.session.user.id } }
+      })
+
+      return users.map(user => {
+        return {
+          id: user.id,
+          username: user.username,
+          name: user.name,
+          flair: user.statusEmoji,
         }
       })
     }),
