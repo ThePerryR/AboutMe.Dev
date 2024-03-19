@@ -1,4 +1,4 @@
-import { Skill, User } from '@prisma/client';
+import { type Skill, User } from '@prisma/client';
 import classNames from 'classnames';
 import { type Session } from 'next-auth';
 import Image from 'next/image';
@@ -200,7 +200,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                 <div key={project.id} className='rounded  border-opacity-10'>
                                     {project.image &&
                                         <Link href={project.url ?? ''} target='_blank'>
-                                            <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2' />
+                                            <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2 aspect-[1200/630]' />
                                         </Link>
                                     }
                                     <div className='flex items-center justify-between mb-2'>
