@@ -31,7 +31,7 @@ export default async function Home() {
               <h1 className='font-mono text-white text-3xl sm:text-6xl mb-4 sm:mb-8'>
                 Showcase Yourself, Share Your Story
               </h1>
-              <h2 className='text-lg text-white text-opacity-60 mb-8 sm:mb-12 sm:max-w-[600px]'>
+              <h2 className='text-lg text-white text-opacity-60 mb-8 sm:mb-12 sm:max-w-[440px]'>
                 Create a dynamic developer profile that speaks to your skills, projects, and coding journey.
               </h2>
 
