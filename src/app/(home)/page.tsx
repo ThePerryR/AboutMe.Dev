@@ -67,7 +67,7 @@ export default async function Home() {
                 <span className='absolute right-[-30px] text-3xl font-bold text-[#0079de] top-1/2 transform -translate-y-1/2 mt-[-6px]'>⟶</span>
               </div>
               <div style={{ right: 'Calc(100% + -14px)' }} className='absolute top-[658px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
-                List our your experience.
+                List out your experience.
                 <span className='absolute right-[-30px] text-3xl font-bold text-[#0079de] top-1/2 transform -translate-y-1/2 mt-[-6px]'>⟶</span>
               </div>
               <div style={{ right: 'Calc(100% + -14px)' }} className='absolute top-[921px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
