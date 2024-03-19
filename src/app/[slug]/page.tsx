@@ -76,7 +76,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     <div className='relative'>
                         <Image src={userQuery?.image ?? githubData?.avatar_url ?? '/no-picture.jpg'} alt='avatar' width={120} height={120} className='rounded h-[120px] w-[120px] sm:w-[100px] sm:h-[100px]' />
                         {userQuery?.statusEmoji &&
-                            <div className='absolute bottom-[-8px] right-[-8px] bg-[#ececec] bg-opacity-0 text-opacity-100 rounded-full h-[28px] w-[28px] text-[26px] rotate-[-6deg] flex items-center justify-center'>
+                            <div className='absolute cursor-default bottom-[-8px] right-[-8px] bg-[#ececec] bg-opacity-0 text-opacity-100 rounded-full h-[28px] w-[28px] text-[26px] rotate-[-6deg] flex items-center justify-center'>
                                 {userQuery.statusEmoji}
                             </div>
                         }
