@@ -191,102 +191,113 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     </div>
                     <SkillSection skills={userQuery.skills.filter(skill => !skill.primary)} />
 
-                    <div className='text-sm opacity-70 mb-2 mt-10 sm:mt-12'>
-                        Projects
-                    </div>
-                    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6'>
-                        {userQuery?.projects.map(project => {
-                            return (
-                                <div key={project.id} className='rounded  border-opacity-10 flex flex-col'>
-                                    {project.image
-                                        ? (
-                                            <Link href={project.url ?? ''} target='_blank'>
-                                                <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2 aspect-[1200/630] object-cover' />
-                                            </Link>
-                                        )
-                                        : (
-                                            <div className='border-white border border-dashed border-opacity-20 aspect-[1200/630] rounded mb-2 bg-white bg-opacity-5 opacity-80'>
-                                            </div>
-                                        )
-                                    }
-                                    <div className='flex items-center justify-between mb-2'>
-                                        {project.url
-                                            ? (
-                                                <Link href={project.url} target="_blank">
-                                                    <div className='text-sm opacity-90'>{project.name}</div>
-                                                </Link>
-                                            )
-                                            :
-                                            <div className='text-sm opacity-100'>{project.name}</div>
-                                        }
-                                        {project.status === 'live' &&
-                                            <div className='bg-green-500 text-black text-[12px] px-2 rounded-full'>Live</div>
-                                        }
-                                        {project.status === 'live-beta' &&
-                                            <div className='bg-blue-500 text-black text-[12px] px-2 rounded-full'>Beta</div>
-                                        }
-                                        {project.status === 'in-progress' &&
-                                            <div className='bg-yellow-500 text-black text-[12px] px-2 rounded-full'>In Progress</div>
-                                        }
-                                    </div>
-                                    <div className='text-sm text-opacity-40 text-white'>{project.headline}</div>
-                                    <div className='flex flex-wrap gap-0 mt-1'>
-                                        {project.skills.filter(s => !!s.image && typeof s.image === 'string').map(s => {
-                                            const skill = s as Skill & { image: string }
-                                            return (
-                                                <SkillShow key={skill.id} skill={skill} />
-                                            )
-                                        })}
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
-                    <div className='text-sm opacity-70 mb-2 mt-2 sm:mt-8'>
-                        Experience
-                    </div>
-                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-y-8 sm:gap-x-4'>
-                        {userQuery?.experiences.map(experience => {
-                            const years = (experience.isCurrent && experience.startDate) ? (new Date().getFullYear() - experience.startDate.getFullYear()) : (experience.endDate && experience.startDate) ? experience.endDate.getFullYear() - experience.startDate.getFullYear() : undefined
-                            return (
-                                <div key={experience.id} className={classNames('flex flex-col border border-white border-opacity-20 rounded p-2 pl-4', experience.isCurrent ? 'sm:col-span-2' : 'col-span-1')}>
-                                    <div className='flex justify-between items-center'>
-                                        <div className='flex-1'>
-                                            {experience.companyLogo &&
-                                                <Image src={experience.companyLogo} alt='experience' width={200} height={56} className='h-[24px] w-auto' />
+                    {userQuery.projects.length > 0 &&
+                        <>
+                            <div className='text-sm opacity-70 mb-2 mt-10 sm:mt-12'>
+                                Projects
+                            </div>
+                            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6'>
+                                {userQuery.projects.map(project => {
+                                    return (
+                                        <div key={project.id} className='rounded  border-opacity-10 flex flex-col'>
+                                            {project.image
+                                                ? (
+                                                    <Link href={project.url ?? ''} target='_blank'>
+                                                        <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2 aspect-[1200/630] object-cover' />
+                                                    </Link>
+                                                )
+                                                : (
+                                                    <div className='border-white border border-dashed border-opacity-20 aspect-[1200/630] rounded mb-2 bg-white bg-opacity-5 opacity-80'>
+                                                    </div>
+                                                )
                                             }
-                                        </div>
-                                        <div className='flex flex-col text-right justify-end'>
-                                            <div className='text-sm opacity-90'>{experience.company}</div>
-                                            <div className='text-sm opacity-50'>{experience.role}</div>
-                                            <div className='text-sm opacity-50'>
-                                                {experience.startDate ? experience.startDate.toLocaleDateString('en-us', { year: "numeric", month: "short" }) : ''}
-                                                {(experience.startDate && (experience.endDate ?? experience.isCurrent)) ? ' - ' : ''}{experience.isCurrent ? 'Present' : experience.endDate ? experience.endDate.toLocaleDateString('en-us', { year: "numeric", month: "short" }) : ''}
-                                                &nbsp;{years !== undefined && `(${years} yrs)`}
+                                            <div className='flex items-center justify-between mb-2'>
+                                                {project.url
+                                                    ? (
+                                                        <Link href={project.url} target="_blank">
+                                                            <div className='text-sm opacity-90'>{project.name}</div>
+                                                        </Link>
+                                                    )
+                                                    :
+                                                    <div className='text-sm opacity-100'>{project.name}</div>
+                                                }
+                                                {project.status === 'live' &&
+                                                    <div className='bg-green-500 text-black text-[12px] px-2 rounded-full'>Live</div>
+                                                }
+                                                {project.status === 'live-beta' &&
+                                                    <div className='bg-blue-500 text-black text-[12px] px-2 rounded-full'>Beta</div>
+                                                }
+                                                {project.status === 'in-progress' &&
+                                                    <div className='bg-yellow-500 text-black text-[12px] px-2 rounded-full'>In Progress</div>
+                                                }
+                                            </div>
+                                            <div className='text-sm text-opacity-40 text-white'>{project.headline}</div>
+                                            <div className='flex flex-wrap gap-0 mt-1'>
+                                                {project.skills.filter(s => !!s.image && typeof s.image === 'string').map(s => {
+                                                    const skill = s as Skill & { image: string }
+                                                    return (
+                                                        <SkillShow key={skill.id} skill={skill} />
+                                                    )
+                                                })}
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
+                                    )
+                                })}
+                            </div>
+                        </>
+                    }
+                    {userQuery.experiences.length > 0 &&
+                        <>
+                            <div className='text-sm opacity-70 mb-2 mt-2 sm:mt-8'>
+                                Experience
+                            </div>
+                            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-y-8 sm:gap-x-4'>
+                                {userQuery.experiences.map(experience => {
+                                    const years = (experience.isCurrent && experience.startDate) ? (new Date().getFullYear() - experience.startDate.getFullYear()) : (experience.endDate && experience.startDate) ? experience.endDate.getFullYear() - experience.startDate.getFullYear() : undefined
+                                    return (
+                                        <div key={experience.id} className={classNames('flex flex-col border border-white border-opacity-20 rounded p-2 pl-4', experience.isCurrent ? 'sm:col-span-2' : 'col-span-1')}>
+                                            <div className='flex justify-between items-center'>
+                                                <div className='flex-1'>
+                                                    {experience.companyLogo &&
+                                                        <Image src={experience.companyLogo} alt='experience' width={200} height={56} className='h-[24px] w-auto' />
+                                                    }
+                                                </div>
+                                                <div className='flex flex-col text-right justify-end'>
+                                                    <div className='text-sm opacity-90'>{experience.company}</div>
+                                                    <div className='text-sm opacity-50'>{experience.role}</div>
+                                                    <div className='text-sm opacity-50'>
+                                                        {experience.startDate ? experience.startDate.toLocaleDateString('en-us', { year: "numeric", month: "short" }) : ''}
+                                                        {(experience.startDate && (experience.endDate ?? experience.isCurrent)) ? ' - ' : ''}{experience.isCurrent ? 'Present' : experience.endDate ? experience.endDate.toLocaleDateString('en-us', { year: "numeric", month: "short" }) : ''}
+                                                        &nbsp;{years !== undefined && `(${years} yrs)`}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </>
+                    }
 
-
-                    <div className='text-sm opacity-70 mb-2 mt-10'>
-                        Hobbies, Interests, & Causes
-                    </div>
-                    <div className='flex items-center flex-wrap gap-x-6 gap-y-1 sm:gap-y-2'>
-                        {userQuery.interests.map(skill => {
-                            return (
-                                <div key={skill.id} className='flex items-center border h-9  border-none justify-between mb-2'>
-                                    {skill.image &&
-                                        <div>{skill.image}</div>
-                                    }
-                                    <div className='text-sm opacity-90 mx-2'>{skill.name}</div>
-                                </div>
-                            )
-                        })}
-                    </div>
+                    {userQuery.interests.length > 0 &&
+                        <>
+                            <div className='text-sm opacity-70 mb-2 mt-10'>
+                                Hobbies, Interests, & Causes
+                            </div>
+                            <div className='flex items-center flex-wrap gap-x-6 gap-y-1 sm:gap-y-2'>
+                                {userQuery.interests.map(skill => {
+                                    return (
+                                        <div key={skill.id} className='flex items-center border h-9  border-none justify-between mb-2'>
+                                            {skill.image &&
+                                                <div>{skill.image}</div>
+                                            }
+                                            <div className='text-sm opacity-90 mx-2'>{skill.name}</div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </>
+                    }
                 </div>
             }
         </div>
