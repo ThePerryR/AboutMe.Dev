@@ -44,7 +44,7 @@ export default async function Home() {
                 <span>Join now</span>
               </Link>
 
-              <h3 className='text-white font-mono text-lg  sm:text-xl mb-3 sm:mb-5 opacity-80'>Why Join aboutme.dev?</h3>
+              <h3 className='text-white font-mono text-lg  sm:text-xl mb-3 sm:mb-5 opacity-80'>Why join aboutme.dev?</h3>
               <p className='text-white opacity-60 leading-loose text-lg sm:text-base sm:pr-4 lg:pr-8'>
                 Unlock the door to new opportunities with a profile that&apos;s more than a resume. <b>aboutme.dev</b> lets you vividly demonstrate your coding prowess, track your progress over time, and connect with a network of professionals. Whether you&apos;re seeking new challenges, showcasing your latest project, or just keeping your coding history up to date, this is the platform for developers who mean business.
               </p>
