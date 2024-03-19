@@ -197,11 +197,17 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6'>
                         {userQuery?.projects.map(project => {
                             return (
-                                <div key={project.id} className='rounded  border-opacity-10'>
-                                    {project.image &&
-                                        <Link href={project.url ?? ''} target='_blank'>
-                                            <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2 aspect-[1200/630]' />
-                                        </Link>
+                                <div key={project.id} className='rounded  border-opacity-10 flex flex-col'>
+                                    {project.image
+                                        ? (
+                                            <Link href={project.url ?? ''} target='_blank'>
+                                                <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2 aspect-[1200/630] object-cover' />
+                                            </Link>
+                                        )
+                                        : (
+                                            <div className='border-white border border-dashed border-opacity-20 aspect-[1200/630] rounded mb-2 bg-white bg-opacity-5 opacity-80'>
+                                            </div>
+                                        )
                                     }
                                     <div className='flex items-center justify-between mb-2'>
                                         {project.url
