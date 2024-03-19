@@ -69,14 +69,14 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
     }
 
     return (
-        <div className='flex flex-col items-center py-4 sm:py-10 text-white text-opacity-80 px-6'>
+        <div className='flex flex-col items-center py-4 sm:py-10 text-white px-6'>
             <div className='flex flex-col sm:flex-row w-full max-w-[844px] mb-4 sm:mb-8 justify-between'>
                 <div className='flex flex-col sm:flex-row items-start sm:items-center mb-4 sm:mb-0'>
                     {/* User's Picture */}
                     <div className='relative'>
                         <Image src={userQuery?.image ?? githubData?.avatar_url ?? '/no-picture.jpg'} alt='avatar' width={120} height={120} className='rounded h-[120px] w-[120px] sm:w-[100px] sm:h-[100px]' />
                         {userQuery?.statusEmoji &&
-                            <div className='absolute bottom-[-4px] right-[-4px] bg-[#5f5f5f] rounded-full h-[24px] w-[24px] text-[18px] shadow flex items-center justify-center'>
+                            <div className='absolute bottom-[-8px] right-[-8px] bg-[#ececec] bg-opacity-0 text-opacity-100 rounded-full h-[28px] w-[28px] text-[26px] rotate-[-6deg] flex items-center justify-center'>
                                 {userQuery.statusEmoji}
                             </div>
                         }
@@ -223,7 +223,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                                 {project.url
                                                     ? (
                                                         <Link href={project.url} target="_blank" className='flex items-center'>
-                                                            <div className='text-sm opacity-90'>{project.name}</div>
+                                                            <div className='text-sm opacity-80'>{project.name}</div>
                                                             <div className='ml-2 opacity-40'>
                                                                 {project.url.includes('github.com')
                                                                     ? (
@@ -298,7 +298,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                                     }
                                                 </div>
                                                 <div className='flex flex-col text-right justify-end'>
-                                                    <div className='text-sm opacity-90'>{experience.company}</div>
+                                                    <div className='text-sm opacity-80'>{experience.company}</div>
                                                     <div className='text-sm opacity-50'>{experience.role}</div>
                                                     <div className='text-sm opacity-50'>
                                                         {experience.startDate ? experience.startDate.toLocaleDateString('en-us', { year: "numeric", month: "short" }) : ''}
