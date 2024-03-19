@@ -10,6 +10,8 @@ import { TRPCReactProvider } from "~/trpc/react";
 import Link from "next/link";
 import { getServerAuthSession } from "~/server/auth";
 import { ourFileRouter } from "~/app/api/uploadthing/core";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 export const metadata = {
   title: "AboutMe.dev",
@@ -61,6 +63,7 @@ export default async function RootLayout({
           </header>
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
           {children}
+          <ToastContainer />
           <Analytics />
         </TRPCReactProvider>
       </body>

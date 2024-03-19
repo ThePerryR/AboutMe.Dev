@@ -8,7 +8,9 @@ import { api } from "~/trpc/react";
 const Location = ({ initialRegion, initialLocation }: { initialRegion?: string, initialLocation?: string }) => {
     const [region, setRegion] = useState(initialRegion)
     const [location, setLocation] = useState(initialLocation)
-    const canSave = region !== initialRegion || location !== initialLocation
+    const [initRegion, setInitRegion] = useState(initialRegion)
+    const [initLocation, setInitLocation] = useState(initialLocation)
+    const canSave = region !== initRegion || location !== initLocation
     const updateLocationMutation = api.post.updateLocation.useMutation()
     return (
         <div className='bg-black border-white border rounded border-opacity-10'>
@@ -43,7 +45,9 @@ const Location = ({ initialRegion, initialLocation }: { initialRegion?: string, 
                 <div
                     onClick={async () => {
                         if (canSave) {
-                            updateLocationMutation.mutate({ region, location })
+                            await updateLocationMutation.mutateAsync({ region, location })
+                            setInitRegion(region)
+                            setInitLocation(location)
                         }
                     }}
                     className={className('px-2 h-8 flex items-center text-sm rounded w-auto', (canSave || updateLocationMutation.isLoading) ? 'bg-white text-black cursor-pointer' : 'bg-gray-600 bg-opacity-20 border border-white border-opacity-5 text-white text-opacity-20')}>

@@ -9,7 +9,10 @@ const Links = ({ username, initialTwitter, initialLinkedin, initialWebsite }: { 
     const [twitter, setTwitter] = useState(initialTwitter)
     const [linkedin, setLinkedin] = useState(initialLinkedin)
     const [website, setWebsite] = useState(initialWebsite)
-    const canSave = twitter !== initialTwitter || linkedin !== initialLinkedin || website !== initialWebsite
+    const [initTwitter, setInitTwitter] = useState(initialTwitter)
+    const [initLinkedin, setInitLinkedin] = useState(initialLinkedin)
+    const [initWebsite, setInitWebsite] = useState(initialWebsite)
+    const canSave = twitter !== initTwitter || linkedin !== initLinkedin || website !== initWebsite
     const updateLinksMutation = api.post.updateLinks.useMutation()
     return (
         <div className='bg-black border-white border rounded border-opacity-10'>
@@ -41,11 +44,14 @@ const Links = ({ username, initialTwitter, initialLinkedin, initialWebsite }: { 
                 <div
                     onClick={async () => {
                         if (canSave) {
-                            updateLinksMutation.mutate({
+                            await updateLinksMutation.mutateAsync({
                                 twitterUsername: twitter,
                                 linkedinUsername: linkedin,
                                 website
                             })
+                            setInitTwitter(twitter)
+                            setInitLinkedin(linkedin)
+                            setInitWebsite(website)
                         }
                     }}
                     className={className('px-2 h-8 flex items-center text-sm rounded w-auto', (canSave || updateLinksMutation.isLoading) ? 'bg-white text-black cursor-pointer' : 'bg-gray-600 bg-opacity-20 border border-white border-opacity-5 text-white text-opacity-20')}>

@@ -19,10 +19,37 @@ const Statuses = ({ initialNationality, initialStatus }: { initialNationality: s
                     <div className='text-xl font-medium'>Statuses</div>
                 </div>
 
-                <div className='flex flex-wrap space-x-8 justify-between flex-1'>
+                <div className='flex flex-wrap space-x-8 flex-1'>
+                    <div className='flex items-center space-x-3'>
+                        <div className='font-medium opacity-60'>Flair</div>
+                        <div className='flex items-center'>
+                            <EmojiPicker
+                                emoji={status}
+                                placeholder='😴'
+                                onUpdate={(emoji) => {
+                                    setStatus(emoji);
+                                    updateStatusesMutation.mutate({
+                                        statusEmoji: emoji
+                                    })
+                                }}
+                            />
+                            {status !== undefined &&
+                            <div
+                                onClick={() => {
+                                    setStatus(undefined);
+                                    updateStatusesMutation.mutate({
+                                        statusEmoji: null
+                                    })
+                                }}
+                                className='w-4 h-4 ml-1 hover:text-opacity-80 hover:bg-opacity-40 flex items-center justify-center rounded-full cursor-pointer text-xs bg-white bg-opacity-20 text-white text-opacity-50'>
+                                x
+                            </div>
+                            }
+                        </div>
+                    </div>
                     <div className='flex items-center space-x-3'>
                         <div className='font-medium opacity-60'>Nationality</div>
-                        <EmojiPicker 
+                        <EmojiPicker
                             emoji={nationality}
                             placeholder='🇺🇸'
                             onUpdate={(emoji) => {
@@ -32,19 +59,18 @@ const Statuses = ({ initialNationality, initialStatus }: { initialNationality: s
                                 })
                             }}
                         />
-                    </div>
-                    <div className='flex items-center space-x-3'>
-                        <div className='font-medium opacity-60'>Flair</div>
-                        <EmojiPicker 
-                            emoji={status}
-                            placeholder='😴'
-                            onUpdate={(emoji) => {
-                                setStatus(emoji);
+                        {nationality !== undefined &&
+                        <div
+                            onClick={() => {
+                                setNationality(undefined);
                                 updateStatusesMutation.mutate({
-                                    statusEmoji: emoji
+                                    nationalityEmoji: null
                                 })
                             }}
-                        />
+                            className='w-4 h-4 ml-1 hover:text-opacity-80 hover:bg-opacity-40 flex items-center justify-center rounded-full cursor-pointer text-xs bg-white bg-opacity-20 text-white text-opacity-50'>
+                            x
+                        </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -63,8 +89,8 @@ const EmojiPicker = ({ emoji, placeholder, onUpdate }: { emoji: string | undefin
             </div>
             {open &&
                 <div className='absolute top-full left-50 transform -translate-x-1/2 z-10'>
-                    <Picker 
-                        data={data} 
+                    <Picker
+                        data={data}
                         onEmojiSelect={({ native }: { native: string }) => {
                             onUpdate(native);
                             setOpen(false);

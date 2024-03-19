@@ -9,6 +9,7 @@ import { getServerAuthSession } from '~/server/auth';
 import { api } from "~/trpc/server";
 import Calendar from './Calendar';
 import SkillShow from './Skill';
+import SkillSection from './SkillSection';
 
 async function fetchGithubData(user: { username: string | null } | null, username: string) {
     if (user !== null) {
@@ -172,11 +173,11 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
             </div>
 
             {userQuery &&
-                <div className='w-full max-w-[844px] mt-4 sm:mt-8'>
+                <div className='w-full max-w-[844px] mt-6 sm:mt-8'>
                     <div className='text-sm opacity-70 mb-2'>
                         Current Stack
                     </div>
-                    <div className='flex items-center flex-wrap gap-x-2 gap-y-1'>
+                    <div className='flex items-center flex-wrap gap-x-2 gap-y-1 mb-0'>
                         {userQuery.skills.filter(skill => skill.primary).map(skill => {
                             return (
                                 <div key={skill.id} className='flex items-center border h-9 border-white border-opacity-20 rounded-full px-2 py-1 justify-between mb-2'>
@@ -188,8 +189,9 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                             )
                         })}
                     </div>
+                    <SkillSection skills={userQuery.skills.filter(skill => !skill.primary)} />
 
-                    <div className='text-sm opacity-70 mb-2 mt-10'>
+                    <div className='text-sm opacity-70 mb-2 mt-10 sm:mt-12'>
                         Projects
                     </div>
                     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6'>

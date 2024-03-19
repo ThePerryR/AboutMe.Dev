@@ -29,6 +29,7 @@ const Skills = () => {
 
                     <div className='flex-1'>
                         <SearchList
+                            label="interests"
                             interests={interestsQuery.data ?? []}
                             addInterest={async (name) => {
                                 await addInterestMutation.mutateAsync(name)
@@ -37,6 +38,10 @@ const Skills = () => {
                                 await toggleInterestMutation.mutateAsync(id)
                             }}
                         />
+
+                        {!interestsQuery.isSuccess &&
+                            <div className='text-white text-opacity-30 text-sm'>Loading...</div>
+                        }
                     </div>
                 </div>
             </div>
@@ -45,7 +50,7 @@ const Skills = () => {
 }
 
 
-const SearchList = ({ addInterest, toggleInterest, interests }: {  interests: Interest[], addInterest: (name: string) => Promise<void>, toggleInterest: (id: number) => Promise<void> }) => {
+const SearchList = ({ addInterest, toggleInterest, interests, label = "skills" }: { interests: Interest[], addInterest: (name: string) => Promise<void>, toggleInterest: (id: number) => Promise<void>, label?: string }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [focused, setFocused] = useState(false);
     const [search, setSearch] = useState('');
@@ -72,7 +77,7 @@ const SearchList = ({ addInterest, toggleInterest, interests }: {  interests: In
             <div className='relative'>
                 <input
                     type='text'
-                    placeholder='Search skills'
+                    placeholder={`Search ${label}`}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className='w-full bg-black bg-opacity-5 border border-white border-opacity-10 rounded px-2 py-1 text-sm text-white text-opacity-80'

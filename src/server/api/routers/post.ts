@@ -1,3 +1,4 @@
+import { sqltag } from "@prisma/client/runtime/library";
 import { z } from "zod";
 
 import {
@@ -75,11 +76,11 @@ export const postRouter = createTRPCRouter({
             headline: project.headline,
             isFavorited: project.isFavorited,
             skills: project.skills.map(skill => {
-                return ({
-                  id: skill.id,
-                  name: skill.name,
-                  type: skill.type,
-                  image: skill.image
+              return ({
+                id: skill.id,
+                name: skill.name,
+                type: skill.type,
+                image: skill.image
               })
             })
           })
@@ -318,7 +319,7 @@ export const postRouter = createTRPCRouter({
       });
     }),
 
-    updateSkill: protectedProcedure
+  updateSkill: protectedProcedure
     .input(z.object({
       id: z.number(),
       type: z.string().optional()
@@ -481,7 +482,7 @@ export const postRouter = createTRPCRouter({
       })
     }),
 
-    fetchUsers: protectedProcedure
+  fetchUsers: protectedProcedure
     .query(async ({ ctx }) => {
       const users = await ctx.db.user.findMany({
         where: { id: { not: ctx.session.user.id } }
@@ -504,12 +505,30 @@ export const postRouter = createTRPCRouter({
       limit: z.number().optional()
     }))
     .query(async ({ ctx, input }) => {
+      const interestIds = await ctx.db.$queryRaw<{interestId: number}[]>(sqltag`SELECT A as interestId, COUNT(B) as count
+                                              FROM _InterestToUser
+                                              GROUP BY A
+                                              ORDER BY COUNT(B) DESC`);
+
+      // Filter out the excluded IDs and limit the number of IDs to include
+      const filteredInterestIds = interestIds
+        .map((row) => row.interestId)
+        .filter((id) => !input.exclude?.includes(id))
+        .slice(0, input.limit ?? interestIds.length);
+
+      // Then, fetch the interest details for these IDs in the order of usage frequency
+      if (filteredInterestIds.length === 0) {
+        return [];
+      }
+
       return ctx.db.interest.findMany({
         where: {
-          name: { contains: input.search },
-          id: { notIn: input.exclude }
+          id: { in: filteredInterestIds },
+          name: { contains: input.search }
         },
-        take: input.limit
+        orderBy: {
+          name: 'asc' // Or any other ordering you prefer
+        }
       });
     }),
   updateInterest: protectedProcedure
@@ -527,8 +546,8 @@ export const postRouter = createTRPCRouter({
     }),
   updateStatuses: protectedProcedure
     .input(z.object({
-      nationalityEmoji: z.string().optional(),
-      statusEmoji: z.string().optional()
+      nationalityEmoji: z.string().optional().nullable(),
+      statusEmoji: z.string().optional().nullable()
     }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db.user.update({
@@ -536,6 +555,16 @@ export const postRouter = createTRPCRouter({
         data: {
           nationalityEmoji: input.nationalityEmoji,
           statusEmoji: input.statusEmoji
+        }
+      })
+    }),
+
+  clearProfilePicture: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      return ctx.db.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          image: null
         }
       })
     })

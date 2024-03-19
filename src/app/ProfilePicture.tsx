@@ -6,10 +6,16 @@ import { set } from 'zod'
 
 import { UploadButton } from '~/utils/uploadthing'
 import UploadButtonWrapper from './_components/upload-button'
+import { api } from '~/trpc/react'
 
-const ProfilePicture = ({ initialImage }: { initialImage?: string }) => {
+
+
+const ProfilePicture = ({ initialImage, emoji }: { initialImage?: string, emoji: string }) => {
     const [image, setImage] = useState(initialImage)
     const [uploadError, setUploadError] = useState<string | undefined>(undefined)
+    const clearProfilePictureMutation = api.post.clearProfilePicture.useMutation()
+    // rotation between -20 and 20
+    const randomRotation = Math.floor(Math.random() * 40) - 20
     return (
         <div className='bg-white bg-opacity-5 border-white border rounded border-opacity-10'>
             <div className='flex p-4 space-x-10'>
@@ -46,8 +52,17 @@ const ProfilePicture = ({ initialImage }: { initialImage?: string }) => {
                                 <Image src={image} alt='avatar' width={120} height={120} className='rounded w-full h-full object-cover' />
                             )
                             : (
-                                <div className='w-20 h-20 bg-gray-500 rounded-full'></div>
+                                <div className='w-[120px] h-[120px] bg-gray-500 rounded relative overflow-hidden'>
+                                    <div className={`absolute text-[96px] top-[50%] left-[50%] `} style={{ transform: `rotate(${randomRotation}deg) translate(-50%, -50%)` }}>
+                                        {emoji}
+                                    </div>
+                                </div>
                             )
+                        }
+                        {image !== undefined &&
+                        <div onClick={() => clearProfilePictureMutation.mutate()} className='cursor-pointer text-red-400 hover:text-red-500 font-medium text-sm'>
+                            Clear
+                        </div>
                         }
                     </div>
                 </div>

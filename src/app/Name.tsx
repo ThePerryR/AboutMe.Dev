@@ -7,7 +7,8 @@ import { api } from "~/trpc/react";
 
 const Name = ({ initialName }: { initialName?: string }) => {
     const [name, setName] = useState(initialName)
-    const canSave = name !== initialName
+    const [initial, setInitial] = useState(initialName)
+    const canSave = name !== initial
     const updateNameMutation = api.post.updateName.useMutation()
     return (
         <div className='bg-black border-white border rounded border-opacity-10'>
@@ -22,7 +23,8 @@ const Name = ({ initialName }: { initialName?: string }) => {
                 <div
                     onClick={async () => {
                         if (canSave && name) {
-                            updateNameMutation.mutate(name)
+                            await updateNameMutation.mutateAsync(name)
+                            setInitial(name)
                         }
                     }}
                     className={className('px-2 h-8 flex items-center text-sm rounded w-auto', (canSave || updateNameMutation.isLoading) ? 'bg-white text-black cursor-pointer' : 'bg-gray-600 bg-opacity-20 border border-white border-opacity-5 text-white text-opacity-20')}>

@@ -14,6 +14,7 @@ import Location from "../Location";
 import Links from "../Links";
 import Statuses from "../Statuses";
 import profile from './profile.png'
+const faceEmojis = ['🤩', '🥳', '🥸', '🤪', '🤯', '🤠', '😵‍💫', '🫨', '🙄', '🤔', '😬', '😶', '😀', '😃', '😄', '😁', '😆', '🫥', '🤓', '🦊', '🐼']
 
 export default async function Home() {
   noStore();
@@ -49,27 +50,27 @@ export default async function Home() {
               </p>
             </div>
             <div className='hidden sm:block w-[524px] shrink-0 relative'>
-              <div style={{right: 'Calc(100% + -14px)'}} className='absolute top-[128px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
+              <div style={{ right: 'Calc(100% + -14px)' }} className='absolute top-[128px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
                 Share your Github contribution chart.
                 <span className='absolute right-[-30px] text-3xl font-bold text-[#0079de] top-1/2 transform -translate-y-1/2 mt-[-6px]'>⟶</span>
               </div>
-              <div style={{right: 'Calc(100% + -14px)'}} className='absolute top-[232px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
+              <div style={{ right: 'Calc(100% + -14px)' }} className='absolute top-[232px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
                 Showcase the tools you use most.
                 <span className='absolute right-[-30px] text-3xl font-bold text-[#0079de] top-1/2 transform -translate-y-1/2 mt-[-6px]'>⟶</span>
               </div>
-              <div style={{right: 'Calc(100% + -14px)'}} className='absolute top-[348px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
+              <div style={{ right: 'Calc(100% + -14px)' }} className='absolute top-[348px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
                 Present your best work...
                 <span className='absolute right-[-30px] text-3xl font-bold text-[#0079de] top-1/2 transform -translate-y-1/2 mt-[-6px]'>⟶</span>
               </div>
-              <div style={{right: 'Calc(100% + -14px)'}} className='absolute top-[426px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
+              <div style={{ right: 'Calc(100% + -14px)' }} className='absolute top-[426px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
                 ...and which skills you used.
                 <span className='absolute right-[-30px] text-3xl font-bold text-[#0079de] top-1/2 transform -translate-y-1/2 mt-[-6px]'>⟶</span>
               </div>
-              <div style={{right: 'Calc(100% + -14px)'}} className='absolute top-[658px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
+              <div style={{ right: 'Calc(100% + -14px)' }} className='absolute top-[658px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
                 List our your experience.
                 <span className='absolute right-[-30px] text-3xl font-bold text-[#0079de] top-1/2 transform -translate-y-1/2 mt-[-6px]'>⟶</span>
               </div>
-              <div style={{right: 'Calc(100% + -14px)'}} className='absolute top-[921px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
+              <div style={{ right: 'Calc(100% + -14px)' }} className='absolute top-[921px]  text-sm bg-[#0079de] text-white text-opacity-90 w-full max-w-[140px] py-1 px-2 rounded text-left'>
                 Share whats important to you.
                 <span className='absolute right-[-30px] text-3xl font-bold text-[#0079de] top-1/2 transform -translate-y-1/2 mt-[-6px]'>⟶</span>
               </div>
@@ -85,9 +86,10 @@ export default async function Home() {
   if (!userQuery) {
     return null;
   }
+  const randomEmoji = faceEmojis[Math.floor(Math.random() * faceEmojis.length)]
   return (
     <>
-      <ProfilePicture initialImage={session.user.image ?? undefined} />
+      <ProfilePicture emoji={randomEmoji ?? '😀'} initialImage={session.user.image ?? undefined} />
       <Statuses initialNationality={userQuery.nationalityEmoji} initialStatus={userQuery.statusEmoji} />
       <Name initialName={session.user.name ?? undefined} />
       <Location initialRegion={userQuery.region ?? undefined} initialLocation={userQuery.location ?? undefined} />
