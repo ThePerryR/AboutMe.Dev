@@ -48,7 +48,7 @@ const Statuses = ({ initialNationality, initialStatus }: { initialNationality: s
                         </div>
                     </div>
                     <div className='flex items-center space-x-3'>
-                        <div className='font-medium opacity-60'>Nationality</div>
+                        <div className='font-medium opacity-60'>Flag</div>
                         <EmojiPicker
                             emoji={nationality}
                             placeholder='🇺🇸'
