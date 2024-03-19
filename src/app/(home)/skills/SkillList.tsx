@@ -25,6 +25,11 @@ const SkillList = ({ allSkills, skills, addSkill, toggleSkill }: { allSkills: Sk
         };
     }, []);
 
+    const languages = skills.filter(skill => skill.type === 'language');
+    const library = skills.filter(skill => skill.type === 'library');
+    const framework = skills.filter(skill => skill.type === 'framework');
+    const tool = skills.filter(skill => skill.type === 'tool');
+
     return (
         <div ref={containerRef}>
             <div className='relative'>
@@ -74,7 +79,30 @@ const SkillList = ({ allSkills, skills, addSkill, toggleSkill }: { allSkills: Sk
                     </div>
                 )}
             </div>
-            <div className='flex mt-2 flex-wrap gap-2'>
+
+            <div className='w-full space-y-4 mt-4'>
+                {languages.length > 0 &&
+                    <SkillListt skills={languages} toggleSkill={(skill) => toggleSkill(skill)} label='Languages' />
+                }
+                {library.length > 0 &&
+                    <SkillListt skills={library} toggleSkill={(skill) => toggleSkill(skill)} label='Libraries' />
+                }
+                {framework.length > 0 &&
+                    <SkillListt skills={framework} toggleSkill={(skill) => toggleSkill(skill)} label='Frameworks' />
+                }
+                {tool.length > 0 &&
+                    <SkillListt skills={tool} toggleSkill={(skill) => toggleSkill(skill)} label='Tools' />
+                }
+            </div>
+        </div>
+    );
+}
+
+const SkillListt = ({ skills, toggleSkill, label }: { skills: Skill[], toggleSkill: (id: number) => Promise<void>, label: string }) => {
+    return (
+        <div>
+            <div className='text-white text-opacity-50 text-sm'>{label}</div>
+            <div className='flex mt-1 flex-wrap gap-2'>
                 {skills.map(skill => (
                     <div
                         key={skill.id}
@@ -96,7 +124,6 @@ const SkillList = ({ allSkills, skills, addSkill, toggleSkill }: { allSkills: Sk
                 ))}
             </div>
         </div>
-    );
+    )
 }
-
 export default SkillList;

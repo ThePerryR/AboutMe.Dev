@@ -171,6 +171,23 @@ export const postRouter = createTRPCRouter({
         },
       });
     }),
+  deleteExperience: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ ctx, input }) => {
+      const experience = await ctx.db.experience.findUnique({
+        where: { id: input }
+      })
+      if (!experience) {
+        throw new Error('Experience not found')
+      }
+      if (experience.createdById !== ctx.session.user.id) {
+        throw new Error('You do not have permission to delete this experience')
+      }
+      await ctx.db.experience.delete({
+        where: { id: input }
+      })
+      return true
+    }),
 
   createProject: protectedProcedure
     .mutation(async ({ ctx }) => {
@@ -505,7 +522,7 @@ export const postRouter = createTRPCRouter({
       limit: z.number().optional()
     }))
     .query(async ({ ctx, input }) => {
-      const interestIds = await ctx.db.$queryRaw<{interestId: number}[]>(sqltag`SELECT A as interestId, COUNT(B) as count
+      const interestIds = await ctx.db.$queryRaw<{ interestId: number }[]>(sqltag`SELECT A as interestId, COUNT(B) as count
                                               FROM _InterestToUser
                                               GROUP BY A
                                               ORDER BY COUNT(B) DESC`);
@@ -514,7 +531,6 @@ export const postRouter = createTRPCRouter({
       const filteredInterestIds = interestIds
         .map((row) => row.interestId)
         .filter((id) => !input.exclude?.includes(id))
-        .slice(0, input.limit ?? interestIds.length);
 
       // Then, fetch the interest details for these IDs in the order of usage frequency
       if (filteredInterestIds.length === 0) {
@@ -527,8 +543,9 @@ export const postRouter = createTRPCRouter({
           name: { contains: input.search }
         },
         orderBy: {
-          name: 'asc' // Or any other ordering you prefer
-        }
+          // name: 'asc' // Or any other ordering you prefer
+        },
+        take: input.limit
       });
     }),
   updateInterest: protectedProcedure

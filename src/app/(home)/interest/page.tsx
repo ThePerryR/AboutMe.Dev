@@ -32,8 +32,9 @@ const Skills = () => {
                             label="interests"
                             interests={interestsQuery.data ?? []}
                             addInterest={async (name) => {
-                                await addInterestMutation.mutateAsync(name)
+                                addInterestMutation.mutate(name)
                             }}
+                            isAdding={addInterestMutation.isLoading || (interestsQuery.isSuccess && interestsQuery.isLoading)}
                             toggleInterest={async (id) => {
                                 await toggleInterestMutation.mutateAsync(id)
                             }}
@@ -50,7 +51,7 @@ const Skills = () => {
 }
 
 
-const SearchList = ({ addInterest, toggleInterest, interests, label = "skills" }: { interests: Interest[], addInterest: (name: string) => Promise<void>, toggleInterest: (id: number) => Promise<void>, label?: string }) => {
+const SearchList = ({ addInterest, toggleInterest, interests, label = "skills", isAdding }: { interests: Interest[], addInterest: (name: string) => Promise<void>, toggleInterest: (id: number) => Promise<void>, label?: string, isAdding: boolean }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [focused, setFocused] = useState(false);
     const [search, setSearch] = useState('');
@@ -89,6 +90,7 @@ const SearchList = ({ addInterest, toggleInterest, interests, label = "skills" }
                             <div
                                 key={skill.id}
                                 onClick={() => {
+                                    setFocused(false);
                                     void toggleInterest(skill.id);
                                 }}
                                 className='px-2 py-1 hover:bg-white hover:bg-opacity-5 cursor-pointer'>
@@ -112,18 +114,29 @@ const SearchList = ({ addInterest, toggleInterest, interests, label = "skills" }
             </div>
             <div className='flex mt-2 flex-wrap gap-2'>
                 {interests.map(skill => (
-                    <div
-                        key={skill.id}
-                        onClick={() => {
-                            void toggleInterest(skill.id);
-                        }}
-                        className='cursor-pointer flex items-center hover:opacity-50 space-x-2 border border-white border-opacity-20 px-2 py-1 rounded-full text-white text-opacity-70 bg-white bg-opacity-5 text-xs'>
-                        <div>{skill.image ? `${skill.image} ${skill.name}` : skill.name}</div>
-                    </div>
+                    <Interest key={skill.id} interest={skill} toggleInterest={toggleInterest} />
                 ))}
+                {isAdding &&
+                <div className='border border-white border-opacity-20 w-[100px] animate-pulse h-6 rounded-full bg-white bg-opacity-5'>
+                </div>
+                }
             </div>
         </div>
     );
+}
+
+const Interest = ({ interest, toggleInterest }: { interest: Interest, toggleInterest: (id: number) => Promise<void> }) => {
+    const [removing, setRemoving] = useState(false);
+    return (
+        <div
+            onClick={async () => {
+                setRemoving(true);
+                await toggleInterest(interest.id);
+            }}
+            className='cursor-pointer flex items-center hover:opacity-50 space-x-2 border border-white border-opacity-20 px-2 py-1 rounded-full text-white text-opacity-70 bg-white bg-opacity-5 text-xs'>
+            {removing ? 'Removing...' : <div>{interest.image ? `${interest.image} ${interest.name}` : interest.name}</div>}
+        </div>
+    )
 }
 
 export default Skills

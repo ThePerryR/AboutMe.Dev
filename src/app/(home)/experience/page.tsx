@@ -6,6 +6,7 @@ import Image from 'next/image'
 import React, { useState } from 'react'
 import { api } from '~/trpc/react'
 import { UploadButton } from '~/utils/uploadthing'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 const Experience = () => {
     const experienceQuery = api.post.fetchExperiences.useQuery()
@@ -38,6 +39,10 @@ const Experience = () => {
                             <ExperienceCard
                                 key={experience.id}
                                 experience={experience}
+                                refetch={() => {
+                                    void experienceQuery.refetch()
+                                
+                                }}
                             />
                         ))}
                     </div>
@@ -46,7 +51,7 @@ const Experience = () => {
     )
 }
 
-const ExperienceCard = ({ experience }: { experience: Experience }) => {
+const ExperienceCard = ({ experience, refetch }: { experience: Experience, refetch: () => void }) => {
     const [role, setRole] = useState(experience.role)
     const [company, setCompany] = useState(experience.company)
     const [companyLogo, setCompanyLogo] = useState(experience.companyLogo)
@@ -56,6 +61,11 @@ const ExperienceCard = ({ experience }: { experience: Experience }) => {
     const [endYear, setEndYear] = useState(experience.endDate ? new Date(experience.endDate).getFullYear() : undefined)
     const [isCurrent, setIsCurrent] = useState(experience.isCurrent)
     const updateExperienceMutation = api.post.updateExperience.useMutation()
+    const deleteExperienceMutation = api.post.deleteExperience.useMutation({
+        onSuccess: () => {
+            refetch()
+        }
+    })
     const canSave = role !== experience.role || company !== experience.company || startMonth !== (experience.startDate ? new Date(experience.startDate).getMonth() : undefined) || startYear !== (experience.startDate ? new Date(experience.startDate).getFullYear() : undefined) || endMonth !== (experience.endDate ? new Date(experience.endDate).getMonth() : undefined) || endYear !== (experience.endDate ? new Date(experience.endDate).getFullYear() : undefined) || isCurrent !== experience.isCurrent
     return (
         <div className='bg-black border-white border rounded border-opacity-10'>
@@ -178,6 +188,28 @@ const ExperienceCard = ({ experience }: { experience: Experience }) => {
                 </div>
             </div>
             <div className='flex justify-end p-4'>
+                <DropdownMenu.Root>
+                    <DropdownMenu.Trigger className='px-2 mr-2'>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                            <path fillRule="evenodd" d="M4.5 12a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm6 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm6 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" clipRule="evenodd" />
+                        </svg>
+                    </DropdownMenu.Trigger>
+
+                    <DropdownMenu.Portal>
+                        <DropdownMenu.Content className='bg-white py-2 rounded'>
+                            <DropdownMenu.Item
+                                onClick={() => {
+                                    if (confirm("Are you sure you want to delete this experience?")) {
+                                        deleteExperienceMutation.mutate(experience.id)
+                                    }
+                                }}
+                                className='px-3 text-red-500 font-medium text-sm cursor-pointer hover:bg-gray-200 h-8 flex items-center'>
+                                <div>Delete Experience</div>
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Arrow className='fill-white' />
+                        </DropdownMenu.Content>
+                    </DropdownMenu.Portal>
+                </DropdownMenu.Root>
                 <div
                     onClick={async () => {
                         updateExperienceMutation.mutate({
