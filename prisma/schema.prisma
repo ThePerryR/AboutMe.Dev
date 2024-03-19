@@ -34,6 +34,7 @@ model Project {
     image  String?
     status String?
     headline String?
+    description String? @db.Text
     isFavorited Boolean @default(false)
 
     createdAt DateTime @default(now())
@@ -50,7 +51,7 @@ model Project {
 model Experience {
     id     Int      @id @default(autoincrement())
     role  String?
-    description String?
+    description String? @db.Text
     startDate DateTime?
     endDate DateTime?
     company String?

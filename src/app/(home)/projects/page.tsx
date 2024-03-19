@@ -5,10 +5,12 @@ import { Skill, type Project } from '@prisma/client'
 import classNames from 'classnames'
 import Image from 'next/image'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import * as Tooltip from '@radix-ui/react-tooltip';
 
 import { api } from '~/trpc/react'
 import { UploadButton } from '~/utils/uploadthing'
 import SkillList from '../skills/SkillList'
+
 
 const Projects = () => {
     const [favoriteCount, setFavoriteCount] = React.useState(0)
@@ -61,12 +63,13 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Projec
     const [url, setUrl] = React.useState(project.url)
     const [status, setStatus] = React.useState(project.status)
     const [headline, setHeadline] = React.useState(project.headline)
+    const [description, setDescription] = React.useState(project.description)
     const [skills, setSkills] = React.useState(project.skills)
 
     const [image, setImage] = React.useState(project.image)
     const [isFavorited, setIsFavorited] = React.useState(project.isFavorited)
 
-    const canSave = name !== project.name || url !== project.url || status !== project.status || headline !== project.headline || image !== project.image
+    const canSave = name !== project.name || url !== project.url || status !== project.status || headline !== project.headline || image !== project.image || description !== project.description
     const updateProjectMutation = api.post.updateProject.useMutation({})
     const deleteProjectMutation = api.post.deleteProject.useMutation({
         onSuccess: () => {
@@ -117,6 +120,14 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Projec
                         value={headline ?? ''}
                         placeholder='"Recipe app for busy people"'
                         onChange={(e) => setHeadline(e.target.value)}
+                        className='bg-transparent placeholder:opacity-30 border-white border rounded border-opacity-10 p-2 w-full'
+                    />
+                </div>
+                <div className='flex'>
+                    <div className='text-sm mb-1 w-[120px]'>Description</div>
+                    <textarea
+                        value={description ?? ''}
+                        onChange={(e) => setDescription(e.target.value)}
                         className='bg-transparent placeholder:opacity-30 border-white border rounded border-opacity-10 p-2 w-full'
                     />
                 </div>
@@ -197,55 +208,74 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Projec
                 </div>
             </div>
             <div className='flex p-4 justify-between items-center'>
-                <div
-                    className={classNames('group', (!canFavorite && !isFavorited) ? 'cursor-not-allowed' : 'cursor-pointer', { 'opacity-50': (!canFavorite && !isFavorited) })}
-                    onClick={() => {
-                        if (!isFavorited && !canFavorite) return
-                        toggleProjectFavoriteMutation.mutate(project.id)
-                        setIsFavorited(!isFavorited)
-                    }}>
-                    {isFavorited
-                        ? (
-                            <>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="currentColor"
-                                    className="w-6 h-6 group-hover:hidden text-blue-500">
-                                    <path fillRule="evenodd" d="M6.32 2.577a49.255 49.255 0 0 1 11.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 0 1-1.085.67L12 18.089l-7.165 3.583A.75.75 0 0 1 3.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93Z" clipRule="evenodd" />
-                                </svg>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="currentColor"
-                                    className="w-6 h-6 hidden group-hover:flex text-blue-500">
-                                    <path d="M3.53 2.47a.75.75 0 0 0-1.06 1.06l18 18a.75.75 0 1 0 1.06-1.06l-18-18ZM20.25 5.507v11.561L5.853 2.671c.15-.043.306-.075.467-.094a49.255 49.255 0 0 1 11.36 0c1.497.174 2.57 1.46 2.57 2.93ZM3.75 21V6.932l14.063 14.063L12 18.088l-7.165 3.583A.75.75 0 0 1 3.75 21Z" />
-                                </svg>
+                <Tooltip.Provider delayDuration={(!isFavorited && !canFavorite) ? 100 : 500}>
+                    <Tooltip.Root>
+                        <Tooltip.Trigger asChild>
+                            <div
+                                className={classNames('group', (!canFavorite && !isFavorited) ? 'cursor-not-allowed' : 'cursor-pointer', { 'opacity-50': (!canFavorite && !isFavorited) })}
+                                onClick={() => {
+                                    if (!isFavorited && !canFavorite) return
+                                    toggleProjectFavoriteMutation.mutate(project.id)
+                                    setIsFavorited(!isFavorited)
+                                }}>
+                                {isFavorited
+                                    ? (
+                                        <>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                                className="w-6 h-6 group-hover:hidden text-blue-500">
+                                                <path fillRule="evenodd" d="M6.32 2.577a49.255 49.255 0 0 1 11.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 0 1-1.085.67L12 18.089l-7.165 3.583A.75.75 0 0 1 3.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93Z" clipRule="evenodd" />
+                                            </svg>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                                className="w-6 h-6 hidden group-hover:flex text-blue-500">
+                                                <path d="M3.53 2.47a.75.75 0 0 0-1.06 1.06l18 18a.75.75 0 1 0 1.06-1.06l-18-18ZM20.25 5.507v11.561L5.853 2.671c.15-.043.306-.075.467-.094a49.255 49.255 0 0 1 11.36 0c1.497.174 2.57 1.46 2.57 2.93ZM3.75 21V6.932l14.063 14.063L12 18.088l-7.165 3.583A.75.75 0 0 1 3.75 21Z" />
+                                            </svg>
 
-                            </>
-                        )
-                        : (
-                            <>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth="1.5"
-                                    stroke="currentColor"
-                                    className={classNames("w-6 h-6", canFavorite ? 'group-hover:hidden' : '')}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
-                                </svg>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="currentColor"
-                                    className={classNames("hidden w-6 h-6", canFavorite ? 'group-hover:flex' : '')}>
-                                    <path fillRule="evenodd" d="M6.32 2.577a49.255 49.255 0 0 1 11.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 0 1-1.085.67L12 18.089l-7.165 3.583A.75.75 0 0 1 3.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93Z" clipRule="evenodd" />
-                                </svg>
-                            </>
-                        )
-                    }
-                </div>
+                                        </>
+                                    )
+                                    : (
+                                        <>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth="1.5"
+                                                stroke="currentColor"
+                                                className={classNames("w-6 h-6", canFavorite ? 'group-hover:hidden' : '')}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+                                            </svg>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                                className={classNames("hidden w-6 h-6", canFavorite ? 'group-hover:flex' : '')}>
+                                                <path fillRule="evenodd" d="M6.32 2.577a49.255 49.255 0 0 1 11.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 0 1-1.085.67L12 18.089l-7.165 3.583A.75.75 0 0 1 3.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93Z" clipRule="evenodd" />
+                                            </svg>
+                                        </>
+                                    )
+                                }
+                            </div>
+                        </Tooltip.Trigger>
+                        <Tooltip.Portal>
+                            <Tooltip.Content className='bg-white'>
+                                <div className='text-xs p-2'>
+                                    {isFavorited
+                                        ? 'Unfavorite'
+                                        : canFavorite
+                                            ? 'Favorite'
+                                            : 'You can only favorite 6 projects'
+                                    }
+                                </div>
+                                <Tooltip.Arrow className='fill-white'/>
+                            </Tooltip.Content>
+                        </Tooltip.Portal>
+                    </Tooltip.Root>
+                </Tooltip.Provider>
                 <div className='flex items-center'>
                     <DropdownMenu.Root>
                         <DropdownMenu.Trigger className='px-2 mr-2'>
@@ -277,6 +307,7 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Projec
                                 url: url ?? undefined,
                                 status: status ?? undefined,
                                 headline: headline ?? undefined,
+                                description: description ?? undefined,
                             })
                         }}
                         className={classNames('px-2 h-8 flex items-center text-sm rounded w-auto', (canSave || updateProjectMutation.isLoading) ? 'bg-white text-black cursor-pointer' : 'bg-gray-600 bg-opacity-20 border border-white border-opacity-5 text-white text-opacity-20')}>

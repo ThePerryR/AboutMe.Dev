@@ -54,6 +54,7 @@ const Experience = () => {
 const ExperienceCard = ({ experience, refetch }: { experience: Experience, refetch: () => void }) => {
     const [role, setRole] = useState(experience.role)
     const [company, setCompany] = useState(experience.company)
+    const [description, setDescription] = useState(experience.description)
     const [companyLogo, setCompanyLogo] = useState(experience.companyLogo)
     const [startMonth, setStartMonth] = useState(experience.startDate ? new Date(experience.startDate).getMonth() : undefined)
     const [startYear, setStartYear] = useState(experience.startDate ? new Date(experience.startDate).getFullYear() : undefined)
@@ -66,7 +67,7 @@ const ExperienceCard = ({ experience, refetch }: { experience: Experience, refet
             refetch()
         }
     })
-    const canSave = role !== experience.role || company !== experience.company || startMonth !== (experience.startDate ? new Date(experience.startDate).getMonth() : undefined) || startYear !== (experience.startDate ? new Date(experience.startDate).getFullYear() : undefined) || endMonth !== (experience.endDate ? new Date(experience.endDate).getMonth() : undefined) || endYear !== (experience.endDate ? new Date(experience.endDate).getFullYear() : undefined) || isCurrent !== experience.isCurrent
+    const canSave = role !== experience.role || company !== experience.company || startMonth !== (experience.startDate ? new Date(experience.startDate).getMonth() : undefined) || startYear !== (experience.startDate ? new Date(experience.startDate).getFullYear() : undefined) || endMonth !== (experience.endDate ? new Date(experience.endDate).getMonth() : undefined) || endYear !== (experience.endDate ? new Date(experience.endDate).getFullYear() : undefined) || isCurrent !== experience.isCurrent || description !== experience.description
     return (
         <div className='bg-black border-white border rounded border-opacity-10'>
             <div className='flex flex-col p-4 space-y-4 bg-white bg-opacity-5'>
@@ -186,6 +187,18 @@ const ExperienceCard = ({ experience, refetch }: { experience: Experience, refet
                         </div>
                     </div>
                 </div>
+
+                <div className='flex'>
+                    <div className='text-sm mb-1 w-[120px] shrink-0'>Description</div>
+                    <div className='flex-1'>
+                        <textarea 
+                            value={description ?? ''}
+                            placeholder='What does this place do, what you did, and why you left.'
+                            onChange={(e) => setDescription(e.target.value)}
+                            className='bg-transparent border-white border rounded border-opacity-10 p-2 w-full h-24'
+                        />
+                    </div>
+                </div>
             </div>
             <div className='flex justify-end p-4'>
                 <DropdownMenu.Root>
@@ -216,6 +229,7 @@ const ExperienceCard = ({ experience, refetch }: { experience: Experience, refet
                             id: experience.id,
                             role: role ?? undefined,
                             company: company ?? undefined,
+                            description: description ?? undefined,
                             startDate: startMonth && startYear ? new Date(startYear, startMonth).toISOString() : undefined,
                             endDate: isCurrent ? undefined : endMonth && endYear ? new Date(endYear, endMonth).toISOString() : undefined,
                             isCurrent

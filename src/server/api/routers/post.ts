@@ -153,6 +153,7 @@ export const postRouter = createTRPCRouter({
   updateExperience: protectedProcedure
     .input(z.object({
       id: z.number(),
+      description: z.string().optional(),
       role: z.string().optional(),
       company: z.string().optional(),
       startDate: z.string().optional(),
@@ -164,6 +165,7 @@ export const postRouter = createTRPCRouter({
         where: { id: input.id },
         data: {
           role: input.role,
+          description: input.description,
           company: input.company,
           startDate: input.startDate,
           endDate: input.endDate,
@@ -237,6 +239,7 @@ export const postRouter = createTRPCRouter({
       name: z.string().optional(),
       url: z.string().optional(),
       status: z.string().optional(),
+      description: z.string().optional(),
       headline: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
@@ -246,6 +249,7 @@ export const postRouter = createTRPCRouter({
           name: input.name,
           url: input.url,
           status: input.status,
+          description: input.description,
           headline: input.headline
         },
       });
