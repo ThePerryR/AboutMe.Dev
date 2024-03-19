@@ -32,7 +32,7 @@ export default async function RootLayout({
   const rotation = Math.floor(Math.random() * 60) - 30
   return (
     <html lang="en">
-      <body className={`font-sans ${GeistSans.variable}  ${GeistMono.variable} min-h-screen bg-black`}>
+      <body className={`font-sans ${GeistSans.variable}  ${GeistMono.variable} min-h-screen bg-black overflow-x-hidden`}>
         <TRPCReactProvider>
           <header className="max-w-[1608px] h-[56px] sm:h-[120px] mx-auto flex items-center justify-between px-4 bg-[#010101] text-white">
             <Link href="/" className='text-2xl flex items-center'>
