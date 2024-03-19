@@ -38,11 +38,11 @@ const Navigation = ({ username }: { username: string }) => {
                             <div className={classNames(pathname === '/projects' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Projects</div>
                         </Link>
                     </div>
-                    <div>
+                    {/* <div>
                         <Link href='/calendar'>
                             <div className={classNames(pathname === '/calendar' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Calendar</div>
                         </Link>
-                    </div>
+                    </div> */}
                 </div>
 
                 <Link href={`/${username}`} target='_blank' className='flex items-center space-x-1 group'>

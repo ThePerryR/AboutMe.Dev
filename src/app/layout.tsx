@@ -42,7 +42,7 @@ export default async function RootLayout({
                   {randomEmoji}
                 </div>
               </div>
-              <span className='opacity-50 text-base ml-2'>about me . <span className='font-mono'>dev</span></span>
+              <span className='opacity-50 text-base ml-2 font-thin'>about<span className='font-medium'>me</span>.<span className='font-mono font-thin'>dev</span></span>
             </Link>
 
             {!session?.user
