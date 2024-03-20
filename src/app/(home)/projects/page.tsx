@@ -123,14 +123,14 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Projec
                         className='bg-transparent placeholder:opacity-30 border-white border rounded border-opacity-10 p-2 w-full'
                     />
                 </div>
-                <div className='flex'>
+                {/* <div className='flex'>
                     <div className='text-sm mb-1 w-[120px]'>Description</div>
                     <textarea
                         value={description ?? ''}
                         onChange={(e) => setDescription(e.target.value)}
                         className='bg-transparent placeholder:opacity-30 border-white border rounded border-opacity-10 p-2 w-full'
                     />
-                </div>
+                </div> */}
                 <div className='flex'>
                     <div className='text-sm mb-1 w-[120px]'>Status</div>
                     <select

@@ -73,6 +73,7 @@ export const postRouter = createTRPCRouter({
             url: project.url,
             image: project.image,
             status: project.status,
+            description: project.description,
             headline: project.headline,
             isFavorited: project.isFavorited,
             skills: project.skills.map(skill => {
@@ -99,6 +100,7 @@ export const postRouter = createTRPCRouter({
             company: experience.company,
             companyLogo: experience.companyLogo,
             startDate: experience.startDate,
+            description: experience.description,
             endDate: experience.endDate,
             isCurrent: experience.isCurrent
           })

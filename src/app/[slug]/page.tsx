@@ -1,4 +1,4 @@
-import { type Skill, User } from '@prisma/client';
+import { type Skill, User, Project } from '@prisma/client';
 import classNames from 'classnames';
 import { type Session } from 'next-auth';
 import Image from 'next/image';
@@ -10,6 +10,7 @@ import { api } from "~/trpc/server";
 import Calendar from './Calendar';
 import SkillShow from './Skill';
 import SkillSection from './SkillSection';
+import MoreProjects from './MoreProjects';
 
 async function fetchGithubData(user: { username: string | null } | null, username: string) {
     if (user !== null) {
@@ -84,7 +85,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     <div className='mt-2 sm:mt-0 sm:ml-4'>
                         {/* Name */}
                         <div className='flex'>
-                            <h1 className={classNames('text-2xl sm:text-4xl font-bold mb-1', (userQuery?.name ?? githubData?.name) ? '' : 'opacity-50')}>{userQuery?.name ?? githubData?.name ?? 'No name'}</h1>
+                            <h1 className={classNames('text-2xl sm:text-4xl font-bold mb-1 ', (userQuery?.name ?? githubData?.name) ? 'opacity-90' : 'opacity-50')}>{userQuery?.name ?? githubData?.name ?? 'No name'}</h1>
                             {userQuery?.nationalityEmoji &&
                                 <div className='ml-2'>
                                     <span>{userQuery.nationalityEmoji}</span>
@@ -139,7 +140,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                         />
                                     </svg>
                                 </div>
-                                <div>{params.slug}</div>
+                                <div className='opacity-80'>{params.slug}</div>
                             </div>
                         </Link>
                         {(userQuery?.githubCreatedAt ?? githubData?.created_at) &&
@@ -155,7 +156,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                     <div className='w-5 sm:w-7'>
                                         𝕏
                                     </div>
-                                    <div className=''>{userQuery?.twitterUsername}</div>
+                                    <div className='opacity-80'>{userQuery?.twitterUsername}</div>
                                 </div>
                             </Link>
                         </div>
@@ -169,7 +170,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                             <path fillRule="evenodd" clipRule="evenodd" d="M64 72H8C3.58172 72 0 68.4183 0 64V8C0 3.58172 3.58172 0 8 0H64C68.4183 0 72 3.58172 72 8V64C72 68.4183 68.4183 72 64 72ZM51.3156 62H62V40.0512C62 30.7645 56.7357 26.2742 49.3826 26.2742C42.026 26.2742 38.9301 32.0029 38.9301 32.0029V27.3333H28.6333V62H38.9301V43.8021C38.9301 38.9261 41.1746 36.0245 45.4707 36.0245C49.4198 36.0245 51.3156 38.8128 51.3156 43.8021V62ZM10 16.397C10 19.9297 12.8421 22.794 16.3493 22.794C19.8566 22.794 22.697 19.9297 22.697 16.397C22.697 12.8644 19.8566 10 16.3493 10C12.8421 10 10 12.8644 10 16.397ZM21.7694 62H11.0326V27.3333H21.7694V62Z" fill="white" />
                                         </svg>
                                     </div>
-                                    <div className=''>{userQuery.linkedinUsername}</div>
+                                    <div className='opacity-80'>{userQuery.linkedinUsername}</div>
                                 </div>
                             </Link>
                         </div>
@@ -205,19 +206,26 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                 Projects
                             </div>
                             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6'>
-                                {userQuery.projects.map(project => {
+                                {userQuery.projects.slice(0, 6).map(project => {
                                     return (
                                         <div key={project.id} className='rounded  border-opacity-10 flex flex-col'>
                                             {project.image
-                                                ? (
-                                                    <Link href={project.url ?? ''} target='_blank'>
+                                                ? project.url
+                                                    ? (
+                                                        <Link href={project.url ?? ''} target='_blank'>
+                                                            <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2 aspect-[1200/630] object-cover' />
+                                                        </Link>
+                                                    )
+                                                    : (
                                                         <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2 aspect-[1200/630] object-cover' />
-                                                    </Link>
-                                                )
-                                                : (
-                                                    <div className='border-white border border-dashed border-opacity-20 aspect-[1200/630] rounded mb-2 bg-white bg-opacity-5 opacity-80'>
-                                                    </div>
-                                                )
+                                                    )
+                                                : project.url
+                                                    ? (
+                                                        <Link href={project.url ?? ''} target='_blank'>
+                                                            <div className='border-white border border-dashed border-opacity-20 aspect-[1200/630] rounded mb-2 bg-white bg-opacity-5 opacity-80' />
+                                                        </Link>
+                                                    )
+                                                    : <div className='border-white border border-dashed border-opacity-20 aspect-[1200/630] rounded mb-2 bg-white bg-opacity-5 opacity-80' />
                                             }
                                             <div className='flex items-center justify-between mb-2'>
                                                 {project.url
@@ -279,14 +287,17 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                     )
                                 })}
                             </div>
+                            {userQuery.projects.length > 6 &&
+                                <MoreProjects projects={userQuery.projects.slice(6)} />
+                            }
                         </>
                     }
                     {userQuery.experiences.length > 0 &&
                         <>
-                            <div className='text-sm opacity-70 mb-2 mt-2 sm:mt-8'>
+                            <div className={classNames('text-sm opacity-70 mb-2 mt-2', userQuery.projects.length > 6 ? 'sm:mt-16' : 'sm:mt-8')}>
                                 Experience
                             </div>
-                            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-y-8 sm:gap-x-4'>
+                            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-y-8 sm:gap-x-4 items-start'>
                                 {userQuery.experiences.map(experience => {
                                     const years = (experience.isCurrent && experience.startDate) ? (new Date().getFullYear() - experience.startDate.getFullYear()) : (experience.endDate && experience.startDate) ? experience.endDate.getFullYear() - experience.startDate.getFullYear() : undefined
                                     return (
@@ -307,6 +318,12 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            {experience.description &&
+                                                <div className='text-sm pt-2 pb-1 text-white text-opacity-60'>
+                                                    {experience.description}
+                                                </div>
+                                            }
                                         </div>
                                     )
                                 })}
