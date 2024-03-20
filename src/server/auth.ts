@@ -21,11 +21,13 @@ declare module "next-auth" {
     user: {
       id: string;
       username: string;
+      isSuperUser: boolean;
     } & DefaultSession["user"];
   }
 
   interface User {
     username: string;
+    isSuperUser: boolean;
   }
 }
 
@@ -43,6 +45,7 @@ export const authOptions: NextAuthOptions = {
           ...session.user,
           id: user.id,
           username: user.username,
+          isSuperUser: user.isSuperUser
         },
       })
     },

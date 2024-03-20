@@ -155,6 +155,7 @@ model User {
     location        String?
     nationalityEmoji String?
     statusEmoji     String?
+    isSuperUser     Boolean  @default(false)
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
