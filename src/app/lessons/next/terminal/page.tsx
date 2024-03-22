@@ -4,6 +4,12 @@ import Image from 'next/image'
 import IntroImage from './intro.png'
 
 import './styles.css'
+import { type Metadata } from 'next'
+
+export const metadata: Metadata = {
+    title: 'Terminal for beginners',
+    description: 'Learn the basics of using the terminal on your Mac. We cover opening the terminal, navigating directories, and creating folders.'
+}
 
 const Section = ({ id, title, videoUrl, children }: { id?: string, title: string, videoUrl: string, children: React.ReactNode[] }) => {
     return (
