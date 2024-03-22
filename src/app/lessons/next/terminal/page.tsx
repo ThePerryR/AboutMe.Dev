@@ -102,6 +102,15 @@ const TerminalLesson = () => {
                 </ol>
                 <p>You can use the &quot;open&quot; command to open a directory in Finder. For example, <code>open ~/Documents/aboutme</code> or <code>open .</code> to open the directory you&apos;re currently in.</p>
             </Section>
+
+            <div className='px-4 md:px-16 py-10'>
+                <h2 className='opacity-80 text-2xl mb-6 font-mono max-w-xl'>
+                    That&apos;s it for this lesson!
+                </h2>
+                <p className='opacity-80 text-xl leading-loose mb-8'>
+                    You&apos;ve learned the basics of using the terminal on your Mac. You can now navigate directories and create folders. So far you&apos;ve only used built-in commands, but you can also install new commands and programs to use in the terminal. We&apos;ll cover that in a future lesson. For now, practice navigating your directories and creating folders.
+                </p>
+            </div>
         </article>
     )
 }
