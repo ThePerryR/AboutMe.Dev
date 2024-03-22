@@ -1,0 +1,47 @@
+code {
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+    font-size: 14px;
+    border-radius: 6px;
+    color: white;
+}
+code.simple {
+    background: none;
+    border: none;
+    letter-spacing: 1px;
+    font-size: 18px;
+    padding: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+    
+}
+
+h3 {
+    opacity: 80%;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-family: 'Geist Mono', monospace;
+    margin-bottom: 40px;
+}
+p {
+    opacity: 80%;
+    font-size: 18px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+ol, ul {
+    margin-bottom: 20px;
+}
+
+li {
+    opacity: 80%;
+    list-style-type: decimal;
+    margin-left: 20px;
+    padding-left: 8px;
+    margin-bottom: 8px;
+}
