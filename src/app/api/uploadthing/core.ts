@@ -33,6 +33,15 @@ export const ourFileRouter = {
             })
             return { url: file.url };
         }),
+      logoUploader: f({ image: { maxFileSize: "1MB" } })
+        .middleware(async ({ req }) => {
+            const session = await getServerAuthSession()
+            if (!session?.user) throw new UploadThingError("Unauthorized");
+            return { userId: session.user.id }
+        })
+        .onUploadComplete(async ({ metadata, file }) => {
+            return { url: file.url };
+        }),
     projectImage: f({ image: { maxFileSize: "4MB" } })
         .input(z.object({ projectId: z.number() }))
         .middleware(async ({ req, input }) => {

@@ -1,3 +1,4 @@
+import { UpdateType } from "@prisma/client";
 import { sqltag } from "@prisma/client/runtime/library";
 import { z } from "zod";
 
@@ -219,14 +220,57 @@ export const postRouter = createTRPCRouter({
       return experience
     }),
 
+  addUpdate: protectedProcedure
+    .input(z.object({
+      projectId: z.number().optional(),
+      title: z.string(),
+      content: z.string().optional(),
+      type: z.string()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const project = await ctx.db.project.findUnique({
+        where: { id: input.projectId }
+      })
+      if (!project) {
+        throw new Error('Project not found')
+      }
+      const update = await ctx.db.update.create({
+        data: {
+          title: input.title,
+          content: input.content,
+          type: input.type as UpdateType,
+          project: { connect: { id: input.projectId } },
+          createdBy: { connect: { id: ctx.session.user.id } }
+        }
+      })
+      return update
+    }),
+  fetchUpdates: protectedProcedure
+    .query(async ({ ctx }) => {
+      const updates = await ctx.db.update.findMany({
+        where: { createdBy: { id: ctx.session.user.id } },
+        include: { project: true }
+      })
+      return updates
+    }),
+
   fetchProjects: protectedProcedure
     .query(async ({ ctx }) => {
       const projects = await ctx.db.project.findMany({
         where: { createdBy: { id: ctx.session.user.id } },
-        include: { skills: true }
+        include: { skills: true, users: { include: { user: true }} }
       });
 
       return projects;
+    }),
+  fetchProject: protectedProcedure
+    .input(z.number())
+    .query(async ({ ctx, input }) => {
+      const project = await ctx.db.project.findUnique({
+        where: { id: input },
+        include: { skills: true, updates: true }
+      });
+      return project;
     }),
   fetchExperiences: protectedProcedure
     .query(async ({ ctx }) => {
@@ -352,6 +396,50 @@ export const postRouter = createTRPCRouter({
         where: { id: input.id },
         data: {
           type: input.type
+        }
+      })
+    }),
+  addUserToProject: protectedProcedure
+    .input(z.object({ projectId: z.number(), username: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { username: input.username }
+      })
+      if (!user) {
+        throw new Error('User not found')
+      }
+      const project = await ctx.db.project.findUnique({
+        where: { id: input.projectId }
+      })
+      if (!project) {
+        throw new Error('Project not found')
+      }
+      await ctx.db.userProject.create({
+        data: {
+          user: { connect: { id: user.id } },
+          project: { connect: { id: project.id } }
+        }
+      })
+    }),
+  removeUserFromProject: protectedProcedure
+    .input(z.object({ projectId: z.number(), userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { id: input.userId }
+      })
+      if (!user) {
+        throw new Error('User not found')
+      }
+      const project = await ctx.db.project.findUnique({
+        where: { id: input.projectId }
+      })
+      if (!project) {
+        throw new Error('Project not found')
+      }
+      await ctx.db.userProject.deleteMany({
+        where: {
+          userId: user.id,
+          projectId: project.id
         }
       })
     }),
@@ -505,6 +593,19 @@ export const postRouter = createTRPCRouter({
       })
     }),
 
+  fetchAllUsers: publicProcedure
+    .query(async ({ ctx }) => {
+      const users = await ctx.db.user.findMany()
+      return users.map(user => {
+        return {
+          id: user.id,
+          username: user.username,
+          name: user.name,
+          flair: user.statusEmoji,
+        }
+      })
+    }),
+
   fetchUsers: protectedProcedure
     .query(async ({ ctx }) => {
       const users = await ctx.db.user.findMany({
@@ -590,5 +691,127 @@ export const postRouter = createTRPCRouter({
           image: null
         }
       })
-    })
+    }),
+    getTeams: protectedProcedure
+    .query(async ({ ctx }) => {
+      const teams = await ctx.db.team.findMany({
+        where: { users: { some: { userId: ctx.session.user.id } } },
+        include: { 
+          users: {
+            include: {
+              user: {
+                select: {
+                  image: true,
+                  name: true
+                }
+              }
+            }
+          } 
+        }
+      })
+      return teams
+    }),
+    createTeam: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      
+      const team = await ctx.db.team.create({
+        data: {}
+      })
+      await ctx.db.userTeam.create({
+        data: {
+          owner: true,
+          user: { connect: { id: ctx.session.user.id } },
+          team: { connect: { id: team.id } }
+        }
+      })
+      return team
+    }),
+    updateTeam: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      name: z.string().optional(),
+      image: z.string().optional()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const team = await ctx.db.team.findUnique({
+        where: { id: input.id }
+      })
+      console.log('AOAOAOAO', team)
+      if (!team) {
+        throw new Error('Team not found')
+      }
+      console.log('saving', input.name)
+      await ctx.db.team.update({
+        where: { id: input.id },
+        data: {
+          name: input.name,
+          image: input.image
+        }
+      })
+      return team
+    }),
+    getTeam: protectedProcedure
+    .input(z.number())
+    .query(async ({ ctx, input }) => {
+      const team = await ctx.db.team.findUnique({
+        where: { id: input },
+        select: {
+          name: true,
+          image: true,
+          id: true,
+          users: {
+            select: {
+              owner: true,
+              user: {
+                select: {
+                  id: true,
+                  image: true,
+                  name: true
+                }
+              }
+            }
+          }
+        }
+      })
+      console.log('GOT TEAM', team)
+      return team
+    }),
+    deleteTeam: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ ctx, input }) => {
+      const team = await ctx.db.team.findUnique({
+        where: { id: input }
+      })
+      if (!team) {
+        throw new Error('Team not found')
+      }
+      await ctx.db.userTeam.deleteMany({
+        where: { teamId: input }
+      })
+      await ctx.db.team.delete({
+        where: { id: input }
+      })
+    }),
+    addUserToTeam: protectedProcedure
+    .input(z.object({ teamId: z.number(), username: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { username: input.username }
+      })
+      if (!user) {
+        throw new Error('User not found')
+      }
+      const team = await ctx.db.team.findUnique({
+        where: { id: input.teamId }
+      })
+      if (!team) {
+        throw new Error('Team not found')
+      }
+      await ctx.db.userTeam.create({
+        data: {
+          user: { connect: { id: user.id } },
+          team: { connect: { id: team.id } }
+        }
+      })
+    }),
 });

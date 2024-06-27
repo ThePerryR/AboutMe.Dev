@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Skill, type Project } from '@prisma/client'
+import { type Skill, type Project, type User, type UserProject } from '@prisma/client'
 import classNames from 'classnames'
 import Image from 'next/image'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
@@ -30,7 +30,8 @@ const Projects = () => {
             <div className='flex items-center justify-between mb-4'>
                 <h1 className=' font-bold'>Projects</h1>
                 <button className='text-black bg-white text-sm rounded-lg px-2 py-1' onClick={() => createProjectMutation.mutate()}>
-                    {createProjectMutation.isLoading ? 'One moment...' : 'Add Project'}</button>
+                  {createProjectMutation.isLoading ? 'One moment...' : 'Add Project'}
+                </button>
             </div>
             {projects.data.length === 0
                 ? (
@@ -50,6 +51,9 @@ const Projects = () => {
                                 toggleFavorite={() => {
                                     void projects.refetch()
                                 }}
+                                refresh={() => {
+                                  void projects.refetch()
+                                }}
                             />
                         ))}
                     </div>
@@ -58,13 +62,14 @@ const Projects = () => {
     )
 }
 
-const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Project & { skills: Skill[] }, canFavorite: boolean, toggleFavorite: () => void }) => {
+const ProjectCard = ({ project, canFavorite, toggleFavorite, refresh }: { project: Project & { skills: Skill[], users: (UserProject & { user: User })[] }, canFavorite: boolean, toggleFavorite: () => void, refresh: () => void }) => {
     const [name, setName] = React.useState(project.name)
     const [url, setUrl] = React.useState(project.url)
     const [status, setStatus] = React.useState(project.status)
     const [headline, setHeadline] = React.useState(project.headline)
     const [description, setDescription] = React.useState(project.description)
     const [skills, setSkills] = React.useState(project.skills)
+    const [newUserName, setNewUserName] = React.useState('')
 
     const [image, setImage] = React.useState(project.image)
     const [isFavorited, setIsFavorited] = React.useState(project.isFavorited)
@@ -91,6 +96,21 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Projec
             console.log(111, skills)
             setSkills(skills)
         }
+    })
+
+    const addUserToProjectMutation = api.post.addUserToProject.useMutation({
+        onSuccess: (user) => {
+          refresh()
+        }
+    })
+    function handleClickAddUser() {
+      addUserToProjectMutation.mutate({ projectId: project.id, username: newUserName })
+      setNewUserName('')
+    }
+    const removeUserFromProjectMutation = api.post.removeUserFromProject.useMutation({
+      onSuccess: () => {
+        refresh()
+      }
     })
     return (
         <div className='bg-black border-white border rounded border-opacity-10'>
@@ -120,6 +140,15 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Projec
                         value={headline ?? ''}
                         placeholder='"Recipe app for busy people"'
                         onChange={(e) => setHeadline(e.target.value)}
+                        className='bg-transparent placeholder:opacity-30 border-white border rounded border-opacity-10 p-2 w-full'
+                    />
+                </div>
+                <div className='flex'>
+                    <div className='text-sm mb-1 w-[120px]'>Description</div>
+                    <textarea
+                        value={description ?? ''}
+                        placeholder='"Recipe app for busy people"'
+                        onChange={(e) => setDescription(e.target.value)}
                         className='bg-transparent placeholder:opacity-30 border-white border rounded border-opacity-10 p-2 w-full'
                     />
                 </div>
@@ -188,7 +217,7 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Projec
                     </div>
                 </div>
 
-                <div className='flex'>
+                <div className='flex mb-8'>
                     <div className='flex-1 flex flex-col items-start max-w-[250px]'>
                         <div className='text-sm mb-1'>Skills</div>
                         <div className='text-xs opacity-60'>List the technologies and tools used in this project.</div>
@@ -205,6 +234,37 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite }: { project: Projec
                             }}
                         />
                     </div>
+                </div>
+
+                <div>
+                  <div className='flex items-center justify-between'>
+                    <div>Users</div>
+
+                    <input 
+                      className='border bg-transparent' 
+                      placeholder='Add user by username'
+                      value={newUserName} 
+                      onChange={e => setNewUserName(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          handleClickAddUser()
+                        }
+                      }}
+                    />
+                  </div>
+                  <div>
+                    {project.users.map(user => (
+                      <div key={user.user.username} className='flex items-center space-x-4'>
+                        <div>{user.user.name} {user.user.nationalityEmoji}</div>
+                        <div 
+                          className='cursor-pointer text-xs text-red-500'
+                          onClick={() => {
+                            removeUserFromProjectMutation.mutate({ projectId: project.id, userId: user.user.id })
+                          }}>
+                          Remove</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
             </div>
             <div className='flex p-4 justify-between items-center'>

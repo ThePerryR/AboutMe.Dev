@@ -27,6 +27,28 @@ model Post {
     @@index([createdById])
 }
 
+enum UpdateType {
+  FEATURE
+  PROGRESS
+}
+
+model Update {
+    id        Int      @id @default(autoincrement())
+    title      String
+    content String? @db.Text
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    type UpdateType
+    
+    project Project @relation(fields: [projectId], references: [id])
+    projectId Int
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
+
+    @@index([createdById])
+    @@index([projectId])
+}
+
 model Project {
     id     Int      @id @default(autoincrement())
     name   String?
@@ -41,11 +63,63 @@ model Project {
     updatedAt DateTime @updatedAt
 
     skills    Skill[]
+    updates   Update[]
 
     createdBy   User   @relation(fields: [createdById], references: [id])
     createdById String
 
+    users    UserProject[]
+
     @@index([createdById])
+}
+
+model UserProject {
+    id     Int      @id @default(autoincrement())
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    owner Boolean @default(false)
+
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    project  Project  @relation(fields: [projectId], references: [id])
+    projectId Int
+
+    @@index([userId])
+    @@index([projectId])
+    @@unique([userId, projectId])
+}
+
+model Team {
+    id     Int      @id @default(autoincrement())
+    name   String?
+    image  String?
+    description String? @db.Text
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    users    UserTeam[]
+}
+
+model UserTeam {
+    id     Int      @id @default(autoincrement())
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    owner Boolean @default(false)
+
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    team  Team  @relation(fields: [teamId], references: [id])
+    teamId Int
+
+    @@index([userId])
+    @@index([teamId])
 }
 
 model Experience {
@@ -160,9 +234,12 @@ model User {
     sessions      Session[]
     posts         Post[]
     projects      Project[]
+    allProjects   UserProject[]
     experiences   Experience[]
     skills        UserSkill[]
     interests     Interest[]
+    teams         UserTeam[]
+    updates       Update[]
 }
 
 model VerificationToken {

@@ -37,6 +37,6 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts"
-  ],
+, "src/app/(home)/teams/[id]"  ],
   "exclude": ["node_modules"]
 }

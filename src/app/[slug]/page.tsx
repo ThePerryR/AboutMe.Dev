@@ -212,7 +212,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                             {project.image
                                                 ? project.url
                                                     ? (
-                                                        <Link href={project.url ?? ''} target='_blank'>
+                                                        <Link href={`/project/${project.id}`} target='_blank'>
                                                             <Image src={project.image ?? ''} alt='project' width={600} height={315} className='rounded mb-2 aspect-[1200/630] object-cover' />
                                                         </Link>
                                                     )
@@ -221,7 +221,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                                     )
                                                 : project.url
                                                     ? (
-                                                        <Link href={project.url ?? ''} target='_blank'>
+                                                        <Link href={`/project/${project.id}`} target='_blank'>
                                                             <div className='border-white border border-dashed border-opacity-20 aspect-[1200/630] rounded mb-2 bg-white bg-opacity-5 opacity-80' />
                                                         </Link>
                                                     )
@@ -230,7 +230,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                                             <div className='flex items-center justify-between mb-2'>
                                                 {project.url
                                                     ? (
-                                                        <Link href={project.url} target="_blank" className='flex items-center'>
+                                                        <Link href={`/project/${project.id}`} target="_blank" className='flex items-center'>
                                                             <div className='text-sm opacity-80'>{project.name}</div>
                                                             <div className='ml-2 opacity-40'>
                                                                 {project.url.includes('github.com')

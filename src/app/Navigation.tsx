@@ -40,7 +40,12 @@ const Navigation = ({ username }: { username: string }) => {
                     </div>
                     <div>
                         <Link href='/teams'>
-                            <div className={classNames(pathname === '/teams' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Teams</div>
+                            <div className={classNames(pathname.startsWith('/teams') ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Teams</div>
+                        </Link>
+                    </div>
+                    <div>
+                        <Link href='/updates'>
+                            <div className={classNames(pathname.startsWith('/updates') ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white')}>Updates</div>
                         </Link>
                     </div>
                     {/* <div>
