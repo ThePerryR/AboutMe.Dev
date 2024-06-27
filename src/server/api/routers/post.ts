@@ -268,7 +268,7 @@ export const postRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const project = await ctx.db.project.findUnique({
         where: { id: input },
-        include: { skills: true, updates: true }
+        include: { skills: true, updates: true, users: { include: { user: true }} }
       });
       return project;
     }),

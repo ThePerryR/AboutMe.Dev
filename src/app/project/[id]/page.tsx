@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -8,14 +9,11 @@ const ProjectPage = async ({ params }: { params: { id: string } }) => {
     if (!project) return null
     console.log(project, 'PROJECT PAGEIO')
     return (
-        <div className='text-white px-6'>
+        <div className='text-white px-6 max-w-[844px] w-full mx-auto'>
           <div className='flex space-x-8'>
             <div className='w-1/2'>
-              {project.image &&
-              <Image className='w-full mb-3 rounded' src={project.image} alt={project.name ?? ''} width={500} height={500} />
-              }
               <div className='flex space-x-4 items-center'>
-              <h1 className='font-bold text-2xl mb-2'>{project.name}</h1>
+                <h1 className='font-bold text-2xl mb-2'>{project.name}</h1>
                 {project.status === 'live' &&
                 <div className='bg-green-500 text-black text-[12px] px-2 rounded-full'>Live</div>
                 }
@@ -35,8 +33,11 @@ const ProjectPage = async ({ params }: { params: { id: string } }) => {
                 <div className='bg-gray-500 text-black text-[12px] px-2 rounded-full'>Inactive</div>
                 }
               </div>
-              <p className='opacity-60 mb-8'>{project.description}</p>
-              <div className='flex space-x-4 items-center'>
+              {project.image &&
+              <Image className='w-full mb-3 rounded' src={project.image} alt={project.name ?? ''} width={500} height={500} />
+              }
+              
+              <div className='flex space-x-4 items-center mb-8'>
                 {project.url
                   ? (
                       <Link href={`/project/${project.id}`} target="_blank" className='flex items-center'>
@@ -62,17 +63,22 @@ const ProjectPage = async ({ params }: { params: { id: string } }) => {
                   <div className='text-sm opacity-100'>{project.name}</div>
                 }
               </div>
+
+              <p className='opacity-90 font-medium text-lg mb-1'>Project Description</p>
+              <p className={classNames('', project.description ? 'opacity-80' : 'opacity-50')}>
+                {project.description ?? 'No description'}
+              </p>
             </div>
 
             <div className='w-1/2'>
-              <h2 className='text-xl font-medium'>Project Details</h2>
-              <p className='opacity-30 mb-10'>No details</p>
+              <h2 className='text-xl font-medium'>Headline</h2>
+              <p className={classNames('mb-10', project.headline ? 'opacity-80' : 'opacity-30')}>{project.headline}</p>
 
               <h2 className='text-xl font-medium mb-2'>Skills & Technologies Used</h2>
               {project.skills.length === 0
                 ? <p className='opacity-30 mb-10'>No skills</p>
                 : (
-                  <div className='flex flex-wrap gap-12 mb-10'>
+                  <div className='flex flex-wrap gap-x-12 gap-y-6 mb-10'>
                     {project.skills.filter(skill => skill.type === 'language').length > 0 &&
                     <div>
                       <h3 className=' font-medium mb-1'>Languages</h3>
@@ -138,8 +144,28 @@ const ProjectPage = async ({ params }: { params: { id: string } }) => {
               }
 
 
-              <h2 className='text-xl font-medium'>Project Team Members</h2>
-              <p className='opacity-30 mb-10'>No Members</p>  
+              <h2 className='text-xl font-medium mb-2'>Project Team Members</h2>
+              {project.users.length === 0
+              ? (
+                <p className='opacity-30 mb-10'>No Members</p>  
+              )
+              : (
+                <div>
+                  {project.users.map(user => (
+                    <Link key={user.id} href={`/${user.user.username}`}>
+                      <div className='flex items-center space-x-2 mb-4'>
+                        {user.user.image &&
+                        <Image className='rounded-full h-6 w-6' src={user.user.image} alt={user.user.name ?? ''} width={40} height={40} />
+                        }
+                        <div>
+                          <div className='font-medium opacity-80'>{user.user.name}</div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )
+              }
             </div>
           </div>
 
