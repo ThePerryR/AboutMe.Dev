@@ -10,6 +10,7 @@ import * as Tooltip from '@radix-ui/react-tooltip';
 import { api } from '~/trpc/react'
 import { UploadButton } from '~/utils/uploadthing'
 import SkillList from '../skills/SkillList'
+import Link from 'next/link'
 
 
 const Projects = () => {
@@ -255,7 +256,9 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite, refresh }: { projec
                   <div>
                     {project.users.map(user => (
                       <div key={user.user.username} className='flex items-center space-x-4'>
-                        <div>{user.user.name} {user.user.nationalityEmoji}</div>
+                        <Link href={`/${user.user.username}`}>
+                          <div>{user.user.name} {user.user.nationalityEmoji}</div>
+                        </Link>
                         <div 
                           className='cursor-pointer text-xs text-red-500'
                           onClick={() => {
