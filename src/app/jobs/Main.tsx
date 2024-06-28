@@ -20,6 +20,7 @@ const LinkForm = ({
 }) => {
   const [url, setUrl] = React.useState("");
   const [companyName, setCompanyName] = React.useState("");
+  const [companyLogo, setCompanyLogo] = React.useState<string | undefined>(undefined);
   const [jobTitle, setJobTitle] = React.useState("");
   const [region, setRegion] = React.useState("us");
   const [location, setLocation] = React.useState("");
@@ -96,7 +97,9 @@ const LinkForm = ({
         />
       </div>
       <ImageEditor 
-        label=""
+        label="Company Logo"
+        value={companyLogo}
+        handleClickSave={(value) => setCompanyLogo(value)}
       />
       <div>
         <div className="mb-1 font-medium">Job Title</div>
