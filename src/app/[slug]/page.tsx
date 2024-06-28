@@ -70,7 +70,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
     }
 
     return (
-        <div className='flex flex-col items-center py-4 sm:py-10 text-white px-6'>
+        <div className='flex flex-col min-h-full items-center py-4 sm:py-10 text-white bg-[#101827] px-6'>
             <div className='flex flex-col sm:flex-row w-full max-w-[844px] mb-4 sm:mb-8 justify-between'>
                 <div className='flex flex-col sm:flex-row items-start sm:items-center mb-4 sm:mb-0'>
                     {/* User's Picture */}
@@ -181,24 +181,31 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                 <Calendar username={params.slug} />
             </div>
 
-            {userQuery &&
+            {userQuery && userQuery.skills.length > 0 &&
                 <div className='w-full max-w-[844px] mt-6 sm:mt-8'>
-                    <div className='text-sm opacity-70 mb-2'>
-                        Current Stack
-                    </div>
-                    <div className='flex items-center flex-wrap gap-x-2 gap-y-1 mb-0'>
-                        {userQuery.skills.filter(skill => skill.primary).map(skill => {
-                            return (
-                                <div key={skill.id} className='flex items-center border h-9 border-white border-opacity-20 rounded-full px-2 py-1 justify-between mb-2'>
-                                    {skill.image &&
-                                        <Image src={skill.image} alt='skill' width={20} height={20} className='' />
-                                    }
-                                    <div className='text-sm opacity-90 mx-2'>{skill.name}</div>
-                                </div>
-                            )
-                        })}
-                    </div>
-                    <SkillSection skills={userQuery.skills.filter(skill => !skill.primary)} />
+                    {userQuery.skills.filter(skill => skill.primary).length > 0 &&
+                    <>
+                      <div className='text-sm opacity-70 mb-2'>
+                          Current Stack
+                      </div>
+                      <div className='flex items-center flex-wrap gap-x-2 gap-y-1 mb-0'>
+                          {userQuery.skills.filter(skill => skill.primary).map(skill => {
+                              return (
+                                  <div key={skill.id} className='flex items-center border h-9 border-white border-opacity-20 rounded-full px-2 py-1 justify-between mb-2'>
+                                      {skill.image &&
+                                          <Image src={skill.image} alt='skill' width={20} height={20} className='' />
+                                      }
+                                      <div className='text-sm opacity-90 mx-2'>{skill.name}</div>
+                                  </div>
+                              )
+                          })}
+                      </div>
+                    </>
+                    }
+                    <SkillSection 
+                      forceOpen={userQuery.skills.filter(skill => skill.primary).length === 0}
+                      skills={userQuery.skills.filter(skill => !skill.primary)} 
+                    />
 
                     {userQuery.projects.length > 0 &&
                         <>

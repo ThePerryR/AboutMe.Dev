@@ -12,6 +12,9 @@ const Calendar = ({ username }: { username: string }) => {
             }}
             fontSize={13}
             hideColorLegend
+            theme={{
+              dark: ['#172134', '#133c87', '#1e56c2', '#1075c8', '#008cff'],
+            }}
         />
     )
 }

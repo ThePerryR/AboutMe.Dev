@@ -8,7 +8,7 @@ import { api } from '~/trpc/react'
 import { UploadButton } from '~/utils/uploadthing'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
-const Experience = () => {
+const ExperiencePage = () => {
     const experienceQuery = api.post.fetchExperiences.useQuery()
     const createExperienceMutation = api.post.createExperience.useMutation({
         onSuccess: () => {
@@ -19,11 +19,12 @@ const Experience = () => {
         return <div>Loading...</div>
     }
     return (
-        <div className='w-full'>
+        <div className='w-full px-8 py-8'>
             <div className='flex items-center justify-between mb-4'>
-                <h1 className=' font-bold'>Experience</h1>
-                <button className='text-black bg-white text-sm rounded-lg px-2 py-1' onClick={() => { createExperienceMutation.mutate() }}>
-                    {createExperienceMutation.isLoading ? 'One moment...' : 'Add an Experience'}</button>
+              <div className="mb-1 font-medium">Experience</div>
+                <button className='text-black bg-white text-sm rounded px-2 py-2' onClick={() => { createExperienceMutation.mutate() }}>
+                    {createExperienceMutation.isLoading ? 'One moment...' : 'Add a new experience'}
+                  </button>
             </div>
             {experienceQuery.data.length === 0
                 ? (
@@ -34,7 +35,7 @@ const Experience = () => {
                     </div>
                 )
                 : (
-                    <div className='space-y-10'>
+                    <div className='space-y-10 mt-10'>
                         {experienceQuery.data.map((experience) => (
                             <ExperienceCard
                                 key={experience.id}
@@ -69,23 +70,24 @@ const ExperienceCard = ({ experience, refetch }: { experience: Experience, refet
     })
     const canSave = role !== experience.role || company !== experience.company || startMonth !== (experience.startDate ? new Date(experience.startDate).getMonth() : undefined) || startYear !== (experience.startDate ? new Date(experience.startDate).getFullYear() : undefined) || endMonth !== (experience.endDate ? new Date(experience.endDate).getMonth() : undefined) || endYear !== (experience.endDate ? new Date(experience.endDate).getFullYear() : undefined) || isCurrent !== experience.isCurrent || description !== experience.description
     return (
-        <div className='bg-black border-white border rounded border-opacity-10'>
-            <div className='flex flex-col p-4 space-y-4 bg-white bg-opacity-5'>
-                <div className='flex'>
-                    <div className='text-sm mb-1 w-[120px] shrink-0'>Company</div>
+        <div className=' border-white/10 border rounded'>
+            <div className='flex flex-col px-8 py-8 space-y-4'>
+                <div className='flex items-center'>
+                    <div className='text-sm mb-1 w-[180px] shrink-0'>Company Name</div>
                     <input
                         type='text'
                         value={company ?? ''}
+                        placeholder={`Bob's Widgets Inc.`}
                         onChange={(e) => setCompany(e.target.value)}
-                        className='bg-transparent border-white border rounded border-opacity-10 p-2 w-full'
+                        className='bg-white/5 border-white/10 max-w-[400px] border rounded border-opacity-10 p-2 w-full'
                     />
                 </div>
-                <div className='flex'>
-                    <div className='flex flex-col items-start w-[120px]'>
+                <div className='flex items-center'>
+                    <div className='flex flex-col items-start w-[180px]'>
                         <div className='text-sm mb-1'>Company Logo</div>
                     </div>
                     <div className='flex-1 flex justify-start'>
-                        <div className='mr-4 text-xs text-opacity-30 text-white border-white border-opacity-10  h-[40px] rounded flex items-center justify-center border'>
+                        <div className='mr-4 text-xs text-opacity-30 bg-white/5 text-white border-white border-opacity-10  h-[40px] rounded flex items-center justify-center border'>
                             {companyLogo !== null
                                 ? (
                                     <Image
@@ -96,7 +98,7 @@ const ExperienceCard = ({ experience, refetch }: { experience: Experience, refet
                                         className='h-full w-auto object-cover'
                                     />
                                 )
-                                : <div className='px-2'>No Image</div>
+                                : <div className='px-10'>No Image</div>
                             }
                         </div>
                         <UploadButton
@@ -104,7 +106,8 @@ const ExperienceCard = ({ experience, refetch }: { experience: Experience, refet
                             input={{ experienceId: experience.id }}
                             className=''
                             appearance={{
-                                button: (args) => `bg-white text-black h-6 text-sm px-2 w-auto`
+                              button: (args) => `bg-white/10 hover:bg-white/20 text-white h-[36px] text-sm px-3 w-auto`,
+                              allowedContent: (args) => 'text-xs text-gray-400 hidden',
                             }}
                             onUploadBegin={() => {
                                 // setUploadError(undefined)
@@ -119,21 +122,22 @@ const ExperienceCard = ({ experience, refetch }: { experience: Experience, refet
                     </div>
                 </div>
 
-                <div className='flex'>
-                    <div className='text-sm mb-1 w-[120px] shrink-0'>Role</div>
+                <div className='flex items-center'>
+                    <div className='text-sm mb-1 w-[180px] shrink-0'>Role</div>
                     <input
                         type='text'
                         value={role ?? ''}
                         onChange={(e) => setRole(e.target.value)}
-                        className='bg-transparent border-white border rounded border-opacity-10 p-2 w-full'
+                        placeholder='Software Engineer'
+                        className='bg-white/5 border-white/10 max-w-[400px] border rounded border-opacity-10 p-2 w-full'
                     />
                 </div>
-                <div className='flex'>
-                    <div className='text-sm mb-1 w-[120px] shrink-0'>Start Date</div>
+                <div className='flex items-center'>
+                    <div className='text-sm mb-1 w-[180px] shrink-0'>Start Date</div>
                     <select
                         value={startMonth ?? ''}
                         onChange={(e) => setStartMonth(Number(e.target.value))}
-                        className='bg-transparent border-white border rounded border-opacity-10 p-2 flex-1 max-w-[140px] mr-2'>
+                        className='bg-white/5 border-white/10 border rounded border-opacity-10 p-2 flex-1 max-w-[140px] mr-2'>
                         <option value='' disabled>Month</option>
                         {Array(12).fill(null).map((_, i) => (
                             <option key={i} value={i}>{new Date(0, i).toLocaleString('default', { month: 'long' })}</option>
@@ -144,18 +148,18 @@ const ExperienceCard = ({ experience, refetch }: { experience: Experience, refet
                         placeholder='2024'
                         value={startYear ?? ''}
                         onChange={(e) => setStartYear(Number(e.target.value))}
-                        className='bg-transparent border-white border rounded border-opacity-10 p-2 w-full max-w-[100px]'
+                        className='bg-white/5 border-white/10 border rounded border-opacity-10 p-2 w-full max-w-[100px]'
                     />
                 </div>
                 <div className='flex'>
-                    <div className='text-sm mb-1 w-[120px] shrink-0'>End Date</div>
+                    <div className='text-sm mb-1 w-[180px] shrink-0 mt-3'>End Date</div>
                     <div className='flex-1'>
                         {!isCurrent &&
                             <div className='flex w-full'>
                                 <select
                                     value={endMonth ?? ''}
                                     onChange={(e) => setEndMonth(Number(e.target.value))}
-                                    className='bg-transparent border-white border rounded border-opacity-10 p-2 flex-1 max-w-[140px] mr-2'>
+                                    className='bg-white/5 border-white/10 border rounded border-opacity-10 p-2 flex-1 max-w-[140px] mr-2'>
                                     <option value='' disabled>Month</option>
                                     {Array(12).fill(null).map((_, i) => (
                                         <option key={i} value={i}>{new Date(0, i).toLocaleString('default', { month: 'long' })}</option>
@@ -166,7 +170,7 @@ const ExperienceCard = ({ experience, refetch }: { experience: Experience, refet
                                     placeholder='2024'
                                     value={endYear ?? ''}
                                     onChange={(e) => setEndYear(Number(e.target.value))}
-                                    className='bg-transparent border-white border rounded border-opacity-10 p-2 w-full max-w-[100px]'
+                                    className='bg-white/5 border-white/10  border rounded border-opacity-10 p-2 w-full max-w-[100px]'
                                 />
                             </div>
                         }
@@ -189,13 +193,13 @@ const ExperienceCard = ({ experience, refetch }: { experience: Experience, refet
                 </div>
 
                 <div className='flex'>
-                    <div className='text-sm mb-1 w-[120px] shrink-0'>Description</div>
+                    <div className='text-sm mb-1 w-[180px] shrink-0'>Description</div>
                     <div className='flex-1'>
                         <textarea 
                             value={description ?? ''}
                             placeholder='What does this place do, what you did, and why you left.'
                             onChange={(e) => setDescription(e.target.value)}
-                            className='bg-transparent border-white border rounded border-opacity-10 p-2 w-full h-24'
+                            className='bg-white/5 border-white/10 border rounded border-opacity-10 p-2 w-full h-24'
                         />
                     </div>
                 </div>
@@ -242,4 +246,4 @@ const ExperienceCard = ({ experience, refetch }: { experience: Experience, refet
         </div>
     )
 }
-export default Experience
+export default ExperiencePage

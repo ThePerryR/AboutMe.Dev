@@ -5,6 +5,7 @@ import { GeistMono } from 'geist/font/mono';
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { Analytics } from "@vercel/analytics/react"
+import { IdentificationIcon } from "@heroicons/react/20/solid";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import Link from "next/link";
@@ -12,6 +13,7 @@ import { getServerAuthSession } from "~/server/auth";
 import { ourFileRouter } from "~/app/api/uploadthing/core";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import { NavItemWithChildren, Navigation } from "./_components/nav-item";
 
 export const metadata = {
   title: "AboutMe.dev",
@@ -32,9 +34,44 @@ export default async function RootLayout({
   const rotation = Math.floor(Math.random() * 60) - 30
   return (
     <html lang="en">
-      <body className={`font-sans ${GeistSans.variable}  ${GeistMono.variable} min-h-screen bg-black overflow-x-hidden`}>
+      <body className={`font-sans min-h-screen text-white ${GeistSans.variable}  ${GeistMono.variable} min-h-screen bg-[#0E1623] overflow-x-hidden`}>
         <TRPCReactProvider>
-          <header className="max-w-[1608px] h-[56px] sm:h-[120px] mx-auto flex items-center justify-between px-4 bg-[#010101] text-white">
+          <div className='flex min-h-screen w-full'>
+            <div className='w-[288px] relative min-h-full flex flex-col space-y-5 border-r border-[#1C2432] px-6'>
+              {/* Header */}
+              <div className='flex items-center h-16 sticky top-0'>
+                <Link href="/" className='text-2xl flex items-center'>
+                  <div className='relative text-[40px]'>
+                    <span className='opacity-80'>⛶</span>
+                    <div
+                      style={{ transform: `rotate(${rotation}deg)` }}
+                      className='absolute top-[2px] left-[3px] text-[28px]'>
+                      {randomEmoji}
+                    </div>
+                  </div>
+                  <span className='opacity-50 text-white text-base ml-2 font-thin'>about<span className='font-medium'>me</span>.<span className='font-mono font-thin'>dev</span></span>
+                </Link>
+              </div>
+              
+              {/* Navigation */}
+              <div className='space-y-1 sticky top-[84px]'>
+                <Navigation 
+                  username={session?.user?.username ?? undefined}
+                />
+              </div>
+            </div>
+            <div className='flex-1 min-h-full'>
+              <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+              {children}
+              <ToastContainer />
+              <Analytics />
+            </div>
+          </div>
+        </TRPCReactProvider>
+      </body>
+      {/* <body className={`font-sans ${GeistSans.variable}  ${GeistMono.variable} min-h-screen bg-[#101C27] overflow-x-hidden`}>
+        <TRPCReactProvider>
+          <header className="max-w-[1608px] h-[56px] sm:h-[120px] mx-auto flex items-center justify-between px-4 bg-[#0E1923] text-white">
             <Link href="/" className='text-2xl flex items-center'>
               <div className='relative text-[40px]'>
                 <span className='opacity-80'>⛶</span>
@@ -66,7 +103,7 @@ export default async function RootLayout({
           <ToastContainer />
           <Analytics />
         </TRPCReactProvider>
-      </body>
+      </body> */}
     </html>
   );
 }

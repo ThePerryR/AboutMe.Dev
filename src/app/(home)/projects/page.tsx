@@ -9,7 +9,7 @@ import * as Tooltip from '@radix-ui/react-tooltip';
 
 import { api } from '~/trpc/react'
 import { UploadButton } from '~/utils/uploadthing'
-import SkillList from '../skills/SkillList'
+import SkillList from '../profile/skills/SkillList'
 import Link from 'next/link'
 
 

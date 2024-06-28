@@ -92,6 +92,12 @@ model UserProject {
     @@unique([userId, projectId])
 }
 
+enum Visibility {
+  PUBLIC
+  PRIVATE
+  LINK
+}
+
 model Team {
     id     Int      @id @default(autoincrement())
     name   String?
@@ -230,6 +236,7 @@ model User {
     nationalityEmoji String?
     statusEmoji     String?
     isSuperUser     Boolean  @default(false)
+    profileVisibility Visibility @default(PUBLIC)
     accounts      Account[]
     sessions      Session[]
     posts         Post[]

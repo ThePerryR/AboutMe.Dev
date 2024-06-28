@@ -88,8 +88,15 @@ export default async function Home() {
   }
   const randomEmoji = faceEmojis[Math.floor(Math.random() * faceEmojis.length)]
   return (
-    <>
-      <ProfilePicture emoji={randomEmoji ?? '😀'} initialImage={session.user.image ?? undefined} />
+    <div>
+      <div>Recent Updates</div>
+      <div className='text-sm opacity-50'>Coming Soon...</div>
+    </div>
+  );
+}
+
+/*
+<ProfilePicture emoji={randomEmoji ?? '😀'} initialImage={session.user.image ?? undefined} />
       <Statuses initialNationality={userQuery.nationalityEmoji} initialStatus={userQuery.statusEmoji} />
       <Name initialName={session.user.name ?? undefined} />
       <Location initialRegion={userQuery.region ?? undefined} initialLocation={userQuery.location ?? undefined} />
@@ -99,6 +106,4 @@ export default async function Home() {
         initialLinkedin={userQuery.linkedinUsername ?? undefined}
         initialWebsite={userQuery.website ?? undefined}
       />
-    </>
-  );
-}
+      */

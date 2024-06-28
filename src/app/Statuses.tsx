@@ -13,18 +13,20 @@ const Statuses = ({ initialNationality, initialStatus }: { initialNationality: s
     const [status, setStatus] = React.useState(initialStatus ?? undefined);
     const updateStatusesMutation = api.post.updateStatuses.useMutation();
     return (
-        <div className='bg-white bg-opacity-5 border-white border rounded border-opacity-10'>
-            <div className='flex p-4 space-x-4'>
+        <div className='border-b border-[#1C2432] py-6 px-8'>
+            <div className='grid grid-cols-3 space-x-10'>
                 <div className='flex flex-col items-start'>
-                    <div className='text-xl font-medium'>Statuses</div>
+                    <div className='font-medium mb-1'>Statuses</div>
+                    <div className='text-sm mb-6 text-gray-400'>These emojis allow you to personalize your profile. Use them how you like. Or don&apos;t, its up to you.</div>
                 </div>
 
-                <div className='flex flex-wrap space-x-8 flex-1'>
+                <div className='flex flex-wrap space-x-8 col-span-2'>
                     <div className='flex items-center space-x-3'>
-                        <div className='font-medium opacity-60'>Flair</div>
+                        <div className='font-medium text-sm'>Flair</div>
                         <div className='flex items-center'>
                             <EmojiPicker
                                 emoji={status}
+                                categories={['people', 'nature', 'foods', 'activity', 'places', 'objects', 'symbols']}
                                 placeholder='😴'
                                 onUpdate={(emoji) => {
                                     setStatus(emoji);
@@ -48,9 +50,10 @@ const Statuses = ({ initialNationality, initialStatus }: { initialNationality: s
                         </div>
                     </div>
                     <div className='flex items-center space-x-3'>
-                        <div className='font-medium opacity-60'>Flag</div>
+                        <div className='font-medium text-sm'>Flag</div>
                         <EmojiPicker
                             emoji={nationality}
+                            categories={['flags']}
                             placeholder='🇺🇸'
                             onUpdate={(emoji) => {
                                 setNationality(emoji);
@@ -78,7 +81,7 @@ const Statuses = ({ initialNationality, initialStatus }: { initialNationality: s
     )
 }
 
-const EmojiPicker = ({ emoji, placeholder, onUpdate }: { emoji: string | undefined, placeholder: string, onUpdate: (emoji: string) => void }) => {
+const EmojiPicker = ({ emoji, placeholder, onUpdate, categories }: { emoji: string | undefined, placeholder: string, onUpdate: (emoji: string) => void, categories?: string[] }) => {
     const [open, setOpen] = React.useState(false);
     return (
         <div className='relative flex'>
@@ -91,6 +94,7 @@ const EmojiPicker = ({ emoji, placeholder, onUpdate }: { emoji: string | undefin
                 <div className='absolute top-full left-50 transform -translate-x-1/2 z-10'>
                     <Picker
                         data={data}
+                        categories={categories}
                         onEmojiSelect={({ native }: { native: string }) => {
                             onUpdate(native);
                             setOpen(false);

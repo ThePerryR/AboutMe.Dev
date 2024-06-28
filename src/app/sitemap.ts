@@ -1,9 +1,10 @@
+import { Visibility } from '@prisma/client'
 import { type MetadataRoute } from 'next'
 import { db } from '~/server/db'
 import { api } from '~/trpc/server'
  
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const users = await db.user.findMany()
+  const users = await db.user.findMany({ where: { profileVisibility: Visibility.PUBLIC }})
   const projects = await db.project.findMany()
   console.log('usosoer', users)
   return [

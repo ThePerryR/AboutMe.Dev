@@ -1,4 +1,4 @@
-import { UpdateType } from "@prisma/client";
+import { UpdateType, Visibility } from "@prisma/client";
 import { sqltag } from "@prisma/client/runtime/library";
 import { z } from "zod";
 
@@ -51,7 +51,7 @@ export const postRouter = createTRPCRouter({
           interests: true
         }
       });
-      if (!user) {
+      if (!user || user.profileVisibility === Visibility.PRIVATE) {
         return null;
       }
       return {
@@ -383,6 +383,7 @@ export const postRouter = createTRPCRouter({
           name: { contains: input.search },
           id: { notIn: input.exclude }
         },
+        take: 12
       });
     }),
 
@@ -813,5 +814,13 @@ export const postRouter = createTRPCRouter({
           team: { connect: { id: team.id } }
         }
       })
+    }),
+  updateVisibility: protectedProcedure
+    .input(z.object({ profileVisibility: z.enum([Visibility.PUBLIC, Visibility.PRIVATE, Visibility.LINK]) }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.user.update({
+        where: { id: ctx.session.user.id },
+        data: { profileVisibility: input.profileVisibility },
+      });
     }),
 });
