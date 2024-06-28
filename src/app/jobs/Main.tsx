@@ -55,6 +55,7 @@ const LinkForm = ({
     createJobMutation.mutate({
       url,
       companyName,
+      companyLogo,
       jobTitle,
       region,
       location,

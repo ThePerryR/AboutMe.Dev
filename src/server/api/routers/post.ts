@@ -849,6 +849,7 @@ export const postRouter = createTRPCRouter({
     .input(z.object({
       url: z.string().url(),
       companyName: z.string().min(1),
+      companyLogo: z.string().url().optional(),
       jobTitle: z.string().min(1),
       region: z.string().optional(),
       location: z.string().optional(),
@@ -864,6 +865,7 @@ export const postRouter = createTRPCRouter({
         data: {
           url: input.url,
           companyName: input.companyName,
+          companyLogo: input.companyLogo,
           jobTitle: input.jobTitle,
           region: input.region,
           location: input.location,

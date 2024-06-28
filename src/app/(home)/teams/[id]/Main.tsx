@@ -64,7 +64,7 @@ export const ImageEditor = ({ label, value, handleClickSave }: { label: string, 
 
       <div className='space-x-4 flex items-center'>
         {localValue && 
-        <Image src={localValue} alt='avatar' width={64} height={64} className='rounded object-cover' />
+        <Image src={localValue} alt='avatar' width={64} height={64} className='object-cover' />
         }
         {localValue === value
         ? (

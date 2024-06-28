@@ -108,6 +108,7 @@ model Team {
     updatedAt DateTime @updatedAt
     
     users    UserTeam[]
+    jobs     Job[]
 }
 
 model UserTeam {
@@ -221,7 +222,12 @@ model Session {
 
 model Job {
     id     Int      @id @default(autoincrement())
-    companyName String
+    companyName String?
+    companyLogo String?
+
+    team  Team? @relation(fields: [teamId], references: [id])
+    teamId Int?
+
     jobTitle String
     region String?
     location String?
@@ -245,6 +251,7 @@ model Job {
     skills    Skill[]
 
     @@index([createdById])
+    @@index([teamId])
 }
 
 model User {
