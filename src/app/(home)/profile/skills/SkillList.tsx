@@ -20,7 +20,7 @@ import {
 } from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 
-const SkillList = ({ allSkills, skills, addSkill, toggleSkill, primary }: { primary?: boolean, allSkills: Skill[], skills: Skill[], addSkill: (name: string) => Promise<void>, toggleSkill: (id: number) => Promise<void> }) => {
+const SkillList = ({ allSkills, skills, addSkill, toggleSkill, primary }: { primary?: boolean, allSkills: Skill[], skills: Skill[], addSkill: (name: string) => Promise<void>, toggleSkill: (id: number, skill: Skill) => Promise<void> }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [focused, setFocused] = useState(false);
@@ -71,7 +71,7 @@ const SkillList = ({ allSkills, skills, addSkill, toggleSkill, primary }: { prim
                             if (skillSearchQuery.data) {
                                 const highlightedSkill = skillSearchQuery.data[highlightedIndex]
                                 if (!highlightedSkill) return
-                                void toggleSkill(highlightedSkill.id);
+                                void toggleSkill(highlightedSkill.id, highlightedSkill);
                                 setHighlightedIndex(0);
                                 setSearch('');
                             }
@@ -87,7 +87,7 @@ const SkillList = ({ allSkills, skills, addSkill, toggleSkill, primary }: { prim
                             <div
                                 key={skill.id}
                                 onClick={() => {
-                                    void toggleSkill(skill.id);
+                                    void toggleSkill(skill.id, skill);
                                 }}
                                 className={classNames('px-2 flex items-center py-1.5 hover:bg-white hover:bg-opacity-5 cursor-pointer', highlightedIndex === i ? 'bg-opacity-5 bg-white' : '')}>
                                 <div className='w-[20px]'>
@@ -129,7 +129,7 @@ const SkillList = ({ allSkills, skills, addSkill, toggleSkill, primary }: { prim
     );
 }
 
-const SkillGroup = ({ primary, skills, toggleSkill }: { primary?: boolean, skills: Skill[], toggleSkill: (id: number) => Promise<void> }) => {
+const SkillGroup = ({ primary, skills, toggleSkill }: { primary?: boolean, skills: Skill[], toggleSkill: (id: number, skill: Skill) => Promise<void> }) => {
   const languages = skills.filter(skill => skill.type === 'language');
   const library = skills.filter(skill => skill.type === 'library');
   const framework = skills.filter(skill => skill.type === 'framework');
@@ -139,22 +139,22 @@ const SkillGroup = ({ primary, skills, toggleSkill }: { primary?: boolean, skill
   return (
     <div className='w-full space-y-4 mt-4'>
         {languages.length > 0 &&
-            <SkillListt id={primary ? 'primary-languages' : 'languages'} skills={languages} toggleSkill={(skill) => toggleSkill(skill)} label='Languages' />
+            <SkillListt id={primary ? 'primary-languages' : 'languages'} skills={languages} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Languages' />
         }
         {library.length > 0 &&
-            <SkillListt id={primary ? 'primary-library' : 'library'} skills={library} toggleSkill={(skill) => toggleSkill(skill)} label='Libraries' />
+            <SkillListt id={primary ? 'primary-library' : 'library'} skills={library} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Libraries' />
         }
         {framework.length > 0 &&
-            <SkillListt id={primary ? 'primary-framework' : 'framework'} skills={framework} toggleSkill={(skill) => toggleSkill(skill)} label='Frameworks' />
+            <SkillListt id={primary ? 'primary-framework' : 'framework'} skills={framework} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Frameworks' />
         }
         {tool.length > 0 &&
-            <SkillListt id={primary ? 'primary-tool' : 'tools'} skills={tool} toggleSkill={(skill) => toggleSkill(skill)} label='Tools' />
+            <SkillListt id={primary ? 'primary-tool' : 'tools'} skills={tool} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Tools' />
         }
     </div>
   )
 }
 
-const SkillListt = ({ id, skills, toggleSkill, label }: { id: string, skills: Skill[], toggleSkill: (id: number) => Promise<void>, label: string }) => {
+const SkillListt = ({ id, skills, toggleSkill, label }: { id: string, skills: Skill[], toggleSkill: (id: number, skill: Skill) => Promise<void>, label: string }) => {
     return (
       <SortableContext 
       items={skills}
@@ -171,7 +171,7 @@ const SkillListt = ({ id, skills, toggleSkill, label }: { id: string, skills: Sk
     )
 }
 
-const SkillTab = ({ skill, toggleSkill }: { skill: Skill, toggleSkill: (id: number) => Promise<void> }) => {
+const SkillTab = ({ skill, toggleSkill }: { skill: Skill, toggleSkill: (id: number, skill: Skill) => Promise<void> }) => {
   const {
     attributes,
     listeners,

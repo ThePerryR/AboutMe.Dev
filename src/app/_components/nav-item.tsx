@@ -48,7 +48,7 @@ export function Navigation ({ username }: { username?: string }) {
   const pathname = usePathname()
   console.log(1, username)
   return (
-    <>
+    <div className='flex-1 space-y-1'>
       <NavItem href='/' label='Home' child={false} current={pathname === '/'} />
       <NavItem href='/jobs' label='Jobs' child={false} current={pathname === '/jobs'} />
       {username &&
@@ -67,6 +67,6 @@ export function Navigation ({ username }: { username?: string }) {
         ]}
       />
       }
-    </>
+    </div>
   )
 }

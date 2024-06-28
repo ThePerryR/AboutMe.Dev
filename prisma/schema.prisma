@@ -157,6 +157,7 @@ model Skill {
     updatedAt DateTime @updatedAt
     users    UserSkill[]
     projects Project[]
+    jobs     Job[]
 }
 
 model Interest {
@@ -218,6 +219,34 @@ model Session {
     @@index([userId])
 }
 
+model Job {
+    id     Int      @id @default(autoincrement())
+    companyName String
+    jobTitle String
+    region String?
+    location String?
+    allowRemote Boolean @default(false)
+    salaryMin Int?
+    salaryMax Int?
+    aboutCompany String? @db.Text
+    aboutTeam String? @db.Text
+    url    String?
+    image  String?
+    type   String?
+    status String?
+    isFavorited Boolean @default(false)
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    skills    Skill[]
+
+    @@index([createdById])
+}
+
 model User {
     id            String    @id @default(cuid())
     username      String? @unique
@@ -247,6 +276,7 @@ model User {
     interests     Interest[]
     teams         UserTeam[]
     updates       Update[]
+    jobs          Job[]
 }
 
 model VerificationToken {

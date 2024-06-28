@@ -501,6 +501,11 @@ export const postRouter = createTRPCRouter({
       })
       return userSkills.map((us) => us.skill)
     }),
+  parseWebsite: publicProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      console.log(input)
+    }),
   addSkill: protectedProcedure
     .input(z.object({
       name: z.string(),
@@ -823,4 +828,56 @@ export const postRouter = createTRPCRouter({
         data: { profileVisibility: input.profileVisibility },
       });
     }),
+  searchJobs: publicProcedure
+    .input(z.object({
+      search: z.string().optional(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const jobs = await ctx.db.job.findMany({
+        where: {
+          OR: [
+            { companyName: { contains: input.search } },
+            { jobTitle: { contains: input.search } }
+          ]
+        },
+        include: { skills: true },
+        take: 50
+      })
+      return jobs
+    }),
+  createJob: protectedProcedure
+    .input(z.object({
+      url: z.string().url(),
+      companyName: z.string().min(1),
+      jobTitle: z.string().min(1),
+      region: z.string().optional(),
+      location: z.string().optional(),
+      allowRemote: z.boolean().optional(),
+      salaryMin: z.number().optional(),
+      salaryMax: z.number().optional(),
+      aboutCompany: z.string().optional(),
+      aboutTeam: z.string().optional(),
+      skills: z.array(z.number())
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const job = await ctx.db.job.create({
+        data: {
+          url: input.url,
+          companyName: input.companyName,
+          jobTitle: input.jobTitle,
+          region: input.region,
+          location: input.location,
+          allowRemote: input.allowRemote,
+          salaryMin: input.salaryMin,
+          salaryMax: input.salaryMax,
+          aboutCompany: input.aboutCompany,
+          aboutTeam: input.aboutTeam,
+          createdBy: { connect: { id: ctx.session.user.id } },
+          skills: {
+            connect: input.skills.map((id) => ({ id }))
+          }
+        }
+      })
+      return job
+    })
 });

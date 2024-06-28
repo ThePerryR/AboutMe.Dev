@@ -54,7 +54,7 @@ const StringEditor = ({ label, value, handleClickSave }: { label: string, value:
   )
 }
 
-const ImageEditor = ({ label, value, handleClickSave }: { label: string, value: string | undefined, handleClickSave: (newValue: string) => void }) => {
+export const ImageEditor = ({ label, value, handleClickSave }: { label: string, value: string | undefined, handleClickSave: (newValue: string) => void }) => {
   const [localValue, setLocalValue] = React.useState<string | undefined>(value)
   const [editing, setEditing] = React.useState(false)
   const [uploadError, setUploadError] = React.useState<string | undefined>(undefined)
