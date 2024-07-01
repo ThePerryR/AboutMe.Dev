@@ -185,6 +185,8 @@ model UserSkill {
     skill  Skill  @relation(fields: [skillId], references: [id])
     skillId Int
 
+    order Int?
+
     @@index([userId])
     @@index([skillId])
 }
@@ -284,6 +286,7 @@ model User {
     teams         UserTeam[]
     updates       Update[]
     jobs          Job[]
+    updatedAt     DateTime @updatedAt @default(now())
 }
 
 model VerificationToken {

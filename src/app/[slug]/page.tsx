@@ -5,12 +5,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react'
 import GitHubCalendar from 'react-github-calendar'
+import PDFDocument from 'pdfkit'
+
 import { getServerAuthSession } from '~/server/auth';
 import { api } from "~/trpc/server";
 import Calendar from './Calendar';
 import SkillShow from './Skill';
 import SkillSection from './SkillSection';
 import MoreProjects from './MoreProjects';
+import BottomBar from './BottomBar';
 
 async function fetchGithubData(user: { username: string | null } | null, username: string) {
     if (user !== null) {
@@ -60,6 +63,7 @@ function addHttpsToUrlIfNeeded(url: string) {
     }
     return url
 }
+
 
 const UserPage = async ({ params }: { params: { slug: string } }) => {
     const userQuery = await api.post.fetchUser.query(params.slug)
@@ -189,7 +193,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                           Current Stack
                       </div>
                       <div className='flex items-center flex-wrap gap-x-2 gap-y-1 mb-0'>
-                          {userQuery.skills.filter(skill => skill.primary).map(skill => {
+                          {userQuery.skills.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).filter(skill => skill.primary).map(skill => {
                               return (
                                   <div key={skill.id} className='flex items-center border h-9 border-white border-opacity-20 rounded-full px-2 py-1 justify-between mb-2'>
                                       {skill.image &&
@@ -204,7 +208,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     }
                     <SkillSection 
                       forceOpen={userQuery.skills.filter(skill => skill.primary).length === 0}
-                      skills={userQuery.skills.filter(skill => !skill.primary)} 
+                      skills={userQuery.skills.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).filter(skill => !skill.primary)} 
                     />
 
                     {userQuery.projects.length > 0 &&
@@ -357,6 +361,8 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                             </div>
                         </>
                     }
+
+                    <BottomBar username={params.slug} />
                 </div>
             }
         </div>

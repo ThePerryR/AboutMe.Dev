@@ -10,9 +10,9 @@ import Main from './Main'
 
 const SudoPage = async () => {
     const session = await getServerAuthSession()
-    if (!session?.user.isSuperUser) {
-        return null
-    }
+    // if (!session?.user.isSuperUser) {
+    //     return null
+    // }
     return (
         <Main />
     )

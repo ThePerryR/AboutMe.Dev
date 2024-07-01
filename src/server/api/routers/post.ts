@@ -1,4 +1,4 @@
-import { UpdateType, Visibility } from "@prisma/client";
+import { type UpdateType, Visibility } from "@prisma/client";
 import { sqltag } from "@prisma/client/runtime/library";
 import { z } from "zod";
 
@@ -9,20 +9,6 @@ import {
 } from "~/server/api/trpc";
 
 export const postRouter = createTRPCRouter({
-  getPublicUser: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(({ ctx }) => {
-      // return ctx.db.user.findUnique({
-      //   where: { id: ctx.input.id },
-      // });
-    }),
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
   fetchMyUser: protectedProcedure
     .query(({ ctx }) => {
       return ctx.db.user.findUnique({
@@ -82,7 +68,7 @@ export const postRouter = createTRPCRouter({
                 id: skill.id,
                 name: skill.name,
                 type: skill.type,
-                image: skill.image
+                image: skill.image,
               })
             })
           })
@@ -112,7 +98,8 @@ export const postRouter = createTRPCRouter({
             name: skill.skill.name,
             type: skill.skill.type,
             primary: skill.primary,
-            image: skill.skill.image
+            image: skill.skill.image,
+            order: skill.order
           })
         })
       };
@@ -374,7 +361,8 @@ export const postRouter = createTRPCRouter({
   searchSkills: publicProcedure
     .input(z.object({
       search: z.string(),
-      exclude: z.array(z.number()).optional()
+      exclude: z.array(z.number()).optional(),
+      take: z.number().optional()
     }))
     .query(async ({ ctx, input }) => {
 
@@ -383,7 +371,7 @@ export const postRouter = createTRPCRouter({
           name: { contains: input.search },
           id: { notIn: input.exclude }
         },
-        take: 12
+        take: input.take ?? 12
       });
     }),
 
@@ -444,6 +432,20 @@ export const postRouter = createTRPCRouter({
         }
       })
     }),
+  updateSkillOrder: protectedProcedure
+    .input(z.array(z.object({ id: z.number(), order: z.number(), primary: z.boolean() })))
+    .mutation(async ({ ctx, input }) => {
+      const userSkills = await ctx.db.userSkill.findMany({ where: { userId: ctx.session.user.id } })
+      for (const skill of input) {
+        const userSkill = userSkills.find((us) => us.id === skill.id)
+        if (userSkill && (userSkill.order !== skill.order || userSkill.primary !== skill.primary)) {
+          await ctx.db.userSkill.update({
+            where: { id: skill.id },
+            data: { order: skill.order, primary: skill.primary }
+          })
+        }
+      }
+    }),
   toggleSkill: protectedProcedure
     .input(z.object({ id: z.number(), primary: z.boolean().optional(), projectId: z.number().optional() }))
     .mutation(async ({ ctx, input }) => {
@@ -483,10 +485,12 @@ export const postRouter = createTRPCRouter({
         }
       })
       if (userSkill) {
+        console.log('delete')
         await ctx.db.userSkill.delete({
           where: { id: userSkill.id, userId: ctx.session.user.id }
         })
       } else {
+        console.log('create')
         await ctx.db.userSkill.create({
           data: {
             userId: ctx.session.user.id,
@@ -626,6 +630,11 @@ export const postRouter = createTRPCRouter({
           flair: user.statusEmoji,
         }
       })
+    }),
+
+    fetchDashboard: publicProcedure
+    .query(async ({ ctx }) => {
+      console.log('dashboard')
     }),
 
   searchInterests: publicProcedure

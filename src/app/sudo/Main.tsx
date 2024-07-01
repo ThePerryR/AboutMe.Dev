@@ -1,6 +1,6 @@
 'use client'
 
-import { Interest } from '@prisma/client'
+import { type Interest } from '@prisma/client'
 import classNames from 'classnames'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -10,7 +10,7 @@ import { UploadButton } from '~/utils/uploadthing'
 
 const Main = () => {
     const [view, setView] = React.useState<'skills' | 'interests' | 'users'>('skills')
-    const skillsQuery = api.post.searchSkills.useQuery({ search: '', exclude: [] })
+    const skillsQuery = api.post.searchSkills.useQuery({ search: '', exclude: [], take: 99999 })
     const interestsQuery = api.post.searchInterests.useQuery({ search: '', exclude: [] })
     const usersQuery = api.post.fetchUsers.useQuery()
     const updateSkillMutation = api.post.updateSkill.useMutation()
@@ -93,7 +93,7 @@ const Main = () => {
                 {view === 'interests' && (
                     <ul className='space-y-2'>
                         {interestsQuery.data?.map((skill) => (
-                            <Interest key={skill.id} interest={skill} />
+                            <InterestC key={skill.id} interest={skill} />
                         ))}
                     </ul>
                 )}
@@ -102,7 +102,7 @@ const Main = () => {
     )
 }
 
-const Interest = ({ interest }: { interest: Interest }) => {
+const InterestC = ({ interest }: { interest: Interest }) => {
     const [image, setImage] = React.useState<string | null>(interest.image)
     const updateInterestMutation = api.post.updateInterest.useMutation()
     return (

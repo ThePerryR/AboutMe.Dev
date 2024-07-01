@@ -1,26 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { type Skill } from '@prisma/client';
-import { api } from '~/trpc/react';
+import { UserSkill, type Skill } from '@prisma/client';
 import Image from 'next/image';
 import classNames from 'classnames';
-import {
-  DndContext, 
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import {CSS} from '@dnd-kit/utilities';
 
-const SkillList = ({ allSkills, skills, addSkill, toggleSkill, primary }: { primary?: boolean, allSkills: Skill[], skills: Skill[], addSkill: (name: string) => Promise<void>, toggleSkill: (id: number, skill: Skill) => Promise<void> }) => {
+import { api } from '~/trpc/react';
+import SkillGroup from './SillGroup';
+import Skills from './Skills';
+
+const SkillList = ({ allSkills, skills, addSkill, toggleSkill, primary }: { primary?: boolean, allSkills: Skill[], skills: (UserSkill & { skill: Skill })[], addSkill: (name: string) => Promise<void>, toggleSkill: (id: number, skill: Skill) => Promise<void> }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [focused, setFocused] = useState(false);
@@ -47,7 +34,7 @@ const SkillList = ({ allSkills, skills, addSkill, toggleSkill, primary }: { prim
 
     return (
         <div ref={containerRef}>
-            <div className='relative'>
+            <div className='relative mb-4'>
                 <input
                     type='text'
                     ref={inputRef}
@@ -120,86 +107,13 @@ const SkillList = ({ allSkills, skills, addSkill, toggleSkill, primary }: { prim
                 )}
             </div>
 
-            <SkillGroup
+            <Skills
               skills={skills}
               toggleSkill={toggleSkill}
-              primary={primary}
+              label=''
             />
         </div>
     );
 }
 
-const SkillGroup = ({ primary, skills, toggleSkill }: { primary?: boolean, skills: Skill[], toggleSkill: (id: number, skill: Skill) => Promise<void> }) => {
-  const languages = skills.filter(skill => skill.type === 'language');
-  const library = skills.filter(skill => skill.type === 'library');
-  const framework = skills.filter(skill => skill.type === 'framework');
-  const tool = skills.filter(skill => skill.type === 'tool');
-
-  
-  return (
-    <div className='w-full space-y-4 mt-4'>
-        {languages.length > 0 &&
-            <SkillListt id={primary ? 'primary-languages' : 'languages'} skills={languages} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Languages' />
-        }
-        {library.length > 0 &&
-            <SkillListt id={primary ? 'primary-library' : 'library'} skills={library} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Libraries' />
-        }
-        {framework.length > 0 &&
-            <SkillListt id={primary ? 'primary-framework' : 'framework'} skills={framework} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Frameworks' />
-        }
-        {tool.length > 0 &&
-            <SkillListt id={primary ? 'primary-tool' : 'tools'} skills={tool} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Tools' />
-        }
-    </div>
-  )
-}
-
-const SkillListt = ({ id, skills, toggleSkill, label }: { id: string, skills: Skill[], toggleSkill: (id: number, skill: Skill) => Promise<void>, label: string }) => {
-    return (
-      <SortableContext 
-      items={skills}
-      strategy={verticalListSortingStrategy}>
-        <div>
-            <div className='text-white text-opacity-50 text-sm'>{label}</div>
-            <div className={classNames('flex mt-1 flex-wrap gap-2')}> {/* isOver ? 'border border-dashed rounded-full p-1' : ''*/}
-                {skills.map(skill => (
-                    <SkillTab key={skill.id} skill={skill} toggleSkill={toggleSkill} />
-                ))}
-            </div>
-        </div>
-      </SortableContext>
-    )
-}
-
-const SkillTab = ({ skill, toggleSkill }: { skill: Skill, toggleSkill: (id: number, skill: Skill) => Promise<void> }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: skill.id });
-  
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-  
-  return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}
-      
-      className='cursor-pointer flex items-center hover:opacity-50 space-x-2 border border-white border-opacity-20 px-2 py-1 rounded-full text-white text-opacity-70 bg-white bg-opacity-5 text-xs'>
-      {skill.image &&
-          <Image
-              src={skill.image}
-              alt={skill.name ?? ''}
-              width={16}
-              height={16}
-              className=''
-          />
-      }
-      <div>{skill.name}</div>
-  </div>
-  )
-}
 export default SkillList;
