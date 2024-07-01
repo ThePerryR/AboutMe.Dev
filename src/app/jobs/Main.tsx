@@ -6,7 +6,7 @@ import { LinkIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
 import { api } from "~/trpc/react";
 import SkillList from "../(home)/profile/skills/SkillList";
-import { User, type Skill } from "@prisma/client";
+import { User, UserSkill, type Skill } from "@prisma/client";
 import { SessionUser } from "./page";
 import Image from "next/image";
 import { ImageEditor } from "../(home)/teams/[id]/Main";
@@ -30,7 +30,7 @@ const LinkForm = ({
   const [salaryMax, setSalaryMax] = React.useState("");
   const [aboutCompany, setAboutCompany] = React.useState("");
   const [aboutTeam, setAboutTeam] = React.useState("");
-  const [selectedSkills, setSelectedSkills] = React.useState<Skill[]>([]);
+  const [selectedSkills, setSelectedSkills] = React.useState<(UserSkill & { skill: Skill })[]>([]);
 
   const parseWebsiteMutation = api.post.parseWebsite.useMutation();
 
@@ -40,7 +40,9 @@ const LinkForm = ({
   });
   const addSkillMutation = api.post.addSkill.useMutation({
     onSuccess: (skill) => {
-      setSelectedSkills([...selectedSkills, skill]);
+      if ('skill' in skill) {
+        setSelectedSkills([ ...selectedSkills, skill ]);
+      }
     },
   });
   const createJobMutation = api.post.createJob.useMutation({
@@ -72,7 +74,7 @@ const LinkForm = ({
   async function toggleSkill(id: number, skill: Skill) {
     const index = selectedSkills.findIndex((s) => s.id === id);
     if (index === -1) {
-      setSelectedSkills([...selectedSkills, skill]);
+      // setSelectedSkills([...selectedSkills, skill]);
     } else {
       setSelectedSkills(selectedSkills.filter((s) => s.id !== id));
     }
@@ -177,7 +179,7 @@ const LinkForm = ({
         <div className="mb-1 font-medium">Skills</div>
         <SkillList
           primary
-          allSkills={selectedSkills}
+          allSkills={selectedSkills.map(s => s.skill)}
           skills={selectedSkills}
           toggleSkill={toggleSkill}
           addSkill={async (name) => {

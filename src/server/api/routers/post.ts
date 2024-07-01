@@ -549,7 +549,7 @@ export const postRouter = createTRPCRouter({
         }
       })
 
-      return userSkill.skill
+      return userSkill
     }),
   getInterests: protectedProcedure
     .query(async ({ ctx }) => {
