@@ -13,16 +13,16 @@ const SkillGroup = ({ primary, skills, toggleSkill }: { primary?: boolean, skill
   return (
     <div className='w-full space-y-4 mt-4'>
       {languages.length > 0 &&
-      <Skills skills={languages} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Languages' />
+      <Skills skills={languages.map(s => s.skill)} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Languages' />
       }
       {library.length > 0 &&
-      <Skills skills={library} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Libraries' />
+      <Skills skills={library.map(s => s.skill)} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Libraries' />
       }
       {framework.length > 0 &&
-      <Skills skills={framework} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Frameworks' />
+      <Skills skills={framework.map(s => s.skill)} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Frameworks' />
       }
       {tool.length > 0 &&
-      <Skills skills={tool} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Tools' />
+      <Skills skills={tool.map(s => s.skill)} toggleSkill={(id, skill) => toggleSkill(id, skill)} label='Tools' />
       }
     </div>
   )
