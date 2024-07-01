@@ -9,7 +9,7 @@ const ProjectPage = async ({ params }: { params: { id: string } }) => {
     if (!project) return null
     console.log(project, 'PROJECT PAGEIO')
     return (
-        <div className='text-white px-6 max-w-[844px] w-full mx-auto'>
+        <div className='text-white px-6 py-8 max-w-[844px] w-full mx-auto'>
           <div className='flex space-x-8'>
             <div className='w-1/2'>
               <div className='flex space-x-4 items-center'>

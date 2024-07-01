@@ -1,12 +1,15 @@
 import { type UpdateType, Visibility } from "@prisma/client";
 import { sqltag } from "@prisma/client/runtime/library";
 import { z } from "zod";
+import * as cheerio from 'cheerio';
 
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
 
 export const postRouter = createTRPCRouter({
   fetchMyUser: protectedProcedure
@@ -23,9 +26,13 @@ export const postRouter = createTRPCRouter({
           username: input.toLowerCase(),
         },
         include: {
-          projects: {
+          allProjects: {
             include: {
-              skills: true
+              project: {
+                include: {
+                  skills: true
+                }
+              }
             }
           },
           experiences: true,
@@ -53,7 +60,8 @@ export const postRouter = createTRPCRouter({
         twitterUsername: user?.twitterUsername,
         linkedinUsername: user?.linkedinUsername,
         githubCreatedAt: user?.githubCreatedAt,
-        projects: user.projects.map(project => {
+        projects: user.allProjects.map(projectData => {
+          const project = projectData.project
           return ({
             id: project.id,
             name: project.name,
@@ -187,12 +195,19 @@ export const postRouter = createTRPCRouter({
         where: { createdBy: { id: ctx.session.user.id }, isFavorited: true }
       })
       const isFavorited = favoritedProjects.length < 6
-      const project = ctx.db.project.create({
+      const project = await ctx.db.project.create({
         data: {
           createdBy: { connect: { id: ctx.session.user.id } },
           isFavorited
         },
       });
+
+      await ctx.db.userProject.create({
+        data: {
+          userId: ctx.session.user.id,
+          projectId: project.id
+        }
+      })
 
       return project;
     }),
@@ -890,5 +905,41 @@ export const postRouter = createTRPCRouter({
         }
       })
       return job
-    })
+    }),
+    generateExperienceHeadline: protectedProcedure
+      .input(z.object({ name: z.string(), url: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        // fetch html content from url
+        console.log('aoaooaoaoaoa')
+        const response = await fetch(input.url);
+        const html = await response.text();
+        // get meta title and description
+        const $ = cheerio.load(html);
+        const title = $('title').text();
+        const description = $('meta[name="description"]').attr('content');
+        
+        const { text } = await generateText({
+          model: openai('gpt-4-turbo'),
+          prompt: `Create a headline for a "Personal Project" on developers portfolio. Shoot for 16 words.
+          This is for a project called "${input.name}" and here is some meta data from the website:
+          Title: ${title}. Description: ${description}. URL: ${input.url}.
+          This headline should be super short and catchy, something like "A personal project to help developers learn new skills and build cool stuff." or "Recipe app for vegans." but DO NOT add quotes around the headline.
+          Should start with "This app" "This is designed to", "Todoist is a webapp built for", etc. Not like "Todoist: Revolutionize ..." or anything too formal.`
+        })
+        console.log('sosososos', text)
+        return text
+      }),
+      generateExperienceDescription: protectedProcedure
+      .input(z.object({ name: z.string(), headline: z.string(), description: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const { text } = await generateText({
+          model: openai('gpt-4-turbo'),
+          prompt: `Please create or improve a brief description for a "Personal Project" on developers portfolio. Shoot for 120 words.
+          This is for a project called "${input.name}". Headline: ${input.headline}.
+          Current Description: ${input.description}.
+          This should be somewhat casual and not overly formal. Use casual language and avoid stuff like "designed to streamline", "by empowering businesses", etc. Be straightforward and to the point. Just a paragraph or two, no title/markdown/etc.`
+        })
+        console.log('sosososos', text)
+        return text
+      })
 });

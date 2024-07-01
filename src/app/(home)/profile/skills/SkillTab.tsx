@@ -8,7 +8,7 @@ import Image from 'next/image';
 import Skills from './Skills';
 import { Bars3Icon } from '@heroicons/react/20/solid';
 
-const SkillTab = ({ skill, toggleSkill }: { skill: UserSkill & { skill: Skill }, toggleSkill: (id: number, skill: Skill) => Promise<void> }) => {
+const SkillTab = ({ skill, toggleSkill }: { skill: Skill, toggleSkill: (id: number, skill: Skill) => Promise<void> }) => {
   const {
     attributes,
     listeners,
@@ -30,18 +30,18 @@ const SkillTab = ({ skill, toggleSkill }: { skill: UserSkill & { skill: Skill },
         className='cursor-move p-1'>
         <Bars3Icon className='w-3 h-3' />
       </div>
-      <div className='flex items-center space-x-2 group' onClick={() => toggleSkill(skill.skill.id, skill.skill)}>
-        {skill.skill.image &&
+      <div className='flex items-center space-x-2 group' onClick={() => toggleSkill(skill.id, skill)}>
+        {skill.image &&
           <Image
-            src={skill.skill.image}
-            alt={skill.skill.name ?? ''}
+            src={skill.image}
+            alt={skill.name ?? ''}
             width={16}
             height={16}
             className=''
           />
           }
           <div>
-            <div className='group-hover:hidden'>{skill.skill.name}</div>
+            <div className='group-hover:hidden'>{skill.name}</div>
             <div className='hidden group-hover:block text-red-500'>Remove</div>
           </div>
         </div>

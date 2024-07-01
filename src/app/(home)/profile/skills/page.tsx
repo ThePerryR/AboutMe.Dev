@@ -129,6 +129,7 @@ const Skills = () => {
                 skills
                   ?.filter((skill) => skill.primary)
                   .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+                  .map(s => s.skill)
               }
               toggleSkill={async (id) => {
                 await toggleSkillMutation.mutateAsync({ id, primary: true });
@@ -160,6 +161,7 @@ const Skills = () => {
                 skills
                   ?.filter((skill) => !skill.primary)
                   .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+                  .map(s => s.skill)
               }
               toggleSkill={async (id) => {
                 await toggleSkillMutation.mutateAsync({ id, primary: false });

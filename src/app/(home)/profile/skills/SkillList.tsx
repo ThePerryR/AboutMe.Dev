@@ -7,7 +7,7 @@ import { api } from '~/trpc/react';
 import SkillGroup from './SillGroup';
 import Skills from './Skills';
 
-const SkillList = ({ allSkills, skills, addSkill, toggleSkill, primary }: { primary?: boolean, allSkills: Skill[], skills: (UserSkill & { skill: Skill })[], addSkill: (name: string) => Promise<void>, toggleSkill: (id: number, skill: Skill) => Promise<void> }) => {
+const SkillList = ({ allSkills, skills, addSkill, toggleSkill, primary }: { primary?: boolean, allSkills: Skill[], skills: Skill[], addSkill: (name: string) => Promise<void>, toggleSkill: (id: number, skill: Skill) => Promise<void> }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [focused, setFocused] = useState(false);
@@ -44,7 +44,7 @@ const SkillList = ({ allSkills, skills, addSkill, toggleSkill, primary }: { prim
                       setSearch(e.target.value)
                       setHighlightedIndex(0)
                     }}
-                    className='w-full bg-black bg-opacity-5 border border-white border-opacity-10 rounded px-2 py-1 text-sm text-white text-opacity-80'
+                    className='w-full border-white/10 bg-white/5 border rounded p-2 text-sm text-white text-opacity-80'
                     onFocus={() => setFocused(true)}
                     onKeyDown={e => {
                         if (e.key === 'ArrowDown') {

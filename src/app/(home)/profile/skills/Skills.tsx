@@ -8,7 +8,7 @@ import { type UserSkill, type Skill } from '@prisma/client';
 
 import SkillTab from './SkillTab';
 
-const Skills = ({ skills, toggleSkill, label }: { skills: (UserSkill & { skill: Skill })[], toggleSkill: (id: number, skill: Skill) => Promise<void>, label: string }) => {
+const Skills = ({ skills, toggleSkill, label }: { skills: Skill[], toggleSkill: (id: number, skill: Skill) => Promise<void>, label: string }) => {
   return (
     <SortableContext 
       items={skills}
