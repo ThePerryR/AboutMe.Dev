@@ -180,7 +180,7 @@ const LinkForm = ({
         <SkillList
           primary
           allSkills={selectedSkills.map(s => s.skill)}
-          skills={selectedSkills}
+          skills={selectedSkills.map(s => s.skill)}
           toggleSkill={toggleSkill}
           addSkill={async (name) => {
             addSkillMutation.mutate({ type: "language", name });
