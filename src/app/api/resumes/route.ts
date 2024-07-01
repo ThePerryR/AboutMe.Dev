@@ -5,7 +5,7 @@ import { db } from '~/server/db';
 import { openai } from '@ai-sdk/openai';
 import { type UserSkill } from '@prisma/client';
 
-export const sortSkills = (a: UserSkill, b: UserSkill) => (a.order ?? 0) - (b.order ?? 0);
+const sortSkills = (a: UserSkill, b: UserSkill) => (a.order ?? 0) - (b.order ?? 0);
 
 export async function GET(request: NextRequest) {
   const username = request.nextUrl.searchParams.get('username');
