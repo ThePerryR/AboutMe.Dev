@@ -114,11 +114,17 @@ export const postRouter = createTRPCRouter({
     }),
 
   updateName: protectedProcedure
-    .input(z.string())
+    .input(z.object({
+      name: z.string(),
+      headline: z.string().optional()
+    }))
     .mutation(({ ctx, input }) => {
       return ctx.db.user.update({
         where: { id: ctx.session.user.id },
-        data: { name: input },
+        data: {
+          name: input.name,
+          headline: input.headline
+        },
       });
     }),
 
