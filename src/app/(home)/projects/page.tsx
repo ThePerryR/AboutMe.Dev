@@ -89,6 +89,7 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite, refresh }: { projec
     })
     const addSkillMutation = api.post.addSkill.useMutation({
         onSuccess: (skill) => {
+            if ('skill' in skill) return
             setSkills([...skills, skill])
         }
     })
@@ -224,7 +225,7 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite, refresh }: { projec
                         <div className='text-xs opacity-60'>List the technologies and tools used in this project.</div>
                     </div>
                     <div className='flex-1'>
-                        <SkillList
+                        {/* <SkillList
                             allSkills={skills}
                             skills={skills}
                             toggleSkill={async (id) => {
@@ -233,7 +234,7 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite, refresh }: { projec
                             addSkill={async (name) => {
                                 await addSkillMutation.mutateAsync({ name, type: 'language', projectId: project.id })
                             }}
-                        />
+                        /> */}
                     </div>
                 </div>
 
