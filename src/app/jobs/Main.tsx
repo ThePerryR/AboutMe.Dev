@@ -10,6 +10,7 @@ import { User, type Skill } from "@prisma/client";
 import { SessionUser } from "./page";
 import Image from "next/image";
 import { ImageEditor } from "../(home)/teams/[id]/Main";
+import Link from "next/link";
 
 const LinkForm = ({
   close,
@@ -211,9 +212,10 @@ const Main = ({ user }: { user?: SessionUser }) => {
       </div>
       <div>
         {jobsQuery.data?.map((job) => (
-          <div key={job.id} className="mb-4 rounded bg-white/5 p-4">
+          <div key={job.id} className="mb-4 rounded bg-white/5 p-4 flex items-center justify-between">
+            <div>
             <div className="font-medium mb-1">{job.companyName}</div>
-            <div className="text-sm">{job.jobTitle}</div>
+            <div className="text-sm flex items-center mb-3">{job.jobTitle}{job.allowRemote && <div className='bg-blue-500 ml-2 text-xs text-white px-1.5 py-0.5 opacity-80 rounded-full'>Allows Remote</div>}</div>
             <div className="text-sm">{job.location}</div>
             <div className="text-sm opacity-80">
               {job.salaryMin?.toLocaleString("en-US", {
@@ -240,6 +242,12 @@ const Main = ({ user }: { user?: SessionUser }) => {
                     />
                   </div>
                 ))}
+            </div>
+          </div>
+            <div>
+              {job.url &&
+              <Link href={job.url} target='_blank'>Link</Link>
+              }
             </div>
           </div>
         ))}
