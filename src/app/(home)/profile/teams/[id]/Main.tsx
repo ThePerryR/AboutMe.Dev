@@ -59,7 +59,7 @@ export const ImageEditor = ({ label, value, handleClickSave }: { label: string, 
   const [editing, setEditing] = React.useState(false)
   const [uploadError, setUploadError] = React.useState<string | undefined>(undefined)
   return (
-    <div className='flex items-center justify-between'>
+    <div className='flex items-center justify-between p-8'>
       <div>{label}</div>
 
       <div className='space-x-4 flex items-center'>

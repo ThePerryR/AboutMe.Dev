@@ -37,7 +37,7 @@ const SkillTab = ({ skill, toggleSkill }: { skill: Skill, toggleSkill: (id: numb
             alt={skill.name ?? ''}
             width={16}
             height={16}
-            className=''
+            className='max-w-[16px] max-h-[16px] object-contain'
           />
           }
           <div>

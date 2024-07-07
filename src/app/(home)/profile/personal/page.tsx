@@ -34,7 +34,7 @@ export default async function Home() {
     <div className=''>
       <ProfilePicture emoji={randomEmoji ?? '😀'} initialImage={session.user.image ?? undefined} />
       <Statuses initialNationality={userQuery.nationalityEmoji} initialStatus={userQuery.statusEmoji} />
-      <Name initialName={session.user.name ?? undefined} />
+      <Name initialName={userQuery.name ?? undefined} initialHeadline={userQuery.headline ?? undefined} />
       <Location initialRegion={userQuery.region ?? undefined} initialLocation={userQuery.location ?? undefined} />
       <Links
         username={userQuery.username ?? ''}

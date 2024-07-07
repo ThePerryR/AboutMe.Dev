@@ -17,17 +17,17 @@ const Skills = () => {
         }
     })
     return (
-        <div className='space-y-6'>
-            <div className='bg-black border-white border rounded border-opacity-10'>
-                <div className='flex flex-col p-4 space-y-6 bg-white bg-opacity-5'>
-                    <div className='w-full shrink-0'>
-                        <div className='text-sm'>Hobbies & Interests</div>
-                        <div className='text-sm opacity-60'>
+        <div className='space-y-6 h-full'>
+            <div className=''>
+                <div className='grid grid-cols-3 space-x-10 px-8 py-16'>
+                    <div className='shrink-0'>
+                        <div className=' mb-1'>Hobbies & Interests</div>
+                        <div className='text-sm text-gray-400'>
                             Add any hobbies you have such as playing guitar, cooking, or reading. Or interests and causes such as climate change, mental health, or politics.
                         </div>
                     </div>
 
-                    <div className='flex-1'>
+                    <div className='col-span-2'>
                         <SearchList
                             label="interests"
                             interests={interestsQuery.data ?? []}

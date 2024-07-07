@@ -148,7 +148,7 @@ const Skills = () => {
 
         <div className="grid grid-cols-3 space-x-10 border-b border-[#1C2432] px-8 py-16">
           <div className="flex shrink-0 flex-col items-start">
-            <div className="text-sm mb-1">Other Skills</div>
+            <div className=" mb-1">Other Skills</div>
             <div className="text-sm text-gray-400">
               Add any other languages, libraries, frameworks, or tools you know.
             </div>

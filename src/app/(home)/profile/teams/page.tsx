@@ -13,7 +13,7 @@ const Teams = () => {
     }
   })
   return (
-    <div>
+    <div className='p-8'>
       <div className='flex items-center justify-between mb-4'>
           <h1 className=' font-bold'>Teams</h1>
           <button className='text-black bg-white text-sm rounded-lg px-2 py-1' onClick={() => { createTeamMutation.mutate() }}>

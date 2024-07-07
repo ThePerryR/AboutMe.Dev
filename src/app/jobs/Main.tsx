@@ -9,7 +9,7 @@ import SkillList from "../(home)/profile/skills/SkillList";
 import { User, UserSkill, type Skill } from "@prisma/client";
 import { SessionUser } from "./page";
 import Image from "next/image";
-import { ImageEditor } from "../(home)/teams/[id]/Main";
+import { ImageEditor } from "../(home)/profile/teams/[id]/Main";
 import Link from "next/link";
 
 const LinkForm = ({
