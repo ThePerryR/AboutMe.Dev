@@ -41,7 +41,11 @@ export const postRouter = createTRPCRouter({
               skill: true
             }
           },
-          interests: true
+          interests: {
+            include: {
+              interest: true
+            }
+          }
         }
       });
       if (!user || user.profileVisibility === Visibility.PRIVATE) {
@@ -83,9 +87,9 @@ export const postRouter = createTRPCRouter({
         }),
         interests: user.interests.map(interest => {
           return ({
-            id: interest.id,
-            name: interest.name,
-            image: interest.image
+            id: interest.interest.id,
+            name: interest.interest.name,
+            image: interest.interest.image
           })
         }),
         experiences: user.experiences.map(experience => {
@@ -467,6 +471,20 @@ export const postRouter = createTRPCRouter({
         }
       }
     }),
+  updateInterestOrder: protectedProcedure
+    .input(z.array(z.object({ id: z.number(), order: z.number() })))
+    .mutation(async ({ ctx, input }) => {
+      const userInterests = await ctx.db.userInterest.findMany({ where: { userId: ctx.session.user.id } })
+      for (const interest of input) {
+        const userInterest = userInterests.find((ui) => ui.id === interest.id)
+        if (userInterest && (userInterest.order !== interest.order)) {
+          await ctx.db.userInterest.update({
+            where: { id: interest.id },
+            data: { order: interest.order }
+          })
+        }
+      }
+    }),
   toggleSkill: protectedProcedure
     .input(z.object({ id: z.number(), primary: z.boolean().optional(), projectId: z.number().optional() }))
     .mutation(async ({ ctx, input }) => {
@@ -577,7 +595,11 @@ export const postRouter = createTRPCRouter({
       const user = await ctx.db.user.findUnique({
         where: { id: ctx.session.user.id },
         include: {
-          interests: true
+          interests: {
+            include: {
+              interest: true
+            }
+          }
         }
       });
       return user?.interests ?? []
@@ -586,22 +608,15 @@ export const postRouter = createTRPCRouter({
     .input(z.number())
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.db.user.findUnique({ where: { id: ctx.session.user.id }, include: { interests: true } })
-      if (user?.interests.find((i) => i.id === input)) {
-        await ctx.db.user.update({
-          where: { id: ctx.session.user.id },
-          data: {
-            interests: {
-              disconnect: { id: input }
-            }
-          }
+      if (user?.interests.find((i) => i.interestId === input)) {
+        await ctx.db.userInterest.deleteMany({ 
+          where: { interestId: input, userId: ctx.session.user.id }
         })
       } else {
-        await ctx.db.user.update({
-          where: { id: ctx.session.user.id },
+        await ctx.db.userInterest.create({
           data: {
-            interests: {
-              connect: { id: input }
-            }
+            user: { connect: { id: ctx.session.user.id } },
+            interest: { connect: { id: input } }
           }
         })
       }
@@ -614,14 +629,15 @@ export const postRouter = createTRPCRouter({
           name: input
         }
       })
-      await ctx.db.user.update({
-        where: { id: ctx.session.user.id },
+      
+      const userInterest = await ctx.db.userInterest.create({
         data: {
-          interests: {
-            connect: { id: interest.id }
-          }
+          user: { connect: { id: ctx.session.user.id } },
+          interest: { connect: { id: interest.id } }
         }
       })
+
+      return userInterest
     }),
 
   fetchAllUsers: publicProcedure
@@ -665,31 +681,16 @@ export const postRouter = createTRPCRouter({
       limit: z.number().optional()
     }))
     .query(async ({ ctx, input }) => {
-      const interestIds = await ctx.db.$queryRaw<{ interestId: number }[]>(sqltag`SELECT A as interestId, COUNT(B) as count
-                                              FROM _InterestToUser
-                                              GROUP BY A
-                                              ORDER BY COUNT(B) DESC`);
-
-      // Filter out the excluded IDs and limit the number of IDs to include
-      const filteredInterestIds = interestIds
-        .map((row) => row.interestId)
-        .filter((id) => !input.exclude?.includes(id))
-
-      // Then, fetch the interest details for these IDs in the order of usage frequency
-      if (filteredInterestIds.length === 0) {
-        return [];
-      }
-
-      return ctx.db.interest.findMany({
+      const interests = await ctx.db.interest.findMany({
         where: {
-          id: { in: filteredInterestIds },
           name: { contains: input.search }
         },
         orderBy: {
-          // name: 'asc' // Or any other ordering you prefer
         },
         take: input.limit
       });
+      console.log('interests', interests)
+      return interests
     }),
   updateInterest: protectedProcedure
     .input(z.object({

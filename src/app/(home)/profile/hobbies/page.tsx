@@ -1,10 +1,30 @@
 'use client'
 
-import { type Interest } from '@prisma/client'
+import { type UserInterest, type Interest } from '@prisma/client'
 import React, { useEffect, useRef, useState } from 'react'
 import { api } from '~/trpc/react'
+import {
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable
+} from '@dnd-kit/sortable';
+import {CSS} from '@dnd-kit/utilities';
+import { Bars3Icon } from '@heroicons/react/20/solid';
 
+let dragTimeout: NodeJS.Timeout | null = null;
 const Skills = () => {
+    const [interests, setInterests] = React.useState<(UserInterest & { interest: Interest })[]>([]);
     const interestsQuery = api.post.getInterests.useQuery()
     const addInterestMutation = api.post.addInterest.useMutation({
         onSuccess: () => {
@@ -16,7 +36,62 @@ const Skills = () => {
             void interestsQuery.refetch()
         }
     })
+    const changeOrderMutation = api.post.updateInterestOrder.useMutation()
+    
+    useEffect(() => {
+      if (interestsQuery.data) {
+          console.log(interestsQuery.data)
+          setInterests(interestsQuery.data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
+      }
+    }, [interestsQuery.data])
+    const sensors = useSensors(
+      useSensor(PointerSensor),
+      useSensor(KeyboardSensor, {
+        coordinateGetter: sortableKeyboardCoordinates,
+      })
+    );
+    function handleDragEnd (event: DragEndEvent) {
+      const {active, over} = event;
+      console.log('drag end')
+      if (over && active.id !== over.id) {
+        setInterests((items) => {
+          const oldIndex = items.findIndex(item => item.id === active.id);
+          const newIndex = items.findIndex(item => item.id === over.id);
+          
+          const newInterests = arrayMove(items, oldIndex, newIndex);
+          console.log('fooo', newInterests.map((interest, i) => ({ id: interest.id, order: i })))
+          changeOrderMutation.mutate(newInterests.map((interest, i) => ({ id: interest.id, order: i })))
+          return newInterests
+        });
+      } else {
+        changeOrderMutation.mutate(interests.map((interest, i) => ({ id: interest.id, order: i })))
+      }
+    }
+
+    function handleDragOver (event: DragEndEvent) {
+      const {active, over} = event;
+      if (!over || active.id === over.id) return;
+
+      const activeInterest = interests.find(item => item.id === active.id);
+      const overInterest = interests.find(item => item.id === over.id);
+
+      if (!activeInterest || !overInterest) return
+
+      const oldIndex = interests.findIndex(item => item.id === active.id);
+      const newIndex = interests.findIndex(item => item.id === over.id);
+      if (dragTimeout) clearTimeout(dragTimeout);
+      dragTimeout = setTimeout(() => {
+        setInterests((items) => {
+          return arrayMove(items, oldIndex, newIndex);
+        });
+      }, 100)
+    }
     return (
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+        onDragOver={handleDragOver}>
         <div className='space-y-6 h-full'>
             <div className=''>
                 <div className='grid grid-cols-3 space-x-10 px-8 py-16'>
@@ -30,7 +105,7 @@ const Skills = () => {
                     <div className='col-span-2'>
                         <SearchList
                             label="interests"
-                            interests={interestsQuery.data ?? []}
+                            interests={interests}
                             addInterest={async (name) => {
                                 addInterestMutation.mutate(name)
                             }}
@@ -47,11 +122,12 @@ const Skills = () => {
                 </div>
             </div>
         </div>
+        </DndContext>
     )
 }
 
 
-const SearchList = ({ addInterest, toggleInterest, interests, label = "skills", isAdding }: { interests: Interest[], addInterest: (name: string) => Promise<void>, toggleInterest: (id: number) => Promise<void>, label?: string, isAdding: boolean }) => {
+const SearchList = ({ addInterest, toggleInterest, interests, label = "skills", isAdding }: { interests: (UserInterest & { interest: Interest })[], addInterest: (name: string) => Promise<void>, toggleInterest: (id: number) => Promise<void>, label?: string, isAdding: boolean }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [focused, setFocused] = useState(false);
     const [search, setSearch] = useState('');
@@ -112,29 +188,60 @@ const SearchList = ({ addInterest, toggleInterest, interests, label = "skills", 
                     </div>
                 )}
             </div>
-            <div className='flex mt-2 flex-wrap gap-2'>
-                {interests.map(skill => (
-                    <Interest key={skill.id} interest={skill} toggleInterest={toggleInterest} />
-                ))}
-                {isAdding &&
-                <div className='border border-white border-opacity-20 w-[100px] animate-pulse h-6 rounded-full bg-white bg-opacity-5'>
-                </div>
-                }
-            </div>
+            <SortableContext 
+              items={interests}
+              strategy={verticalListSortingStrategy}>
+              <div className='flex mt-2 flex-wrap gap-2'>
+                  {interests.map(skill => (
+                      <Interest key={skill.id} interest={skill} toggleInterest={toggleInterest} />
+                  ))}
+                  {isAdding &&
+                  <div className='border border-white border-opacity-20 w-[100px] animate-pulse h-6 rounded-full bg-white bg-opacity-5'>
+                  </div>
+                  }
+              </div>
+            </SortableContext>
         </div>
     );
 }
 
-const Interest = ({ interest, toggleInterest }: { interest: Interest, toggleInterest: (id: number) => Promise<void> }) => {
+const Interest = ({ interest, toggleInterest }: { interest: (UserInterest & { interest: Interest }), toggleInterest: (id: number) => Promise<void> }) => {
     const [removing, setRemoving] = useState(false);
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+    } = useSortable({ id: interest.id });
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
     return (
         <div
-            onClick={async () => {
-                setRemoving(true);
-                await toggleInterest(interest.id);
-            }}
+            ref={setNodeRef}
+            style={style}
             className='cursor-pointer flex items-center hover:opacity-50 space-x-2 border border-white border-opacity-20 px-2 py-1 rounded-full text-white text-opacity-70 bg-white bg-opacity-5 text-xs'>
-            {removing ? 'Removing...' : <div>{interest.image ? `${interest.image} ${interest.name}` : interest.name}</div>}
+            <div 
+              {...attributes} 
+              {...listeners}
+              className='cursor-move p-1'>
+              <Bars3Icon className='w-3 h-3' />
+            </div>
+            {removing 
+              ? 'Removing...'
+              : (
+              <div 
+                onClick={async () => {
+                  setRemoving(true);
+                  await toggleInterest(interest.id);
+                }}>
+                {interest.interest.image ? `${interest.interest.image} ${interest.interest.name}` : interest.interest.name}
+              </div>
+              )
+            }
         </div>
     )
 }
