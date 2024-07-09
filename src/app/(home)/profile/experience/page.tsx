@@ -1,20 +1,26 @@
 'use client'
 
-import { Experience } from '@prisma/client'
+import { type Experience } from '@prisma/client'
 import classNames from 'classnames'
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { api } from '~/trpc/react'
 import { UploadButton } from '~/utils/uploadthing'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 const ExperiencePage = () => {
+  const [experiences, setExperiences] = useState<Experience[]>([]);
     const experienceQuery = api.post.fetchExperiences.useQuery()
     const createExperienceMutation = api.post.createExperience.useMutation({
         onSuccess: () => {
             void experienceQuery.refetch()
         }
     })
+    useEffect(() => {
+        if (experienceQuery.data) {
+          setExperiences(experienceQuery.data.sort((a, b) => (b.startDate ? b.startDate.getTime() : 0) - (a.startDate ? a.startDate.getTime() : 0)))
+        }
+    }, [experienceQuery.data])
     if (!experienceQuery.isSuccess) {
         return <div>Loading...</div>
     }
@@ -26,7 +32,7 @@ const ExperiencePage = () => {
                     {createExperienceMutation.isLoading ? 'One moment...' : 'Add a new experience'}
                   </button>
             </div>
-            {experienceQuery.data.length === 0
+            {experiences.length === 0
                 ? (
                     <div className='bg-white bg-opacity-5 border-white border-opacity-10 border rounded-lg items-center py-20 border-dashed flex flex-col'>
                         <div className='text-sm opacity-60'>
@@ -36,7 +42,7 @@ const ExperiencePage = () => {
                 )
                 : (
                     <div className='space-y-10 mt-10'>
-                        {experienceQuery.data.map((experience) => (
+                        {experiences.map((experience) => (
                             <ExperienceCard
                                 key={experience.id}
                                 experience={experience}

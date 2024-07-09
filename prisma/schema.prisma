@@ -137,6 +137,7 @@ model Experience {
     endDate DateTime?
     company String?
     companyLogo String?
+    url String?
     isCurrent Boolean @default(false)
 
     createdAt DateTime @default(now())

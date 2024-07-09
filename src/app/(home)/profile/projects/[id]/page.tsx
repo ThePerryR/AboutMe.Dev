@@ -10,6 +10,7 @@ import Link from 'next/link';
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import classNames from 'classnames';
+import { ChevronLeftIcon } from '@heroicons/react/20/solid';
 
 const ProjectPage = ({ params }: { params: { id: string } }) => {
   const project = api.post.fetchProject.useQuery(Number(params.id));
@@ -101,7 +102,14 @@ const ProjectCard = ({ project, canFavorite, toggleFavorite, refresh }: { projec
     }
   })
   return (
-    <div className="py-12 px-4">
+    <div className="py-8 px-4">
+      <div>
+        <Link href='/profile/projects'>
+          <div className='text-sm flex items-center cursor-pointer opacity-70 hover:opacity-100 mb-8'>
+            <ChevronLeftIcon className='w-5 h-5' /> Back to projects
+          </div>
+        </Link>
+      </div>
       <div key={project.id} className="flex flex-col space-y-4 p-4">
         <div className="grid grid-cols-3">
           <div className="mb-1 text-sm">Name</div>
