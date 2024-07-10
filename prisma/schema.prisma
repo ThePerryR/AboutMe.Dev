@@ -87,6 +87,8 @@ model UserProject {
     project  Project  @relation(fields: [projectId], references: [id])
     projectId Int
 
+    order Int?
+
     @@index([userId])
     @@index([projectId])
     @@unique([userId, projectId])

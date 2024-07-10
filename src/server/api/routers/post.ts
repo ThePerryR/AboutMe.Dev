@@ -68,6 +68,7 @@ export const postRouter = createTRPCRouter({
           const project = projectData.project
           return ({
             id: project.id,
+            order: projectData.order,
             name: project.name,
             url: project.url,
             image: project.image,
@@ -268,9 +269,9 @@ export const postRouter = createTRPCRouter({
 
   fetchProjects: protectedProcedure
     .query(async ({ ctx }) => {
-      const projects = await ctx.db.project.findMany({
-        where: { createdBy: { id: ctx.session.user.id } },
-        include: { skills: true, users: { include: { user: true }} }
+      const projects = await ctx.db.userProject.findMany({
+        where: { userId: ctx.session.user.id },
+        include: { project: {include: { skills: true, users: { include: { user: true }} }}}
       });
 
       return projects;
@@ -481,6 +482,21 @@ export const postRouter = createTRPCRouter({
           await ctx.db.userInterest.update({
             where: { id: interest.id },
             data: { order: interest.order }
+          })
+        }
+      }
+    }),
+  updateProjectOrder: protectedProcedure
+    .input(z.array(z.object({ id: z.number(), order: z.number() })))
+    .mutation(async ({ ctx, input }) => {
+      console.log('updating order', input)
+      const userProjects = await ctx.db.userProject.findMany({ where: { userId: ctx.session.user.id } })
+      for (const project of input) {
+        const userProject = userProjects.find((up) => up.id === project.id)
+        if (userProject && (userProject.order !== project.order)) {
+          await ctx.db.userProject.update({
+            where: { id: project.id },
+            data: { order: project.order }
           })
         }
       }
