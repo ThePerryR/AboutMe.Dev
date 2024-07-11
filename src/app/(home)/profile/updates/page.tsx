@@ -43,7 +43,7 @@ const NewUpdate = ({ refetch }: { refetch: () => void }) => {
             <option value=''>Select one</option>
             {projectQuery.data?.map((project) => (
               <option key={project.id} value={project.id}>
-                {project.name}
+                {project.project.name}
               </option>
             ))}
           </select>
