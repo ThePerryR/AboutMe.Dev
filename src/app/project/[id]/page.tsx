@@ -40,7 +40,7 @@ const ProjectPage = async ({ params }: { params: { id: string } }) => {
               <div className='flex space-x-4 items-center mb-8'>
                 {project.url
                   ? (
-                      <Link href={`/project/${project.id}`} target="_blank" className='flex items-center'>
+                      <Link href={project.url} target="_blank" className='flex items-center'>
                           <div className='text-sm opacity-80'>{project.url.includes('github.com') ? 'GitHub' : 'Website'}</div>
                           <div className='ml-1 opacity-40'>
                               {project.url.includes('github.com')
