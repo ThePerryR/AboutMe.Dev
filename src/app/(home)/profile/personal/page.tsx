@@ -32,6 +32,9 @@ export default async function Home() {
   const randomEmoji = faceEmojis[Math.floor(Math.random() * faceEmojis.length)]
   return (
     <div className=''>
+      <Visiblity
+        profileVisibility={userQuery.profileVisibility ?? Visibility.PUBLIC}
+      />
       <ProfilePicture emoji={randomEmoji ?? '😀'} initialImage={session.user.image ?? undefined} />
       <Statuses initialNationality={userQuery.nationalityEmoji} initialStatus={userQuery.statusEmoji} />
       <Name initialName={userQuery.name ?? undefined} initialHeadline={userQuery.headline ?? undefined} />
@@ -41,9 +44,6 @@ export default async function Home() {
         initialTwitter={userQuery.twitterUsername ?? undefined}
         initialLinkedin={userQuery.linkedinUsername ?? undefined}
         initialWebsite={userQuery.website ?? undefined}
-      />
-      <Visiblity
-        profileVisibility={userQuery.profileVisibility ?? Visibility.PUBLIC}
       />
     </div>
   );

@@ -6,7 +6,7 @@ import React from 'react'
 const BottomBar = ({ username }: { username: string }) => {
   const [generatingResume, setGeneratingResume] = React.useState(false)
   return (
-    <div className='flex justify-center'>
+    <div className='flex justify-center hidden'>
       <div onClick={async () => {
         setGeneratingResume(true)
         const response = await fetch(`/api/resumes?username=${username}`)

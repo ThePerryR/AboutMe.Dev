@@ -279,6 +279,7 @@ model Job {
 
 model User {
     id            String    @id @default(cuid())
+    publicProfile Boolean @default(false)
     username      String? @unique
     name          String?
     email         String?   @unique
@@ -308,6 +309,7 @@ model User {
     jobs          Job[]
     interests     UserInterest[]
     updatedAt     DateTime @updatedAt @default(now())
+    createdAt     DateTime @default(now())
 }
 
 model VerificationToken {

@@ -58,7 +58,7 @@ export default async function RootLayout({
                 <Navigation 
                   username={session?.user?.username ?? undefined}
                 />
-                {!session?.user 
+                {!session?.user
                 ? (
                 <Link href="/api/auth/signin" className='text-white opacity-100 hover:opacity-80 text-sm uppercase flex items-center'>
                   <svg width="24" height="32" className='h-4 mr-1' viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">

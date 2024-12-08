@@ -50,7 +50,7 @@ export function Navigation ({ username }: { username?: string }) {
   return (
     <div className='flex-1 space-y-1'>
       <NavItem href='/' label='Home' child={false} current={pathname === '/'} />
-      <NavItem href='/jobs' label='Jobs' child={false} current={pathname === '/jobs'} />
+      {/* <NavItem href='/jobs' label='Jobs' child={false} current={pathname === '/jobs'} /> */}
       {username &&
       <NavItemWithChildren
         label='Your Profile' 
@@ -61,9 +61,7 @@ export function Navigation ({ username }: { username?: string }) {
           { label: 'Skills', href: '/profile/skills', current: pathname === '/profile/skills' },
           { label: 'Experience', href: '/profile/experience', current: pathname === '/profile/experience' },
           { label: 'Projects', href: '/profile/projects', current: pathname === '/profile/projects' },
-          { label: 'Hobbies & Interests', href: '/profile/hobbies', current: pathname === '/profile/hobbies' },
-          { label: 'Teams', href: '/profile/teams', current: pathname === '/profile/teams' },
-          { label: 'Updates', href: '/profile/updates', current: pathname === '/profile/updates' },
+          { label: 'Hobbies & Interests', href: '/profile/hobbies', current: pathname === '/profile/hobbies' }
         ]}
       />
       }

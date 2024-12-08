@@ -18,6 +18,26 @@ export const postRouter = createTRPCRouter({
         where: { id: ctx.session.user.id },
       });
     }),
+  fetchDashboard: publicProcedure
+    .query(async ({ ctx }) => {
+      const recentUsers = await ctx.db.user.findMany({
+        where: { profileVisibility: Visibility.PUBLIC },
+        orderBy: { createdAt: 'desc' },
+        take: 10
+      })
+
+
+      const recentProjects = await ctx.db.project.findMany({
+        where: { 
+          isFavorited: true,
+          image: { not: null }
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 8,
+        include: { createdBy: true }
+      })
+      return { recentUsers, recentProjects }
+    }),
   fetchUser: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
@@ -683,11 +703,6 @@ export const postRouter = createTRPCRouter({
           flair: user.statusEmoji,
         }
       })
-    }),
-
-    fetchDashboard: publicProcedure
-    .query(async ({ ctx }) => {
-      console.log('dashboard')
     }),
 
   searchInterests: publicProcedure
