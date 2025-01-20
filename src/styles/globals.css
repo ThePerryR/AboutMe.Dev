@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.landing-bg {
+  /* Combine the repeating image with the gradient overlay */
+  background-image: 
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)), /* Gradient overlay */
+    url("/cross.png"); /* Repeating background image */
+
+  /* Make the image repeat */
+  background-repeat: no-repeat, repeat;
+
+  /* Ensure the image and gradient span the entire element */
+  background-size: auto, auto;
+
+  /* Position the layers */
+  background-position: top, center;
+}

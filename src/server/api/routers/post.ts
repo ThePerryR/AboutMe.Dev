@@ -644,11 +644,15 @@ export const postRouter = createTRPCRouter({
     .input(z.number())
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.db.user.findUnique({ where: { id: ctx.session.user.id }, include: { interests: true } })
+      console.log('aoaoao', user?.interests, input)
       if (user?.interests.find((i) => i.interestId === input)) {
-        await ctx.db.userInterest.deleteMany({ 
+        console.log('aoaoao', 'delete')
+        const ddd = await ctx.db.userInterest.deleteMany({ 
           where: { interestId: input, userId: ctx.session.user.id }
         })
+        console.log('aoaoaoff', ddd)
       } else {
+        console.log('aoaoao', 'create')
         await ctx.db.userInterest.create({
           data: {
             user: { connect: { id: ctx.session.user.id } },

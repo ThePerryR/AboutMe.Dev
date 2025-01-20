@@ -20,12 +20,13 @@ import {
   useSortable
 } from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
-import { Bars3Icon } from '@heroicons/react/20/solid';
+import { Bars3Icon, XCircleIcon } from '@heroicons/react/20/solid';
 
 let dragTimeout: NodeJS.Timeout | null = null;
 const Skills = () => {
     const [interests, setInterests] = React.useState<(UserInterest & { interest: Interest })[]>([]);
     const interestsQuery = api.post.getInterests.useQuery()
+    console.log('fifi', interestsQuery.data)
     const addInterestMutation = api.post.addInterest.useMutation({
         onSuccess: () => {
             void interestsQuery.refetch()
@@ -132,7 +133,6 @@ const SearchList = ({ addInterest, toggleInterest, interests, label = "skills", 
     const [focused, setFocused] = useState(false);
     const [search, setSearch] = useState('');
     const skillSearchQuery = api.post.searchInterests.useQuery({ search, exclude: interests.map(skill => skill.id), limit: 20 });
-
     useEffect(() => {
         // event on HtmlDivElement
         const handleClickOutside = (event: MouseEvent) => {
@@ -223,7 +223,7 @@ const Interest = ({ interest, toggleInterest }: { interest: (UserInterest & { in
         <div
             ref={setNodeRef}
             style={style}
-            className='cursor-pointer flex items-center hover:opacity-50 space-x-2 border border-white border-opacity-20 px-2 py-1 rounded-full text-white text-opacity-70 bg-white bg-opacity-5 text-xs'>
+            className='relative cursor-pointer flex items-center hover:opacity-50 space-x-2 border border-white border-opacity-20 px-2 py-1 rounded-full text-white text-opacity-70 bg-white bg-opacity-5 text-xs'>
             <div 
               {...attributes} 
               {...listeners}
@@ -234,14 +234,19 @@ const Interest = ({ interest, toggleInterest }: { interest: (UserInterest & { in
               ? 'Removing...'
               : (
               <div 
+                className='relative group'
                 onClick={async () => {
                   setRemoving(true);
-                  await toggleInterest(interest.id);
+                  await toggleInterest(interest.interest.id);
                 }}>
                 {interest.interest.image ? `${interest.interest.image} ${interest.interest.name}` : interest.interest.name}
+                <div className='absolute top-[-4px] hidden group-hover:block bg-black/20 rounded-full p-0.5 right-[-2px]'>
+                  <XCircleIcon className='w-5 h-5 text-white text-opacity-90' />
+                </div>
               </div>
               )
             }
+
         </div>
     )
 }

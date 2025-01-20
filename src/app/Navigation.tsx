@@ -6,61 +6,70 @@ import Link from 'next/link'
 import classNames from 'classnames'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
+interface NavItemProps {
+    href: string
+    label: string
+    pathname: string
+    asDropdownItem?: boolean
+}
+
+const NavItem = ({ href, label, pathname, asDropdownItem = false }: NavItemProps) => {
+    const Component = asDropdownItem ? DropdownMenu.Item : 'div'
+    
+    return (
+        <Component asChild={asDropdownItem}>
+            <Link href={href}>
+                <div 
+                  className={classNames(
+                    (href === '/profile' ? href === pathname : pathname.startsWith(href)) ? 'text-[#F1F1F1] hover:text-[#F1F1F1] bg-[#343434]' : 'text-opacity-50 hover:text-opacity-80',
+                    'text-sm py-1.5 rounded-md px-2 font-medium transition-all text-white',
+                  )}>
+                    {label}
+                </div>
+            </Link>
+        </Component>
+    )
+}
+
 const Navigation = ({ username }: { username: string }) => {
     const pathname = usePathname()
+
+    const navItems = [
+        { href: '/profile', label: 'Personal Information' },
+        { href: '/profile/hobbies', label: 'Hobbies & Interests' },
+        { href: '/profile/skills', label: 'Skills' },
+        { href: '/profile/experience', label: 'Experience' },
+        { href: '/profile/projects', label: 'Projects' },
+    ]
+
+    const mobileNavItems = [
+        { href: '/', label: 'Personal Information' },
+        { href: '/interest', label: 'Hobbies & Interests' },
+        { href: '/skills', label: 'Skills' },
+        { href: '/experience', label: 'Experience' },
+        { href: '/projects', label: 'Projects' },
+        { href: '/calendar', label: 'Calendar' },
+    ]
 
     return (
         <>
             <div className='hidden sm:block'>
-                <div className='space-y-3 mb-20'>
-                    <div>
-                        <Link href='/'>
-                            <div className={classNames(pathname === '/' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Personal Information</div>
-                        </Link>
-                    </div>
-                    <div>
-                        <Link href='/interest'>
-                            <div className={classNames(pathname === '/interest' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Hobbies & Interests</div>
-                        </Link>
-                    </div>
-                    <div>
-                        <Link href='/skills'>
-                            <div className={classNames(pathname === '/skills' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Skills</div>
-                        </Link>
-                    </div>
-                    <div>
-                        <Link href='/experience'>
-                            <div className={classNames(pathname === '/experience' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Experience</div>
-                        </Link>
-                    </div>
-                    <div>
-                        <Link href='/projects'>
-                            <div className={classNames(pathname === '/projects' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Projects</div>
-                        </Link>
-                    </div>
-                    <div>
-                        <Link href='/teams'>
-                            <div className={classNames(pathname.startsWith('/teams') ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Teams</div>
-                        </Link>
-                    </div>
-                    <div>
-                        <Link href='/updates'>
-                            <div className={classNames(pathname.startsWith('/updates') ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white')}>Updates</div>
-                        </Link>
-                    </div>
-                    {/* <div>
-                        <Link href='/calendar'>
-                            <div className={classNames(pathname === '/calendar' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Calendar</div>
-                        </Link>
-                    </div> */}
+                <div className='mb-20 px-4'>
+                    {navItems.map((item) => (
+                        <div key={item.href}>
+                            <NavItem href={item.href} label={item.label} pathname={pathname} />
+                        </div>
+                    ))}
                 </div>
 
-                <Link href={`/${username}`} target='_blank' className='flex items-center space-x-1 group'>
+                <div className='px-6'>
+                  <Link href={`/${username}`} target='_blank' className='flex items-center space-x-1 group'>
                     <div className={classNames('text-opacity-50 group-hover:text-opacity-80', 'text-sm transition-all text-white')}>View Profile</div>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 opacity-80 group-hover:opacity-100">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                     </svg>
-                </Link>
+                  </Link>
+                </div>
             </div>
             <div className='sm:hidden w-full'>
                 <DropdownMenu.Root>
@@ -71,7 +80,6 @@ const Navigation = ({ username }: { username: string }) => {
                             {pathname === '/skills' && 'Skills'}
                             {pathname === '/experience' && 'Experience'}
                             {pathname === '/projects' && 'Projects'}
-                            {pathname === '/calendar' && 'Calendar'}
                         </div>
                     </DropdownMenu.Trigger>
 
@@ -81,48 +89,16 @@ const Navigation = ({ username }: { username: string }) => {
                             sideOffset={5}>
                             <DropdownMenu.Label />
                             <div className='space-y-3 mb-4'>
-                                <div>
-                                    <DropdownMenu.Item asChild>
-                                        <Link href='/'>
-                                            <div className={classNames(pathname === '/' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Personal Information</div>
-                                        </Link>
-                                    </DropdownMenu.Item>
-                                </div>
-                                <div>
-                                    <DropdownMenu.Item asChild>
-                                        <Link href='/interest'>
-                                            <div className={classNames(pathname === '/interest' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Hobbies & Interests</div>
-                                        </Link>
-                                    </DropdownMenu.Item>
-                                </div>
-                                <div>
-                                    <DropdownMenu.Item asChild>
-                                        <Link href='/skills'>
-                                            <div className={classNames(pathname === '/skills' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Skills</div>
-                                        </Link>
-                                    </DropdownMenu.Item>
-                                </div>
-                                <div>
-                                    <DropdownMenu.Item asChild>
-                                        <Link href='/experience'>
-                                            <div className={classNames(pathname === '/experience' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Experience</div>
-                                        </Link>
-                                    </DropdownMenu.Item>
-                                </div>
-                                <div>
-                                    <DropdownMenu.Item asChild>
-                                        <Link href='/projects'>
-                                            <div className={classNames(pathname === '/projects' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Projects</div>
-                                        </Link>
-                                    </DropdownMenu.Item>
-                                </div>
-                                <div>
-                                    <DropdownMenu.Item asChild>
-                                        <Link href='/calendar'>
-                                            <div className={classNames(pathname === '/calendar' ? 'text-opacity-80 hover:text-opacity-80' : 'text-opacity-50 hover:text-opacity-80', 'text-sm transition-all text-white',)}>Calendar</div>
-                                        </Link>
-                                    </DropdownMenu.Item>
-                                </div>
+                                {mobileNavItems.map((item) => (
+                                    <div key={item.href}>
+                                        <NavItem 
+                                            href={item.href} 
+                                            label={item.label} 
+                                            pathname={pathname}
+                                            asDropdownItem
+                                        />
+                                    </div>
+                                ))}
                             </div>
 
                             <DropdownMenu.Separator className="h-[1px] bg-white bg-opacity-30 mb-4"  />

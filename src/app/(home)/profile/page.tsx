@@ -6,17 +6,17 @@ import GitHubCalendar from 'react-github-calendar';
 import { CreatePost } from "~/app/_components/create-post";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
-import UploadButtonWrapper from "../../../_components/upload-button";
-import ProfilePicture from "../../../ProfilePicture";
-import Name from "../../../Name";
-import Navigation from "../../../Navigation";
-import Location from "../../../Location";
-import Links from "../../../Links";
-import Statuses from "../../../Statuses";
+import UploadButtonWrapper from "../../_components/upload-button";
+import ProfilePicture from "../../ProfilePicture";
+import Name from "../../Name";
+import Navigation from "../../Navigation";
+import Location from "../../Location";
+import Links from "../../Links";
+import Statuses from "../../Statuses";
 import profile from '../../profile.png'
 import { Visibility } from "@prisma/client";
 import { useState } from "react";
-import Visiblity from "../Visibility";
+import Visiblity from "./Visibility";
 const faceEmojis = ['🤩', '🥳', '🥸', '🤪', '🤯', '🤠', '😵‍💫', '🫨', '🙄', '🤔', '😬', '😶', '😀', '😃', '😄', '😁', '😆', '🫥', '🤓', '🦊', '🐼']
 
 export default async function Home() {

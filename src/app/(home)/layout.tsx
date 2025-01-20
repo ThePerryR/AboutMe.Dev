@@ -10,7 +10,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
         </>
     )
     return (
-        <main className="text-white h-full flex flex-col flex-1 bg-[#101827]">
+        <main className="text-white h-full flex flex-col flex-1 bg-[#0A0A0A]">
           {children}
         </main>
     )
