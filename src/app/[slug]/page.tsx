@@ -146,8 +146,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                   userQuery?.name ?? githubData?.name
                     ? "opacity-90"
                     : "opacity-50",
-                )}
-              >
+                )}>
                 {userQuery?.name ?? githubData?.name ?? "No name"}
               </h1>
               {userQuery?.nationalityEmoji && (
@@ -167,8 +166,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="h-4 w-4"
-                  >
+                    className="h-4 w-4">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -193,16 +191,14 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                       userQuery?.location ?? githubData?.location
                     ),
                   },
-                )}
-              >
+                )}>
                 <svg
                   className="h-[15px] w-[15px]"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
-                  stroke="currentColor"
-                >
+                  stroke="currentColor">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -225,8 +221,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     userQuery?.website ?? githubData?.blog ?? "",
                   )}
                   target="_blank"
-                  className="opacity-90 hover:opacity-100"
-                >
+                  className="opacity-90 hover:opacity-100">
                   <div
                     className={classNames(
                       "flex items-center space-x-1 opacity-100",
@@ -235,16 +230,14 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                           userQuery?.location ?? githubData?.location
                         ),
                       },
-                    )}
-                  >
+                    )}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       strokeWidth="1.5"
                       stroke="currentColor"
-                      className="h-4 w-4"
-                    >
+                      className="h-4 w-4">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -264,8 +257,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
             <Link
               target="_blank"
               href={`https://github.com/${params.slug}`}
-              className="opacity-90 hover:opacity-100"
-            >
+              className="opacity-90 hover:opacity-100">
               <div className="flex items-center">
                 <div className="w-5 sm:w-7">
                   <svg
@@ -274,8 +266,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     className="h-4 w-4"
                     viewBox="0 0 33 32"
                     fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
+                    xmlns="http://www.w3.org/2000/svg">
                     <path
                       fillRule="evenodd"
                       clipRule="evenodd"
@@ -306,8 +297,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
               <Link
                 target="_blank"
                 href={`https://x.com/${userQuery?.twitterUsername}`}
-                className="opacity-90 hover:opacity-100"
-              >
+                className="opacity-90 hover:opacity-100">
                 <div className="flex items-center">
                   <div className="w-5 sm:w-7">𝕏</div>
                   <div className="opacity-80">{userQuery?.twitterUsername}</div>
@@ -320,8 +310,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
               <Link
                 target="_blank"
                 href={`https://linkedin.com/in/${userQuery.linkedinUsername}`}
-                className="opacity-90 hover:opacity-100"
-              >
+                className="opacity-90 hover:opacity-100">
                 <div className="flex items-center">
                   <div className="w-5 sm:w-7">
                     <svg
@@ -330,8 +319,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                       className="h-[15px] w-[15px]"
                       viewBox="0 0 72 72"
                       fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
+                      xmlns="http://www.w3.org/2000/svg">
                       <path
                         fillRule="evenodd"
                         clipRule="evenodd"
@@ -364,8 +352,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
                     return (
                       <div
                         key={skill.id}
-                        className="mb-2 flex h-9 items-center justify-between rounded-full border border-white border-opacity-20 px-2 py-1"
-                      >
+                        className="mb-2 flex h-9 items-center justify-between rounded-full border border-white border-opacity-20 px-2 py-1">
                         {skill.image && (
                           <Image
                             src={skill.image}
