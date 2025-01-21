@@ -11,10 +11,10 @@ export default async function ProfileLayout({
 }) {
   const session = await getServerAuthSession();
   return (
-    <div className='flex'>
-      <div className="overflow-hidden bg-[#1D1D1D] flex sticky top-0 h-screen w-[288px] shrink-0 flex-col space-y-5 border-r border-[#292929] pb-6">
+    <div className='flex flex-col md:flex-row fofjewof'>
+      <div className="overflow-hidden bg-[#1D1D1D] flex sticky top-0 md:h-screen items-center md:items-start w-full md:w-[288px] shrink-0 md:flex-col md:space-y-5 border-r border-[#292929] md:pb-6">
         {/* Header */}
-        <div className="flex h-16 items-center px-6">
+        <div className="flex h-14 md:h-16 items-center px-6">
           <Link href="/" className="flex items-center text-2xl">
             <Logo />
           </Link>
@@ -48,7 +48,7 @@ export default async function ProfileLayout({
           ) : (
             <Link
               href="/api/auth/signout"
-              className="text-sm text-white/60 hover:text-white/100">
+              className="hidden md:block text-sm text-white/60 hover:text-white/100">
               Sign out
             </Link>
           )}

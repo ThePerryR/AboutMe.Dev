@@ -48,12 +48,11 @@ const Navigation = ({ username }: { username: string }) => {
         { href: '/skills', label: 'Skills' },
         { href: '/experience', label: 'Experience' },
         { href: '/projects', label: 'Projects' },
-        { href: '/calendar', label: 'Calendar' },
     ]
 
     return (
         <>
-            <div className='hidden sm:block'>
+            <div className='hidden md:block'>
                 <div className='mb-20 px-4'>
                     {navItems.map((item) => (
                         <div key={item.href}>
@@ -71,15 +70,15 @@ const Navigation = ({ username }: { username: string }) => {
                   </Link>
                 </div>
             </div>
-            <div className='sm:hidden w-full'>
+            <div className='md:hidden w-full'>
                 <DropdownMenu.Root>
                     <DropdownMenu.Trigger asChild>
-                        <div className='text-white text-sm transition-all justify-center bg-white bg-opacity-10 w-full h-10 mb-4 cursor-pointer hover:bg-opacity-5 flex items-center px-3 border-white border-opacity-20 border rounded'>
-                            {pathname === '/' && 'Personal Information'}
-                            {pathname === '/interest' && 'Hobbies & Interests'}
-                            {pathname === '/skills' && 'Skills'}
-                            {pathname === '/experience' && 'Experience'}
-                            {pathname === '/projects' && 'Projects'}
+                        <div className='text-white text-sm transition-all justify-center bg-white bg-opacity-10 w-full h-10 cursor-pointer hover:bg-opacity-5 flex items-center px-3 border-white border-opacity-20 border rounded'>
+                            {pathname === '/profile' && 'Personal Information'}
+                            {pathname === '/profile/hobbies' && 'Hobbies & Interests'}
+                            {pathname === '/profile/skills' && 'Skills'}
+                            {pathname === '/profile/experience' && 'Experience'}
+                            {pathname === '/profile/projects' && 'Projects'}
                         </div>
                     </DropdownMenu.Trigger>
 
@@ -89,7 +88,7 @@ const Navigation = ({ username }: { username: string }) => {
                             sideOffset={5}>
                             <DropdownMenu.Label />
                             <div className='space-y-3 mb-4'>
-                                {mobileNavItems.map((item) => (
+                                {navItems.map((item) => (
                                     <div key={item.href}>
                                         <NavItem 
                                             href={item.href} 

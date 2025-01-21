@@ -117,7 +117,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
   }
 
   return (
-    <div className="flex min-h-full flex-col items-center bg-[#101827] px-6 py-4 text-white sm:py-10">
+    <div className="flex min-h-full flex-col items-center bg-[#0A0A0A] px-6 py-4 text-white sm:py-10">
       <div className="mb-4 flex w-full max-w-[844px] flex-col justify-between sm:mb-8 sm:flex-row">
         <div className="mb-4 flex flex-col items-start sm:mb-0 sm:flex-row sm:items-center">
           {/* User's Picture */}
