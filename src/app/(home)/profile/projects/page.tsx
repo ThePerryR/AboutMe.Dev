@@ -87,28 +87,35 @@ const Projects = () => {
           {createProjectMutation.isLoading ? "One moment..." : "Add Project"}
         </button>
       </div>
-      {projects.length === 0 ? (
-        <div className="flex flex-col items-center rounded-lg border border-dashed border-white border-opacity-10 bg-white bg-opacity-5 py-20">
-          <div className="text-sm opacity-60">{"No projects"}</div>
-        </div>
-      ) : (
-        <div className="grid grid-cols-4 gap-4">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={projects}
-              strategy={verticalListSortingStrategy}
-            >
-              {projects.map((project) => (
-                <ProjectCard key={project.id} project={project.project} />
-              ))}
-            </SortableContext>
-          </DndContext>
-        </div>
-      )}
+      {projectsQuery.isLoading
+      ? (
+        <div>Loading...</div>
+      )
+      : (
+      <div>
+        {projects.length === 0 ? (
+          <div className="flex flex-col items-center rounded-lg border border-dashed border-white border-opacity-10 bg-white bg-opacity-5 py-20">
+            <div className="text-sm opacity-60">{"No projects"}</div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-4 gap-4">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}>
+              <SortableContext
+                items={projects}
+                strategy={verticalListSortingStrategy}>
+                {projects.map((project) => (
+                  <ProjectCard key={project.id} project={project.project} />
+                ))}
+              </SortableContext>
+            </DndContext>
+          </div>
+        )}
+      </div>
+      )
+    }
     </div>
   );
 };
@@ -137,6 +144,7 @@ const ProjectCard = ({
             width={300}
             height={157.5}
             alt="project image"
+            className='h-[157.5px] object-contain'
           />
         ) : (
           <div className="h-[157.5px] rounded border border-dashed border-white border-opacity-10 bg-white/5"></div>
