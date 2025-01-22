@@ -9,6 +9,12 @@ await import("./src/env.js");
 const config = {
     images: {
         domains: ["avatars.githubusercontent.com", "utfs.io", "ufs.sh"],
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "*.ufs.sh",
+            },
+        ],
     }
 };
 
