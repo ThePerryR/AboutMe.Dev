@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import React, { useState } from 'react'
@@ -5,6 +7,7 @@ import className from 'classnames'
 import * as Tooltip from '@radix-ui/react-tooltip';
 
 import { api } from "~/trpc/react";
+import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid';
 /*
 profile status is
 - public
@@ -29,7 +32,7 @@ const Links = ({ username, initialTwitter, initialLinkedin, initialWebsite }: { 
             <div className='flex flex-col items-start space-y-8 col-span-2'>
                 <div className='flex flex-col items-start'>
                     <div className='text-sm font-medium mb-2'>Github Username</div>
-                    <Tooltip.Provider delayDuration={300}>
+                    <Tooltip.Provider delayDuration={120}>
                       <Tooltip.Root>
                           <Tooltip.Trigger asChild>
                           <input type='text' disabled value={`${username}`} className='bg-transparent cursor-not-allowed border-white border rounded border-opacity-5 text-opacity-20 text-white p-2 max-w-96 w-full' />
@@ -40,6 +43,33 @@ const Links = ({ username, initialTwitter, initialLinkedin, initialWebsite }: { 
                                   className="data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade text-black text-opacity-80 select-none rounded-[4px] bg-white px-[10px] py-[6px] text-[13px] leading-none shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] will-change-[transform,opacity]"
                                   sideOffset={5}>
                                   You cannot change your Github username.
+                                  <Tooltip.Arrow className="fill-white" />
+                              </Tooltip.Content>
+                          </Tooltip.Portal>
+                      </Tooltip.Root>
+                    </Tooltip.Provider>
+
+                    
+                    <Tooltip.Provider delayDuration={120}>
+                      <Tooltip.Root>
+                          <Tooltip.Trigger asChild>
+                            <div className='bg-blue-500/20 mt-2 border border-blue-500/50 rounded p-2 text-sm text-blue-500/80'>
+                              Please ensure you are sharing &quot;Private Contributions&quot; in your Github settings.
+                              <QuestionMarkCircleIcon className='w-4 h-4 inline ml-1' />
+                            </div>
+                          </Tooltip.Trigger>
+                          <Tooltip.Portal>
+                              <Tooltip.Content
+                                  className="data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade text-black text-opacity-80 select-none rounded-[4px] bg-white px-[10px] py-[6px] text-[13px] leading-none shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] will-change-[transform,opacity]"
+                                  sideOffset={5}>
+                                  <div>
+                                    <div className='text-base max-w-[480px]'>Go to your {username ? <a href={`https://github.com/${username}`} className='text-blue-500/80 underline'>profile page</a> : 'profile page'}, click on <b>Contribution Settings</b> and then activate the <b>Private contributions</b>. Check the <a href='https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/showing-your-private-contributions-and-achievements-on-your-profile' className='text-blue-500/80 underline'>official GitHub docs here.</a></div>
+                                    <img 
+                                      src='https://media.licdn.com/dms/image/v2/D4E12AQGURddsA284Gw/article-inline_image-shrink_1500_2232/article-inline_image-shrink_1500_2232/0/1711976465034?e=1743033600&v=beta&t=1f8k0810pRhfu3fKKYnxnO-6oC9PTTqXSj21jvhLdg8' 
+                                      className='w-full max-w-[440px]' 
+                                      alt='Github Contribution Settings'
+                                    />
+                                  </div>
                                   <Tooltip.Arrow className="fill-white" />
                               </Tooltip.Content>
                           </Tooltip.Portal>
