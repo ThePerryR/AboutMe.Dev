@@ -1,8 +1,9 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
+import { init } from 'emoji-mart'
 import * as Select from '@radix-ui/react-select';
 import { string } from 'zod';
 import { api } from '~/trpc/react';
@@ -12,6 +13,9 @@ const Statuses = ({ initialNationality, initialStatus }: { initialNationality: s
     const [nationality, setNationality] = React.useState(initialNationality ?? undefined);
     const [status, setStatus] = React.useState(initialStatus ?? undefined);
     const updateStatusesMutation = api.post.updateStatuses.useMutation();
+    useEffect(() => {
+      void init({ data })
+    }, [])
     return (
         <div className='border-b border-[#1C2432] py-6 px-8'>
             <div className='grid grid-cols-3 space-x-10'>
@@ -29,10 +33,10 @@ const Statuses = ({ initialNationality, initialStatus }: { initialNationality: s
                                 categories={['people', 'nature', 'foods', 'activity', 'places', 'objects', 'symbols']}
                                 placeholder='😴'
                                 onUpdate={(emoji) => {
-                                    setStatus(emoji);
-                                    updateStatusesMutation.mutate({
-                                        statusEmoji: emoji
-                                    })
+                                  setStatus(emoji);
+                                  updateStatusesMutation.mutate({
+                                      statusEmoji: emoji
+                                  })
                                 }}
                             />
                             {status !== undefined &&
@@ -88,15 +92,18 @@ const EmojiPicker = ({ emoji, placeholder, onUpdate, categories }: { emoji: stri
             <div
                 onClick={() => { setOpen(!open) }}
                 className={classNames('bg-white py-1 px-2 rounded bg-opacity-20 hover:bg-opacity-50 cursor-pointer', emoji ? '' : 'opacity-50 hover:opacity-80')}>
-                {emoji ?? <span className='opacity-40'>{placeholder}</span>}
+                {emoji
+                ? (emoji.startsWith(':') ? <em-emoji shortcodes={emoji} /> : emoji)
+                : <span className='opacity-40'>{placeholder}</span>
+                }
             </div>
             {open &&
                 <div className='absolute top-full left-50 transform -translate-x-1/2 z-10'>
                     <Picker
                         data={data}
                         categories={categories}
-                        onEmojiSelect={({ native }: { native: string }) => {
-                            onUpdate(native);
+                        onEmojiSelect={({ shortcodes }: { shortcodes: string }) => {
+                            onUpdate(shortcodes);
                             setOpen(false);
                         }}
                     />

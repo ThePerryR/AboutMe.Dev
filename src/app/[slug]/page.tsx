@@ -15,6 +15,7 @@ import SkillSection from "./SkillSection";
 import MoreProjects from "./MoreProjects";
 import BottomBar from "./BottomBar";
 import ProjectCard from "./ProjectCard";
+import EmojiLoader from "./EmojiLoader";
 
 async function fetchGithubData(
   user: { username: string | null } | null,
@@ -118,6 +119,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
 
   return (
     <div className="flex min-h-full flex-col items-center bg-[#0A0A0A] px-6 py-4 text-white sm:py-10">
+      <EmojiLoader />
       <div className="mb-4 flex w-full max-w-[844px] flex-col justify-between sm:mb-8 sm:flex-row">
         <div className="mb-4 flex flex-col items-start sm:mb-0 sm:flex-row sm:items-center">
           {/* User's Picture */}
@@ -133,7 +135,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
             />
             {userQuery?.statusEmoji && (
               <div className="absolute bottom-[-8px] right-[-8px] flex h-[28px] w-[28px] rotate-[-6deg] cursor-default items-center justify-center rounded-full bg-[#ececec] bg-opacity-0 text-[26px] text-opacity-100">
-                {userQuery.statusEmoji}
+                {userQuery.statusEmoji.startsWith(':') ? <em-emoji shortcodes={userQuery.statusEmoji} /> : userQuery.statusEmoji}
               </div>
             )}
           </div>
@@ -151,7 +153,7 @@ const UserPage = async ({ params }: { params: { slug: string } }) => {
               </h1>
               {userQuery?.nationalityEmoji && (
                 <div className="ml-2">
-                  <span>{userQuery.nationalityEmoji}</span>
+                  <span>{userQuery.nationalityEmoji.startsWith(':') ? <em-emoji shortcodes={userQuery.nationalityEmoji} /> : userQuery.nationalityEmoji}</span>
                 </div>
               )}
             </div>

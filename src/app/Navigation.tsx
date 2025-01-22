@@ -14,10 +14,24 @@ interface NavItemProps {
 }
 
 const NavItem = ({ href, label, pathname, asDropdownItem = false }: NavItemProps) => {
-    const Component = asDropdownItem ? DropdownMenu.Item : 'div'
-    
-    return (
-        <Component asChild={asDropdownItem}>
+
+    if (asDropdownItem) {
+        return (
+            <DropdownMenu.Item asChild>
+                <Link href={href}>
+                    <div 
+                      className={classNames(
+                        (href === '/profile' ? href === pathname : pathname.startsWith(href)) ? 'text-[#F1F1F1] hover:text-[#F1F1F1] bg-[#343434]' : 'text-opacity-50 hover:text-opacity-80',
+                        'text-sm py-1.5 rounded-md px-2 font-medium transition-all text-white',
+                      )}>
+                        {label}
+                    </div>
+                </Link>
+            </DropdownMenu.Item>
+        )
+    } else {
+        return (
+            <div>
             <Link href={href}>
                 <div 
                   className={classNames(
@@ -27,8 +41,9 @@ const NavItem = ({ href, label, pathname, asDropdownItem = false }: NavItemProps
                     {label}
                 </div>
             </Link>
-        </Component>
-    )
+        </div>
+      )
+    }
 }
 
 const Navigation = ({ username }: { username: string }) => {
